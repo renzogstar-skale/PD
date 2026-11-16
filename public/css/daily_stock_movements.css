@@ -143,3 +143,8 @@ body.dark-mode #stockMovementsBoard .smv-mod-desc,
 html[data-daily-mode="night"] #stockMovementsBoard .smv-mod-desc {
 	color: #64748b !important;
 }
+
+/* Comparación de inventario (6 indicadores) dentro de los 255 px del panel de /sales */
+@media (min-width: 1201px) {
+	#page-content #stockMovementsBoard .ded-row-2 .ded-table-top5 td { padding-top: 5.5px; padding-bottom: 5.5px; }
+}

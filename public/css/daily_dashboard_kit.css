@@ -13,10 +13,21 @@
 @media (min-width: 1750px) {
 	:root { --ded-kpi-h: 99.8px; }
 }
-/* Entre 768 y 1249 px /sales pasa a 4 columnas anchas: etiquetas en una línea */
-@media (min-width: 768px) and (max-width: 1249.98px) {
+/* Entre 768 y 1200 px /sales pasa a 4 columnas anchas: etiquetas en una línea */
+@media (min-width: 768px) and (max-width: 1200px) {
 	:root { --ded-kpi-h: 99.8px; }
 }
+/* 1201–1249 px: 8 columnas muy estrechas, /sales sube a 153,7 px */
+@media (min-width: 1201px) and (max-width: 1249.98px) {
+	:root { --ded-kpi-h: 153.7px; }
+}
+
+/* Nota de la KPI destacada de /sales (13,2 px por línea): 1 línea ≥1900 y 768–1200, 2 líneas 1300–1899, 3 líneas 1201–1299.
+   La tarjeta usa justify-content: space-between; con la misma altura de nota la cifra cae en la misma coordenada. */
+:root { --ded-hi-sub-h: 26.4px; }
+@media (min-width: 1900px) { :root { --ded-hi-sub-h: 13.2px; } }
+@media (min-width: 1201px) and (max-width: 1299.98px) { :root { --ded-hi-sub-h: 39.6px; } }
+@media (min-width: 768px) and (max-width: 1200px) { :root { --ded-hi-sub-h: 13.2px; } }
 
 /* KPICard (tableta y escritorio): misma altura que /sales; el texto largo se recorta, nunca crece la tarjeta.
    En móvil no se aplica: /sales deja que daily_mobile.js reacomode la rejilla y ajuste cifras. */
@@ -44,12 +55,39 @@
 		text-overflow: ellipsis;
 	}
 
-	/* Destacada: nombre del indicador en máximo 2 líneas (como "Valor del inventario") */
+	/* DashboardPrimaryKPI: fila de marca de 18 px (una línea) y nota con la altura de /sales; sin nota, un hueco equivalente */
+	#page-content .ded-kpis-grid > .ded-kpi-card.is-highlight .ded-kpi-top-highlight {
+		height: 18px;
+		flex: 0 0 18px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 6px;
+		min-width: 0;
+	}
+	#page-content .ded-kpis-grid > .ded-kpi-card.is-highlight .ded-highlight-brand {
+		min-width: 0;
+		flex: 1 1 auto;
+	}
 	#page-content .ded-kpis-grid > .ded-kpi-card.is-highlight .ded-highlight-brand > span:last-child {
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
+		display: block;
+		white-space: nowrap;
 		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	#page-content .ded-kpis-grid > .ded-kpi-card.is-highlight > .ded-kpi-sub-highlight {
+		height: var(--ded-hi-sub-h);
+		flex: 0 0 var(--ded-hi-sub-h);
+		overflow: hidden;
+	}
+	#page-content .ded-kpis-grid > .ded-kpi-card.is-highlight:not(:has(> .ded-kpi-sub-highlight))::after {
+		content: "";
+		flex: 0 0 var(--ded-hi-sub-h);
+	}
+	/* DashboardKPICard sin nota: hueco de una línea (16,5 px) para que etiqueta y cifra no se separen */
+	#page-content .ded-kpis-grid > .ded-kpi-card:not(.is-highlight):not(:has(> .ded-kpi-sub))::after {
+		content: "";
+		flex: 0 0 16.5px;
 	}
 	/* Notas con dos partes (período + variación) en una sola línea recortable */
 	#page-content .ded-kpis-grid > .ded-kpi-card > .ded-kpi-sub.d-flex {
@@ -101,4 +139,51 @@
 @media (min-width: 1201px) and (max-width: 1439.98px) {
 	.ded-kpi-val .ded-val-full { display: none; }
 	.ded-kpi-val .ded-val-compact { display: inline; }
+}
+
+/* DashboardChartPanel + DashboardComparisonPanel: la fila 2 de /sales mide 255 px en escritorio (cabecera + lienzo de 195 px).
+   El panel derecho adapta su contenido dentro de esa altura en lugar de estirar la fila. */
+@media (min-width: 1201px) {
+	#page-content .ded-row-2 > .ded-card {
+		height: 255px;
+		overflow: hidden;
+	}
+	#page-content .ded-row-2 > .ded-card > :not(.ded-card-header) {
+		flex: 0 1 auto;
+		min-height: 0;
+		overflow-y: auto;
+	}
+}
+
+/* Cabecera del panel de gráfico en una línea (título + leyenda + ampliar) como en /sales */
+@media (min-width: 1201px) {
+	#page-content .ded-row-2 > .ded-card > .ded-card-header {
+		flex-wrap: nowrap;
+		min-width: 0;
+	}
+	#page-content .ded-row-2 > .ded-card > .ded-card-header .ded-card-title {
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+	#page-content .ded-row-2 > .ded-card > .ded-card-header .ded-card-tools {
+		min-width: 0;
+		flex-wrap: nowrap;
+	}
+	#page-content .ded-row-2 > .ded-card > .ded-card-header .ded-legend-inline {
+		min-width: 0;
+		flex-wrap: nowrap;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+}
+
+/* DashboardDetailGrid en tableta/móvil: una columna como /sales (≤1200 px); se impide que dm-grid-fit
+   de daily_mobile.js parta los paneles en columnas de 140 px */
+@media (max-width: 1200px) {
+	#page-content .ded-row-2,
+	#page-content .ded-row-2.dm-grid-fit,
+	#page-content .ded-row-3,
+	#page-content .ded-row-3.dm-grid-fit {
+		grid-template-columns: minmax(0, 1fr) !important;
+	}
 }

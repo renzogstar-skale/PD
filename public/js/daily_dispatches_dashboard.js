@@ -41,7 +41,7 @@
 		const n = dates30.length;
 		const maxVal = 1250; // Escala fija exacta a la captura (0 a 1,250)
 		const width = 800;
-		const height = 230;
+		const height = 195; // = .ded-chart-canvas-box de /sales
 		const padding = { top: 15, right: 15, bottom: 35, left: 45 };
 		const plotW = width - padding.left - padding.right;
 		const plotH = height - padding.top - padding.bottom;

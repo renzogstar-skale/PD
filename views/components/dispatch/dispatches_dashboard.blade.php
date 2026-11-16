@@ -121,7 +121,7 @@
 			</header>
 
 			<!-- Contenedor del Gráfico SVG Interactivo -->
-			<div class="dp-chart-wrap position-relative" style="height: 250px; width: 100%;">
+			<div class="ded-chart-canvas-box dp-chart-wrap">
 				<div id="dpEvolutionSvgChart" style="width: 100%; height: 100%;"></div>
 				<div id="dpChartTooltip" class="dp-chart-tooltip" style="display:none;"></div>
 			</div>

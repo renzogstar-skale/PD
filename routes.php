@@ -26,6 +26,7 @@ use Grocy\Controllers\RecipesController;
 use Grocy\Controllers\StockController;
 use Grocy\Controllers\StockReportsController;
 use Grocy\Controllers\SiteController;
+use Grocy\Controllers\B2bSalesOverviewController;
 use Grocy\Controllers\SystemController;
 use Grocy\Controllers\TasksController;
 use Grocy\Controllers\UsersController;
@@ -82,10 +83,19 @@ use Slim\Routing\RouteCollectorProxy;
 
 $app->group('', function (RouteCollectorProxy $group)
 {
-	// System routes
-	$group->get('/', [SystemController::class, 'Root'])->setName('root');
+	// System routes (Redirige la raíz directamente a la Plataforma B2B Mayorista)
+	$group->get('/', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('root');
 	$group->get('/app', [SystemController::class, 'AppEntry']);
 	$group->get('/about', [SystemController::class, 'About']);
+
+	// Plataforma B2B Mayorista — Enterprise Minimal
+	$group->get('/b2b', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.overview');
+	$group->get('/b2b/sales-overview', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.sales-overview');
+	$group->get('/b2b/{section:[a-z0-9-]+}', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.section');
+	$group->get('/sales-reps', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.sales-reps');
+	$group->get('/profitability', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.profitability');
+	$group->get('/reports', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.reports');
+	$group->get('/settings', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.settings');
 
 	// Sitio comercial público (rutas con nombre site.* = sin autenticación)
 	$group->get('/features', [SiteController::class, 'Features'])->setName('site.features');
@@ -123,7 +133,7 @@ $app->group('', function (RouteCollectorProxy $group)
 	$group->get('/usersettings', [UsersController::class, 'UserSettings']);
 
 	// Stock master data routes
-	$group->get('/products', [StockController::class, 'ProductsList']);
+	$group->get('/products', [B2bSalesOverviewController::class, 'SalesOverview']);
 	$group->get('/product/{productId}', [StockController::class, 'ProductEditForm']);
 	$group->get('/quantityunits', [StockController::class, 'QuantityUnitsList']);
 	$group->get('/quantityunit/{quantityunitId}', [StockController::class, 'QuantityUnitEditForm']);
@@ -224,8 +234,8 @@ $app->group('', function (RouteCollectorProxy $group)
 	// Sales & POS
 	$group->get('/pos', [SalesController::class, 'Pos']);
 	$group->get('/pos/returns', [SalesController::class, 'PosReturns']);
-	$group->get('/sales', [SalesController::class, 'SalesHistory']);
-	$group->get('/customers', [SalesController::class, 'CustomersList']);
+	$group->get('/sales', [B2bSalesOverviewController::class, 'SalesOverview']);
+	$group->get('/customers', [B2bSalesOverviewController::class, 'SalesOverview']);
 	$group->get('/customers/export', [\Grocy\Controllers\Api\CustomerCrmApiController::class, 'Export']);
 	$group->get('/customers/{customerId:[0-9]+}', [SalesController::class, 'CustomerProfile']);
 
@@ -234,7 +244,7 @@ $app->group('', function (RouteCollectorProxy $group)
 	// DAIRY Mobile (manager)
 	$group->get('/m', [MobileController::class, 'App']);
 	$group->get('/kpis', [KpiController::class, 'ExecutiveDashboard']);
-	$group->get('/reports', [KpiController::class, 'ReportsHub']);
+	// $group->get('/reports', [KpiController::class, 'ReportsHub']); // Replaced by B2B Intelligence Hub
 	$group->get('/reports/loss-executive', [\Grocy\Controllers\LossExecutiveReportController::class, 'Overview']);
 	$group->get('/cost-centers', [KpiController::class, 'CostCenters']);
 
@@ -271,7 +281,8 @@ $app->group('', function (RouteCollectorProxy $group)
 		$qs = $request->getUri()->getQuery();
 		return $response->withRedirect($this->get('UrlManager')->ConstructUrl('/waste' . ($qs !== '' ? '?' . $qs : '')) . '#tab-fefo', 302);
 	});
-	$group->get('/orders', [OperationsController::class, 'Orders']);
+	$group->get('/orders', [B2bSalesOverviewController::class, 'SalesOverview']);
+	$group->get('/invoices', [B2bSalesOverviewController::class, 'SalesOverview']);
 	$group->get('/dispatches', [RetailPreventionController::class, 'Dispatch']);
 	$group->get('/dispatch', [RetailPreventionController::class, 'Dispatch']);
 	$group->get('/returns', [RetailPreventionController::class, 'Returns']);
@@ -296,7 +307,7 @@ $app->group('', function (RouteCollectorProxy $group)
 	$group->get('/process-flow', [\Grocy\Controllers\ProcessFlowController::class, 'Inbox']);
 	$group->get('/demo/case', [\Grocy\Controllers\DemoCaseController::class, 'Overview']);
 	$group->get('/admin/economics', [\Grocy\Controllers\ProductEconomicsController::class, 'Dashboard']);
-	$group->get('/settings', [\Grocy\Controllers\SystemAdminController::class, 'Settings']);
+	// $group->get('/settings', [\Grocy\Controllers\SystemAdminController::class, 'Settings']); // Replaced by B2B Settings
 	$group->get('/audit-log', [\Grocy\Controllers\SystemAdminController::class, 'AuditLog']);
 	$group->get('/daily/set-role', [SystemController::class, 'SetSimulatedRole']);
 
@@ -1129,6 +1140,102 @@ $app->group('/api', function (RouteCollectorProxy $group)
 	$group->post('/customers/{customerId}/preferences', [\Grocy\Controllers\Api\CustomerCrmApiController::class, 'Preferences']);
 	$group->post('/customers/{customerId}/interactions', [\Grocy\Controllers\Api\CustomerCrmApiController::class, 'Interaction']);
 	$group->post('/customers/{customerId}/loyalty', [\Grocy\Controllers\Api\CustomerCrmApiController::class, 'Loyalty']);
+
+	// B2B Wholesale: Clientes y Establecimientos API
+	$group->get('/b2b/customers', [\Grocy\Controllers\Api\B2bCustomerApiController::class, 'GetCustomers']);
+	$group->get('/b2b/customers/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bCustomerApiController::class, 'GetCustomer']);
+	$group->post('/b2b/customers', [\Grocy\Controllers\Api\B2bCustomerApiController::class, 'CreateCustomer']);
+	$group->put('/b2b/customers/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bCustomerApiController::class, 'UpdateCustomer']);
+	$group->post('/b2b/customers/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bCustomerApiController::class, 'UpdateCustomer']);
+	$group->post('/b2b/customers/{id:[0-9]+}/toggle-active', [\Grocy\Controllers\Api\B2bCustomerApiController::class, 'ToggleCustomerActive']);
+
+	$group->post('/b2b/establishments', [\Grocy\Controllers\Api\B2bCustomerApiController::class, 'CreateEstablishment']);
+	$group->put('/b2b/establishments/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bCustomerApiController::class, 'UpdateEstablishment']);
+	$group->post('/b2b/establishments/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bCustomerApiController::class, 'UpdateEstablishment']);
+	$group->post('/b2b/establishments/{id:[0-9]+}/toggle-active', [\Grocy\Controllers\Api\B2bCustomerApiController::class, 'ToggleEstablishmentActive']);
+
+	// B2B Wholesale: Productos y Precios API
+	$group->get('/b2b/products', [\Grocy\Controllers\Api\B2bProductApiController::class, 'GetProducts']);
+	$group->get('/b2b/products/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bProductApiController::class, 'GetProduct']);
+	$group->post('/b2b/products', [\Grocy\Controllers\Api\B2bProductApiController::class, 'CreateProduct']);
+	$group->put('/b2b/products/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bProductApiController::class, 'UpdateProduct']);
+	$group->post('/b2b/products/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bProductApiController::class, 'UpdateProduct']);
+	$group->post('/b2b/products/{id:[0-9]+}/toggle-active', [\Grocy\Controllers\Api\B2bProductApiController::class, 'ToggleProductActive']);
+	$group->post('/b2b/products/{id:[0-9]+}/tiers', [\Grocy\Controllers\Api\B2bProductApiController::class, 'AddVolumeTier']);
+	$group->post('/b2b/products/{id:[0-9]+}/customer-prices', [\Grocy\Controllers\Api\B2bProductApiController::class, 'AddCustomerPrice']);
+	$group->post('/b2b/pricing/calculate', [\Grocy\Controllers\Api\B2bProductApiController::class, 'CalculatePrice']);
+
+	// B2B Wholesale: Cotizaciones y Pedidos API
+	$group->get('/b2b/orders/metrics', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'GetMetrics']);
+	$group->get('/b2b/quotes', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'GetQuotes']);
+	$group->get('/b2b/quotes/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'GetQuote']);
+	$group->post('/b2b/quotes', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'CreateQuote']);
+	$group->post('/b2b/quotes/{id:[0-9]+}/status', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'UpdateQuoteStatus']);
+	$group->post('/b2b/quotes/{id:[0-9]+}/convert-to-order', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'ConvertQuoteToOrder']);
+
+	$group->get('/b2b/orders', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'GetOrders']);
+	$group->get('/b2b/orders/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'GetOrder']);
+	$group->post('/b2b/orders', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'CreateOrder']);
+	$group->post('/b2b/orders/{id:[0-9]+}/status', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'UpdateOrderStatus']);
+	$group->post('/b2b/orders/{id:[0-9]+}/duplicate', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'DuplicateOrder']);
+	$group->post('/b2b/orders/calculate-lines', [\Grocy\Controllers\Api\B2bOrderApiController::class, 'CalculateLines']);
+
+	// B2B Wholesale: Facturación Comercial, Pagos y Notas de Crédito API
+	$group->get('/b2b/invoices/metrics', [\Grocy\Controllers\Api\B2bInvoiceApiController::class, 'GetMetrics']);
+	$group->get('/b2b/invoices', [\Grocy\Controllers\Api\B2bInvoiceApiController::class, 'GetInvoices']);
+	$group->get('/b2b/invoices/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bInvoiceApiController::class, 'GetInvoice']);
+	$group->get('/b2b/invoices/{id:[0-9]+}/print', [\Grocy\Controllers\Api\B2bInvoiceApiController::class, 'PrintInvoicePdf']);
+	$group->get('/b2b/invoices/{id:[0-9]+}/pdf', [\Grocy\Controllers\Api\B2bInvoiceApiController::class, 'PrintInvoicePdf']);
+	$group->post('/b2b/invoices/from-order/{orderId:[0-9]+}', [\Grocy\Controllers\Api\B2bInvoiceApiController::class, 'CreateInvoiceFromOrder']);
+	$group->post('/b2b/invoices/{id:[0-9]+}/status', [\Grocy\Controllers\Api\B2bInvoiceApiController::class, 'UpdateInvoiceStatus']);
+	$group->post('/b2b/invoices/{id:[0-9]+}/payments', [\Grocy\Controllers\Api\B2bInvoiceApiController::class, 'RegisterPayment']);
+	$group->post('/b2b/invoices/{id:[0-9]+}/credit-notes', [\Grocy\Controllers\Api\B2bInvoiceApiController::class, 'CreateCreditNote']);
+	$group->get('/b2b/credit-notes', [\Grocy\Controllers\Api\B2bInvoiceApiController::class, 'GetCreditNotes']);
+	$group->get('/b2b/credit-notes/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bInvoiceApiController::class, 'GetCreditNote']);
+
+	// B2B Wholesale: Tablero Ejecutivo de Ventas & Analítica API (Paso 8)
+	$group->get('/b2b/dashboard/executive', [\Grocy\Controllers\Api\B2bDashboardApiController::class, 'GetExecutiveDashboard']);
+	$group->get('/b2b/dashboard/filters', [\Grocy\Controllers\Api\B2bDashboardApiController::class, 'GetFilterOptions']);
+
+	// B2B Wholesale: Vendedores, Territorios y Metas Comerciales API (Paso 9)
+	$group->get('/b2b/sales-reps/metrics', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'GetMetrics']);
+	$group->get('/b2b/sales-reps', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'GetSalesReps']);
+	$group->get('/b2b/sales-reps/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'GetSalesRep']);
+	$group->post('/b2b/sales-reps', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'CreateSalesRep']);
+	$group->map(['POST', 'PUT'], '/b2b/sales-reps/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'UpdateSalesRep']);
+	$group->post('/b2b/sales-reps/{id:[0-9]+}/toggle-status', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'ToggleSalesRepStatus']);
+	$group->get('/b2b/territories', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'GetTerritories']);
+	$group->post('/b2b/territories', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'CreateTerritory']);
+	$group->map(['POST', 'PUT'], '/b2b/territories/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'UpdateTerritory']);
+	$group->post('/b2b/territories/reassign-establishment', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'ReassignEstablishment']);
+	$group->get('/b2b/territories/history', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'GetReassignmentHistory']);
+	$group->get('/b2b/sales-reps/territories', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'GetTerritories']);
+	$group->post('/b2b/sales-reps/territories', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'CreateTerritory']);
+	$group->map(['POST', 'PUT'], '/b2b/sales-reps/territories/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'UpdateTerritory']);
+	$group->post('/b2b/sales-reps/reassign-establishment', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'ReassignEstablishment']);
+	$group->get('/b2b/sales-reps/history', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'GetReassignmentHistory']);
+
+	// B2B Wholesale: Rentabilidad Comercial y Costos API (Paso 10)
+	$group->get('/b2b/profitability/metrics', [\Grocy\Controllers\Api\B2bProfitabilityApiController::class, 'GetMetrics']);
+	$group->get('/b2b/profitability/products', [\Grocy\Controllers\Api\B2bProfitabilityApiController::class, 'GetProductsProfitability']);
+	$group->get('/b2b/profitability/customers', [\Grocy\Controllers\Api\B2bProfitabilityApiController::class, 'GetCustomersProfitability']);
+	$group->get('/b2b/profitability/sales-reps', [\Grocy\Controllers\Api\B2bProfitabilityApiController::class, 'GetSalesRepsProfitability']);
+	$group->get('/b2b/profitability/territories', [\Grocy\Controllers\Api\B2bProfitabilityApiController::class, 'GetTerritoriesProfitability']);
+	$group->get('/b2b/profitability/categories', [\Grocy\Controllers\Api\B2bProfitabilityApiController::class, 'GetCategoriesProfitability']);
+	$group->get('/b2b/profitability/trend', [\Grocy\Controllers\Api\B2bProfitabilityApiController::class, 'GetProfitabilityTrend']);
+	$group->get('/b2b/profitability/costs', [\Grocy\Controllers\Api\B2bProfitabilityApiController::class, 'GetCostsCatalog']);
+	$group->post('/b2b/profitability/costs/adjust', [\Grocy\Controllers\Api\B2bProfitabilityApiController::class, 'AdjustCost']);
+
+	// Módulo 7: Inteligencia Comercial B2B (Paso 11)
+	$group->get('/b2b/intelligence/kpis', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'GetKpis']);
+	$group->get('/b2b/intelligence/alerts', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'GetAlerts']);
+	$group->post('/b2b/intelligence/alerts/review', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'ReviewAlert']);
+	$group->get('/b2b/intelligence/inactive-customers', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'GetInactiveCustomers']);
+	$group->get('/b2b/intelligence/opportunities', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'GetOpportunities']);
+	$group->get('/b2b/intelligence/category-trends', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'GetCategoryTrends']);
+	$group->get('/b2b/intelligence/thresholds', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'GetThresholds']);
+	$group->post('/b2b/intelligence/thresholds', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'UpdateThresholds']);
+	$group->post('/b2b/intelligence/run', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'RunEngine']);
 })->add(new CorsMiddleware($container, $app->getResponseFactory()))->add(new JsonMiddleware($container, $app->getResponseFactory()));
 
 

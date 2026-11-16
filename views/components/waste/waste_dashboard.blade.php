@@ -127,14 +127,12 @@
 	<section class="ded-row-2">
 		<!-- Izquierda (1.7): Evolución de la merma -->
 		<article class="ded-card dp-card-chart">
-			<header class="ded-card-header d-flex justify-content-between align-items-center">
-				<div>
-					<h2 class="ded-card-title mb-0">Evolución de la merma</h2>
-					<div class="text-muted font-11 mt-0.5">Total del período: <strong class="text-dark dp-num-cell">$12,480</strong></div>
-				</div>
+			<header class="ded-card-header">
+				<h2 class="ded-card-title">Evolución de la merma</h2>
 				<div class="ded-card-tools d-flex align-items-center gap-3">
 					<!-- Leyenda inline -->
 					<div class="ded-legend-inline">
+						<span class="ded-legend-item">Total: <strong class="text-dark dp-num-cell">$12,480</strong></span>
 						<span class="ded-legend-item">
 							<span class="ded-legend-rect" style="background:#10b26c;"></span>
 							<span>Merma diaria</span>
@@ -153,7 +151,7 @@
 			</header>
 
 			<!-- Contenedor del Gráfico SVG Interactivo -->
-			<div class="dp-chart-wrap position-relative" style="height: 200px; width: 100%;">
+			<div class="ded-chart-canvas-box dp-chart-wrap">
 				<div id="wasteEvolutionSvgChart" style="width: 100%; height: 100%;"></div>
 				<div id="wasteChartTooltip" class="dp-chart-tooltip" style="display:none;"></div>
 			</div>
