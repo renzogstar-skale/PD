@@ -2,7 +2,62 @@
  * Prince Distributors B2B — Mobile Types & Domain Entities
  */
 
-export type UserRole = 'sales_rep' | 'supervisor' | 'admin';
+export type UserRole = 'sales_rep' | 'supervisor' | 'admin' | 'merchandiser';
+
+export interface Task {
+  id: number;
+  title: string;
+  description: string;
+  employee_id: number;
+  employee_name: string;
+  supervisor_id: number;
+  supervisor_name: string;
+  establishment_id: number;
+  establishment_name: string;
+  date: string;
+  priority: 'low' | 'normal' | 'high' | 'urgent';
+  status: 'pending' | 'in_progress' | 'completed' | 'verified';
+  evidence_url?: string | null;
+  notes?: string;
+}
+
+export interface InventoryItem {
+  id: number;
+  upc: string;
+  sku: string;
+  name: string;
+  category: string;
+  lot: string;
+  expiration_date: string;
+  warehouse_stock: number;
+  shelf_stock: number;
+  shelf_capacity: number;
+  price: number;
+  cost: number;
+}
+
+export interface VisitSession {
+  id: number;
+  employee_id: number;
+  employee_name: string;
+  establishment_id: number;
+  establishment_name: string;
+  clock_in: string;
+  clock_out?: string | null;
+  status: 'in_progress' | 'completed';
+  tasks_completed: number;
+  restocked_units: number;
+  notes?: string;
+}
+
+export interface AttendanceRecord {
+  id: number;
+  employee_id: number;
+  establishment_id: number;
+  type: 'clock_in' | 'clock_out';
+  timestamp: string;
+  notes?: string;
+}
 
 export interface CustomerEstablishment {
   id: number;

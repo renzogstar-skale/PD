@@ -6,11 +6,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Customer, Product, Order, UserRole } from '../types';
 
 const KEYS = {
-  SETTINGS: 'pd_b2b_settings',
+  SETTINGS: 'pd_b2b_settings_usa_v1',
   OFFLINE_DRAFTS: 'pd_b2b_offline_drafts',
   CACHED_CUSTOMERS: 'pd_b2b_cached_customers',
   CACHED_PRODUCTS: 'pd_b2b_cached_products',
   API_KEY: 'pd_b2b_api_key',
+  TASKS: 'pd_b2b_tasks_v1',
+  INVENTORY: 'pd_b2b_inventory_v1',
+  ACTIVE_SESSION: 'pd_b2b_active_session',
 };
 
 export interface AppSettings {

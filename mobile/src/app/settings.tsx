@@ -39,6 +39,11 @@ export default function SettingsScreen() {
       title: 'Administrador Global',
       desc: 'Acceso total a finanzas, costos, seguridad y configuración',
     },
+    {
+      role: 'merchandiser',
+      title: 'Reponedor / Merchandiser',
+      desc: 'Mi Jornada, control de turnos, escáner UPC, reposición y mermas',
+    },
   ];
 
   const handleClearCache = async () => {
@@ -228,6 +233,22 @@ export default function SettingsScreen() {
             loading={clearing}
             onPress={handleClearCache}
           />
+        </Card>
+
+        {/* USA Operations & Branch Profile */}
+        <Card style={{ backgroundColor: colors.card, borderColor: colors.primary, borderWidth: 1 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <Text style={{ fontSize: 18 }}>🇺🇸</Text>
+            <View>
+              <Text style={{ fontSize: 13, fontWeight: '700', color: colors.text }}>Prince Distributors — Hallandale HQ</Text>
+              <Text style={{ fontSize: 11, color: colors.textMuted }}>Sede Central Operativa USA</Text>
+            </View>
+          </View>
+          <View style={{ paddingVertical: 6, borderTopWidth: 1, borderTopColor: colors.border, gap: 4 }}>
+            <Text style={{ fontSize: 12, color: colors.textMuted }}>📍 Ubicación: <Text style={{ color: colors.text, fontWeight: '600' }}>Hallandale Beach, FL 33009</Text></Text>
+            <Text style={{ fontSize: 12, color: colors.textMuted }}>💵 Moneda: <Text style={{ color: colors.text, fontWeight: '600' }}>USD ($) • Formato en-US</Text></Text>
+            <Text style={{ fontSize: 12, color: colors.textMuted }}>🕒 Zona Horaria: <Text style={{ color: colors.text, fontWeight: '600' }}>America/New_York (EST)</Text></Text>
+          </View>
         </Card>
       </ScrollView>
     </SafeAreaView>

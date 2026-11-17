@@ -57,10 +57,10 @@ function updateDemoUnreadBadge() {
 	}
 }
 
-// 0. CAMBIAR PESTAÑA INTERNA (6 PESTAÑAS)
+// 0. CAMBIAR PESTAÑA INTERNA (7 PESTAÑAS)
 function switchWfmTab(tabKey) {
 	wfmActiveTab = tabKey;
-	const tabs = ['summary', 'schedule', 'employees', 'productivity', 'simulator', 'settings'];
+	const tabs = ['summary', 'schedule', 'employees', 'productivity', 'simulator', 'settings', 'tasks'];
 
 	tabs.forEach(t => {
 		const btn = document.getElementById(`wfm-navtab-${t}`);
@@ -85,6 +85,8 @@ function switchWfmTab(tabKey) {
 		} else {
 			renderWfmScheduleTable(wfmMatrixData);
 		}
+	} else if (tabKey === 'tasks') {
+		renderWfmTasksAndInventory();
 	} else if (tabKey === 'employees') {
 		if (!wfmEmployeesData || wfmEmployeesData.length === 0) {
 			if (window.PrinceDemoEngine) {
@@ -1009,7 +1011,7 @@ function handleDemoRoleSwitch(role, updateEngine = true) {
 	const adminView = document.getElementById('wfm-admin-schedule-view');
 	const empView = document.getElementById('wfm-employee-personal-view');
 
-	if (role === 'employee' || role === 'reponedor') {
+	if (role === 'employee' || role === 'reponedor' || role === 'merchandiser' || role === 'sales_rep') {
 		if (adminView) adminView.classList.add('hidden');
 		if (empView) empView.classList.remove('hidden');
 		renderEmployeePersonalSchedule(role);
@@ -1027,9 +1029,9 @@ function renderEmployeePersonalSchedule(role) {
 
 	const employees = window.PrinceDemoEngine.getEmployees();
 	// Seleccionar el empleado según rol
-	const emp = (role === 'reponedor')
-		? (employees.find(e => e.role === 'reponedor') || employees[8])
-		: (employees.find(e => e.role === 'vendedor') || employees[2]);
+	const emp = (role === 'merchandiser' || role === 'reponedor')
+		? (employees.find(e => e.role === 'merchandiser') || employees[1])
+		: (employees.find(e => e.role === 'sales_rep') || employees[0]);
 
 	if (!emp) return;
 
@@ -1257,6 +1259,181 @@ function confirmResetDemoData() {
 			refreshWfmSchedule();
 			alert('✓ Dataset de demostración restablecido exitosamente a sus valores originales.');
 		}
+	}
+}
+
+// G. CONTROL DE TAREAS & OPERACIONES EN TIENDA (SHARED WEB & MOBILE)
+function renderWfmTasksAndInventory() {
+	renderWfmTasksTable();
+	renderWfmInventoryTable();
+}
+
+function renderWfmTasksTable() {
+	if (!window.PrinceDemoEngine) return;
+	const tbody = document.getElementById('wfm-tasks-tbody');
+	if (!tbody) return;
+
+	const statusFilter = document.getElementById('wfm-tasks-filter-status')?.value || 'all';
+	const tasks = window.PrinceDemoEngine.getTasks({ status: statusFilter });
+
+	if (tasks.length === 0) {
+		tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">No se encontraron tareas registradas</td></tr>';
+		return;
+	}
+
+	tbody.innerHTML = tasks.map(t => {
+		const prioColors = {
+			urgent: 'bg-red-100 text-red-700 dark:bg-red-950/80 dark:text-red-400',
+			high: 'bg-amber-100 text-amber-700 dark:bg-amber-950/80 dark:text-amber-400',
+			normal: 'bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-400',
+			low: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+		};
+		const statusColors = {
+			completed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300',
+			in_progress: 'bg-sky-100 text-sky-700 dark:bg-sky-950/80 dark:text-sky-300',
+			pending: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+		};
+		const statusLabels = {
+			completed: '✓ Completada',
+			in_progress: '⏳ En curso',
+			pending: '⚪ Pendiente'
+		};
+
+		return `
+			<tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+				<td class="p-3">
+					<span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${prioColors[t.priority] || prioColors.normal}">${t.priority}</span>
+				</td>
+				<td class="p-3">
+					<div class="font-bold text-slate-900 dark:text-white">${t.title}</div>
+					<div class="text-[11px] text-slate-500 mt-0.5">${t.description}</div>
+					${t.notes ? `<div class="text-[10px] text-amber-600 dark:text-amber-400 mt-0.5 font-medium">Nota: ${t.notes}</div>` : ''}
+					${t.evidence_url ? `<a href="${t.evidence_url}" target="_blank" class="inline-flex items-center gap-1 text-[10px] text-emerald-600 font-semibold underline mt-1">📷 Ver Evidencia</a>` : ''}
+				</td>
+				<td class="p-3">
+					<div class="font-medium text-slate-800 dark:text-slate-200">${t.employee_name}</div>
+					<div class="text-[10px] text-slate-400">Supervisor: ${t.supervisor_name}</div>
+				</td>
+				<td class="p-3 text-slate-600 dark:text-slate-300">
+					${t.establishment_name}
+				</td>
+				<td class="p-3 text-center">
+					<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusColors[t.status] || statusColors.pending}">
+						${statusLabels[t.status] || t.status}
+					</span>
+				</td>
+				<td class="p-3 text-right whitespace-nowrap">
+					${t.status !== 'completed' ? `
+						<button onclick="markTaskDone(${t.id})" class="px-2.5 py-1 text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-md transition-colors mr-1">
+							Completar
+						</button>
+					` : `
+						<span class="text-emerald-600 text-[11px] font-bold mr-1">Verificado</span>
+					`}
+					<button onclick="deleteTask(${t.id})" class="p-1 text-slate-400 hover:text-red-600 transition-colors" title="Eliminar tarea">
+						✕
+					</button>
+				</td>
+			</tr>
+		`;
+	}).join('');
+	if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function renderWfmInventoryTable() {
+	if (!window.PrinceDemoEngine) return;
+	const tbody = document.getElementById('wfm-inventory-tbody');
+	if (!tbody) return;
+
+	const items = window.PrinceDemoEngine.getInventory();
+	tbody.innerHTML = items.map(p => {
+		const isLowShelf = p.shelf_stock < 15;
+		const shelfPct = Math.min(100, Math.round((p.shelf_stock / p.shelf_capacity) * 100));
+
+		return `
+			<tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+				<td class="p-3 font-mono font-bold text-brand-700 dark:text-brand-400 text-xs">
+					${p.upc}
+				</td>
+				<td class="p-3">
+					<div class="font-bold text-slate-900 dark:text-white">${p.name}</div>
+					<div class="text-[10px] text-slate-400 font-mono">SKU: ${p.sku} • Cat: ${p.category}</div>
+				</td>
+				<td class="p-3 font-mono text-xs">
+					<span class="font-semibold text-slate-700 dark:text-slate-300">${p.lot}</span>
+					<div class="text-[10px] text-slate-400">Exp: ${p.expiration_date}</div>
+				</td>
+				<td class="p-3 text-center">
+					<span class="font-bold text-slate-800 dark:text-slate-200 text-sm">${p.warehouse_stock}</span>
+					<span class="text-[10px] text-slate-400 block">en bodega</span>
+				</td>
+				<td class="p-3 text-center">
+					<div class="flex items-center justify-center gap-1.5">
+						<span class="font-bold ${isLowShelf ? 'text-amber-600' : 'text-emerald-600'} text-sm">${p.shelf_stock}</span>
+						<span class="text-xs text-slate-400">/ ${p.shelf_capacity}</span>
+					</div>
+					<div class="w-16 bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full mx-auto mt-1 overflow-hidden">
+						<div class="h-full ${isLowShelf ? 'bg-amber-500' : 'bg-emerald-500'}" style="width: ${shelfPct}%"></div>
+					</div>
+				</td>
+				<td class="p-3 text-center text-slate-500">
+					${shelfPct}%
+				</td>
+				<td class="p-3 text-right">
+					<button onclick="quickRestockShelf(${p.id})" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 transition-colors" title="Trasladar 10 unidades de bodega a góndola">
+						+10 a góndola
+					</button>
+				</td>
+			</tr>
+		`;
+	}).join('');
+	if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function markTaskDone(taskId) {
+	if (window.PrinceDemoEngine) {
+		window.PrinceDemoEngine.updateTaskStatus(taskId, 'completed', 'Completada desde la consola central');
+		renderWfmTasksTable();
+	}
+}
+
+function deleteTask(taskId) {
+	if (confirm('¿Eliminar esta tarea operativa?')) {
+		if (window.PrinceDemoEngine) {
+			window.PrinceDemoEngine.deleteTask(taskId);
+			renderWfmTasksTable();
+		}
+	}
+}
+
+function quickRestockShelf(productId) {
+	if (window.PrinceDemoEngine) {
+		const res = window.PrinceDemoEngine.restockShelf(productId, 10);
+		if (res.success) {
+			renderWfmInventoryTable();
+		} else {
+			alert(res.error || 'Error al reponer');
+		}
+	}
+}
+
+function openCreateTaskModal() {
+	const title = prompt('Título de la tarea:');
+	if (!title) return;
+	const desc = prompt('Descripción operativa:');
+	const empName = prompt('Nombre o Rol del colaborador asignado:', 'Rosa María Huamán');
+
+	if (window.PrinceDemoEngine) {
+		window.PrinceDemoEngine.createTask({
+			title,
+			description: desc || '',
+			employee_id: 2,
+			employee_name: empName,
+			priority: 'high',
+			establishment_id: 1,
+			establishment_name: 'Prince Distributors — Hallandale HQ'
+		});
+		renderWfmTasksTable();
 	}
 }
 </script>

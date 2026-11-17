@@ -11,7 +11,11 @@ import {
   SalesRep,
   CommercialAlert,
   ProfitabilityMetrics,
-  SalesOverviewKPIs
+  SalesOverviewKPIs,
+  Task,
+  InventoryItem,
+  VisitSession,
+  AttendanceRecord
 } from '../types';
 
 export class ApiClient {
@@ -95,10 +99,10 @@ export class ApiClient {
         business_name: c.business_name || c.name || 'Cliente Comercial',
         commercial_name: c.commercial_name || c.name,
         tax_id: c.tax_id || c.ruc || '20100000001',
-        phone: c.phone || '+51 987 654 321',
+        phone: c.phone || '+1 (954) 555-0100',
         email: c.email || 'contacto@cliente.com',
-        address: c.address || 'Av. Industrial 1240, Lima',
-        territory: c.territory || 'Lima Norte',
+        address: c.address || '1250 E Hallandale Beach Blvd, Hallandale Beach, FL',
+        territory: c.territory || 'Broward South',
         sales_rep_name: c.sales_rep_name || 'Carlos Mendoza',
         credit_limit: Number(c.credit_limit || 15000),
         outstanding_balance: Number(c.outstanding_balance || 3200),
@@ -124,17 +128,17 @@ export class ApiClient {
           (c.territory && c.territory.toLowerCase().includes(q))
         );
       }
-      // Seed fallback
+      // Seed fallback (South Florida USA)
       return [
         {
           id: 1,
           code: 'CLI-001',
-          business_name: 'Distribuidora San Juan S.A.C.',
-          commercial_name: 'San Juan Mayorista',
-          tax_id: '20512345678',
-          phone: '+51 984 123 456',
-          address: 'Av. Perú 1420, San Martín de Porres',
-          territory: 'Lima Norte',
+          business_name: 'Hollywood Boulevard Supercenter',
+          commercial_name: 'Hollywood Supercenter',
+          tax_id: 'US-FL-954001',
+          phone: '+1 (954) 555-1001',
+          address: '3800 Hollywood Blvd, Hollywood, FL 33021',
+          territory: 'Broward South',
           credit_limit: 25000,
           outstanding_balance: 4200,
           payment_terms_days: 30,
@@ -144,12 +148,12 @@ export class ApiClient {
         {
           id: 2,
           code: 'CLI-002',
-          business_name: 'Supermercados Los Andes E.I.R.L.',
-          commercial_name: 'Los Andes Market',
-          tax_id: '20601234567',
-          phone: '+51 991 888 777',
-          address: 'Jr. Huancavelica 580, Cercado de Lima',
-          territory: 'Lima Centro',
+          business_name: 'Aventura Mall Gourmet Retail Hub',
+          commercial_name: 'Aventura Gourmet Hub',
+          tax_id: 'US-FL-305002',
+          phone: '+1 (305) 555-1002',
+          address: '19501 Biscayne Blvd, Aventura, FL 33180',
+          territory: 'Miami-Dade North',
           credit_limit: 40000,
           outstanding_balance: 12500,
           payment_terms_days: 45,
@@ -159,12 +163,12 @@ export class ApiClient {
         {
           id: 3,
           code: 'CLI-003',
-          business_name: 'Bodegas y Almacenes El Sol S.R.L.',
-          commercial_name: 'El Sol Distribución',
-          tax_id: '20498765432',
-          phone: '+51 976 543 210',
-          address: 'Av. Javier Prado Este 3200, San Borja',
-          territory: 'Lima Este',
+          business_name: 'Fort Lauderdale Central Wholesale',
+          commercial_name: 'FTL Logistics Depot',
+          tax_id: 'US-FL-954003',
+          phone: '+1 (954) 555-1003',
+          address: '2400 SE 10th Ave, Fort Lauderdale, FL 33316',
+          territory: 'Broward Central',
           credit_limit: 15000,
           outstanding_balance: 0,
           payment_terms_days: 15,
@@ -442,8 +446,8 @@ export class ApiClient {
         name: r.name || 'Vendedor Comercial',
         code: r.code || `VEN-${r.id}`,
         email: r.email || 'vendedor@princedistributors.com',
-        phone: r.phone || '+51 987 654 321',
-        territory: r.territory || 'Lima Norte',
+        phone: r.phone || '+1 (954) 555-0101',
+        territory: r.territory || 'Broward South',
         monthly_target: Number(r.monthly_target || 50000),
         current_sales: Number(r.current_sales || 41250),
         target_achievement_pct: Number(r.target_achievement_pct || 82.5),
@@ -454,11 +458,11 @@ export class ApiClient {
       return [
         {
           id: 1,
-          name: 'Carlos Mendoza',
+          name: 'Jorge Luis Quispe',
           code: 'VEN-001',
-          email: 'carlos.mendoza@princedistributors.com',
-          phone: '+51 984 555 123',
-          territory: 'Lima Norte',
+          email: 'jquispe@princedistributors.com',
+          phone: '+1 (954) 555-0101',
+          territory: 'Broward South',
           monthly_target: 60000,
           current_sales: 51200,
           target_achievement_pct: 85.3,
@@ -467,11 +471,11 @@ export class ApiClient {
         },
         {
           id: 2,
-          name: 'Andrea Morales',
+          name: 'Ana Sofía Rivas',
           code: 'VEN-002',
-          email: 'andrea.morales@princedistributors.com',
-          phone: '+51 992 444 888',
-          territory: 'Lima Centro',
+          email: 'arivas@princedistributors.com',
+          phone: '+1 (305) 555-0105',
+          territory: 'Miami-Dade North',
           monthly_target: 75000,
           current_sales: 68900,
           target_achievement_pct: 91.8,
@@ -559,5 +563,177 @@ export class ApiClient {
         }
       ];
     }
+  }
+
+  // =========================================================================
+  // 8. TAREAS & OPERACIONES EN TIENDA (WFM FIELD OPERATIONS)
+  // =========================================================================
+
+  private static mockTasks: Task[] = [
+    {
+      id: 1,
+      title: 'Reposición Góndola Goya & Bebidas',
+      description: 'Trasladar 15 cajas de Frijoles Goya y 20 packs de Pepsi de bodega a góndola frontal.',
+      employee_id: 2,
+      employee_name: 'Rosa María Huamán',
+      supervisor_id: 3,
+      supervisor_name: 'Carlos Mendoza',
+      establishment_id: 1,
+      establishment_name: 'Prince Distributors — Hallandale HQ',
+      date: '2026-11-16',
+      priority: 'high',
+      status: 'in_progress',
+      notes: 'Aplicar regla FEFO con lote LOT-2026-E15',
+    },
+    {
+      id: 2,
+      title: 'Auditoría FEFO y Vencimientos Lote 2026',
+      description: 'Revisar fechas de expiración en estantes de snack y lácteos. Separar mermas menores a 15 días.',
+      employee_id: 2,
+      employee_name: 'Rosa María Huamán',
+      supervisor_id: 3,
+      supervisor_name: 'Carlos Mendoza',
+      establishment_id: 1,
+      establishment_name: 'Prince Distributors — Hallandale HQ',
+      date: '2026-11-16',
+      priority: 'urgent',
+      status: 'pending',
+      notes: 'Reportar cualquier producto vencido a Carlos Mendoza',
+    },
+    {
+      id: 3,
+      title: 'Conteo Cíclico con Escáner UPC',
+      description: 'Escanear códigos UPC en pasillo 4 (Monster Energy, Arizona Tea y Doritos) y cuadrar contra stock bodega.',
+      employee_id: 2,
+      employee_name: 'Rosa María Huamán',
+      supervisor_id: 3,
+      supervisor_name: 'Carlos Mendoza',
+      establishment_id: 1,
+      establishment_name: 'Prince Distributors — Hallandale HQ',
+      date: '2026-11-16',
+      priority: 'normal',
+      status: 'completed',
+      evidence_url: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400',
+      notes: 'Conteo verificado 100% cuadre',
+    },
+    {
+      id: 4,
+      title: 'Alineación de Precios y Planograma POS',
+      description: 'Verificar etiquetas electrónicas y frentes de Inca Kola 2L y Coca-Cola 20oz.',
+      employee_id: 2,
+      employee_name: 'Rosa María Huamán',
+      supervisor_id: 3,
+      supervisor_name: 'Carlos Mendoza',
+      establishment_id: 1,
+      establishment_name: 'Prince Distributors — Hallandale HQ',
+      date: '2026-11-16',
+      priority: 'normal',
+      status: 'pending',
+      notes: 'Actualizar tags de promoción',
+    }
+  ];
+
+  // =========================================================================
+  // 9. INVENTARIO FEFO & CÓDIGOS UPC AUTÉNTICOS (BODEGA -> GÓNDOLA)
+  // =========================================================================
+
+  private static mockInventory: InventoryItem[] = [
+    { id: 1, upc: '012000000133', sku: 'BEV-PEP-12', name: 'Pepsi Cola 12oz Pack (12pk)', category: 'Bebidas & Refrescos', lot: 'LOT-2026-A12', expiration_date: '2027-04-15', warehouse_stock: 140, shelf_stock: 35, shelf_capacity: 50, price: 6.99, cost: 4.20 },
+    { id: 2, upc: '049000000443', sku: 'BEV-COK-20', name: 'Coca-Cola Classic 20oz Bottle', category: 'Bebidas & Refrescos', lot: 'LOT-2026-B04', expiration_date: '2027-02-28', warehouse_stock: 220, shelf_stock: 45, shelf_capacity: 60, price: 2.29, cost: 1.15 },
+    { id: 3, upc: '028400064088', sku: 'SNK-DOR-92', name: 'Doritos Nacho Cheese 9.25oz', category: 'Snacks & Golosinas', lot: 'LOT-2026-C09', expiration_date: '2026-12-10', warehouse_stock: 85, shelf_stock: 18, shelf_capacity: 30, price: 4.49, cost: 2.60 },
+    { id: 4, upc: '070847811169', sku: 'BEV-MON-16', name: 'Monster Energy Drink Original 16oz', category: 'Bebidas Energéticas', lot: 'LOT-2026-D16', expiration_date: '2027-08-30', warehouse_stock: 160, shelf_stock: 28, shelf_capacity: 40, price: 3.29, cost: 1.85 },
+    { id: 5, upc: '041789001429', sku: 'GRO-GOY-15', name: 'Goya Black Beans (Frijoles Negros) 15.5oz', category: 'Abarrotes & Enlatados', lot: 'LOT-2026-E15', expiration_date: '2028-01-20', warehouse_stock: 310, shelf_stock: 60, shelf_capacity: 80, price: 1.79, cost: 0.95 },
+    { id: 6, upc: '775015100102', sku: 'BEV-INC-2L', name: 'Inca Kola Botella 2L Importada', category: 'Bebidas Hispanas', lot: 'LOT-2026-F02', expiration_date: '2027-03-15', warehouse_stock: 95, shelf_stock: 22, shelf_capacity: 35, price: 3.89, cost: 2.10 },
+    { id: 7, upc: '026400001221', sku: 'BEV-ARI-23', name: 'Arizona Green Tea Ginseng 23oz Can', category: 'Tés & Bebidas', lot: 'LOT-2026-G23', expiration_date: '2027-06-18', warehouse_stock: 190, shelf_stock: 40, shelf_capacity: 50, price: 1.29, cost: 0.65 },
+    { id: 8, upc: '016000264601', sku: 'SNK-NAT-12', name: 'Nature Valley Oats & Honey Bars 12ct', category: 'Snacks & Barras', lot: 'LOT-2026-H12', expiration_date: '2026-11-28', warehouse_stock: 60, shelf_stock: 12, shelf_capacity: 25, price: 4.99, cost: 2.80 },
+  ];
+
+  private static activeSession: VisitSession | null = {
+    id: 101,
+    employee_id: 2,
+    employee_name: 'Rosa María Huamán',
+    establishment_id: 1,
+    establishment_name: 'Prince Distributors — Hallandale HQ',
+    clock_in: '08:58 AM',
+    clock_out: null,
+    status: 'in_progress',
+    tasks_completed: 1,
+    restocked_units: 45,
+    notes: 'Jornada activa en Hallandale Beach'
+  };
+
+  static async getTasks(filter?: { employee_id?: number; establishment_id?: number; status?: string }): Promise<Task[]> {
+    let list = [...this.mockTasks];
+    if (filter?.status && filter.status !== 'all') {
+      list = list.filter(t => t.status === filter.status);
+    }
+    return list;
+  }
+
+  static async updateTaskStatus(taskId: number, status: Task['status'], notes?: string): Promise<Task> {
+    const task = this.mockTasks.find(t => t.id === taskId);
+    if (task) {
+      task.status = status;
+      if (notes) task.notes = notes;
+      return task;
+    }
+    throw new Error('Task not found');
+  }
+
+  static async getInventory(): Promise<InventoryItem[]> {
+    return [...this.mockInventory];
+  }
+
+  static async findProductByUpc(upc: string): Promise<InventoryItem | null> {
+    const clean = upc.trim();
+    return this.mockInventory.find(p => p.upc === clean || p.sku.toLowerCase() === clean.toLowerCase()) || null;
+  }
+
+  static async restockShelf(productId: number, quantity: number): Promise<{ success: boolean; product?: InventoryItem; error?: string }> {
+    const prod = this.mockInventory.find(p => p.id === productId);
+    if (!prod) return { success: false, error: 'Producto no encontrado' };
+    if (prod.warehouse_stock < quantity) return { success: false, error: 'Stock insuficiente en bodega' };
+
+    prod.warehouse_stock -= quantity;
+    prod.shelf_stock += quantity;
+    if (this.activeSession) {
+      this.activeSession.restocked_units += quantity;
+    }
+    return { success: true, product: prod };
+  }
+
+  static async recordShrinkage(productId: number, quantity: number, reason?: string): Promise<{ success: boolean; product?: InventoryItem }> {
+    const prod = this.mockInventory.find(p => p.id === productId);
+    if (!prod) return { success: false };
+    prod.shelf_stock = Math.max(0, prod.shelf_stock - quantity);
+    return { success: true, product: prod };
+  }
+
+  static async clockIn(employeeId: number, establishmentId: number): Promise<VisitSession> {
+    this.activeSession = {
+      id: Date.now(),
+      employee_id: employeeId,
+      employee_name: 'Rosa María Huamán',
+      establishment_id: establishmentId,
+      establishment_name: 'Prince Distributors — Hallandale HQ',
+      clock_in: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+      clock_out: null,
+      status: 'in_progress',
+      tasks_completed: 0,
+      restocked_units: 0
+    };
+    return this.activeSession;
+  }
+
+  static async clockOut(employeeId: number, notes?: string): Promise<void> {
+    if (this.activeSession) {
+      this.activeSession.clock_out = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      this.activeSession.status = 'completed';
+      if (notes) this.activeSession.notes = notes;
+    }
+  }
+
+  static async getActiveSession(employeeId: number): Promise<VisitSession | null> {
+    return this.activeSession;
   }
 }

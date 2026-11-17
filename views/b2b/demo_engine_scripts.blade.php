@@ -2,57 +2,80 @@
 /**
  * =========================================================================
  * PRINCE DISTRIBUTORS — MOTOR CENTRAL DE DATOS DEMO & WORKFORCE MANAGEMENT
- * Arquitectura Desacoplada: Modelos de Dominio, Repositorio, Motor de Cálculos y UI
+ * Configuración: Estados Unidos (Hallandale Beach, FL) | USD ($) | en-US | America/New_York
+ * Roles: Vendedor Comercial, Supervisor de Ventas, Administrador Global, Reponedor / Merchandiser
+ * Módulos Integrados: Horarios, Tareas, Inventario FEFO, UPC Barcode Scanner, Asistencia
  * =========================================================================
  */
 
 (function (window) {
 	'use strict';
 
-	const STORAGE_KEY = 'PRINCE_DISTRIBUTORS_WFM_DEMO_V3';
+	const STORAGE_KEY = 'PRINCE_DISTRIBUTORS_WFM_DEMO_USA_V1';
 
 	// =====================================================================
-	// 1. DATASET CENTRAL ESTÁNDAR (20 Empleados, 8 Sedes, 4 Semanas, 12 Sem Ventas)
+	// 1. DATASET CENTRAL — ESTADOS UNIDOS / FLORIDA / SOUTH FLORIDA
 	// =====================================================================
 
 	const DEFAULT_ESTABLISHMENTS = [
-		{ id: 1, code: 'EST-001', name: 'Almacén Central Norte', territory: 'Lima Norte', address: 'Av. Alfredo Mendiola 3420, Los Olivos', budget: 3200.00, minCoverage: 3, salesForecast: 48500.00 },
-		{ id: 2, code: 'EST-002', name: 'Almacén Callao Port', territory: 'Callao', address: 'Av. Elmer Faucett 1850, Callao', budget: 2800.00, minCoverage: 2, salesForecast: 38200.00 },
-		{ id: 3, code: 'EST-003', name: 'Distribuidora San Juan', territory: 'Lima Norte', address: 'Av. Próceres de la Independencia 1120, SJL', budget: 2400.00, minCoverage: 2, salesForecast: 29800.00 },
-		{ id: 4, code: 'EST-004', name: 'Supermercados Los Andes (Sede Central)', territory: 'Lima Centro', address: 'Av. Javier Prado Este 4200, Surco', budget: 3500.00, minCoverage: 3, salesForecast: 54100.00 },
-		{ id: 5, code: 'EST-005', name: 'Hipermercado Metro Sur', territory: 'Lima Sur', address: 'Av. Pedro Miotta 820, SJM', budget: 2600.00, minCoverage: 2, salesForecast: 34500.00 },
-		{ id: 6, code: 'EST-006', name: 'Mercado Mayorista Santa Anita', territory: 'Lima Centro', address: 'Av. Metropolitana 105, Santa Anita', budget: 2900.00, minCoverage: 2, salesForecast: 42300.00 },
-		{ id: 7, code: 'EST-007', name: 'Centro Logístico Faucett', territory: 'Callao', address: 'Av. Argentina 4100, Callao', budget: 2500.00, minCoverage: 2, salesForecast: 31200.00 },
-		{ id: 8, code: 'EST-008', name: 'Mini Market Express Miraflores', territory: 'Lima Centro', address: 'Av. Larco 740, Miraflores', budget: 1800.00, minCoverage: 1, salesForecast: 19400.00 }
+		{ id: 1, code: 'EST-001', name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', address: '1250 E Hallandale Beach Blvd, Hallandale Beach, FL 33009', budget: 3200.00, minCoverage: 3, salesForecast: 48500.00 },
+		{ id: 2, code: 'EST-002', name: 'Aventura Mall Retail Hub', territory: 'Miami-Dade North', address: '19501 Biscayne Blvd, Aventura, FL 33180', budget: 2800.00, minCoverage: 2, salesForecast: 38200.00 },
+		{ id: 3, code: 'EST-003', name: 'Hollywood Boulevard Supercenter', territory: 'Broward South', address: '3800 Hollywood Blvd, Hollywood, FL 33021', budget: 2400.00, minCoverage: 2, salesForecast: 29800.00 },
+		{ id: 4, code: 'EST-004', name: 'Fort Lauderdale Logistics Hub', territory: 'Broward Central', address: '2400 SE 10th Ave, Fort Lauderdale, FL 33316', budget: 3500.00, minCoverage: 3, salesForecast: 54100.00 },
+		{ id: 5, code: 'EST-005', name: 'Miami Gardens Wholesale', territory: 'Miami-Dade North', address: '18300 NW 27th Ave, Miami Gardens, FL 33056', budget: 2600.00, minCoverage: 2, salesForecast: 34500.00 },
+		{ id: 6, code: 'EST-006', name: 'Sunny Isles Gourmet Mart', territory: 'Miami-Dade North', address: '17100 Collins Ave, Sunny Isles Beach, FL 33160', budget: 2900.00, minCoverage: 2, salesForecast: 42300.00 },
+		{ id: 7, code: 'EST-007', name: 'Pembroke Pines Distribution', territory: 'Broward South', address: '11401 Pines Blvd, Pembroke Pines, FL 33026', budget: 2500.00, minCoverage: 2, salesForecast: 31200.00 },
+		{ id: 8, code: 'EST-008', name: 'Pompano Beach Central Depot', territory: 'Broward Central', address: '2201 W Atlantic Blvd, Pompano Beach, FL 33069', budget: 1800.00, minCoverage: 1, salesForecast: 19400.00 }
 	];
 
 	const DEFAULT_EMPLOYEES = [
-		{ id: 1, code: 'EMP-001', name: 'Jorge Luis Quispe', role: 'sales_rep', role_label: 'Vendedor Senior B2B', department: 'Fuerza de Ventas B2B', email: 'jquispe@princedistributors.com', phone: '+51 984 111 201', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 8.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Almacén Central Norte', territory: 'Lima Norte', active: 1 },
-		{ id: 2, code: 'EMP-002', name: 'Rosa María Huamán', role: 'merchandiser', role_label: 'Reponedora Líder', department: 'Reposición & Merchandising', email: 'rhuaman@princedistributors.com', phone: '+51 984 111 202', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 7.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Almacén Central Norte', territory: 'Lima Norte', active: 1 },
-		{ id: 3, code: 'EMP-003', name: 'Carlos Mendoza', role: 'supervisor', role_label: 'Supervisor de Operaciones y Ventas', department: 'Supervisión & Control', email: 'cmendoza@princedistributors.com', phone: '+51 984 111 203', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 12.00, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 1, establishment_name: 'Almacén Central Norte', territory: 'Lima Norte', active: 1 },
-		{ id: 4, code: 'EMP-004', name: 'Miguel Ángel Flores', role: 'merchandiser', role_label: 'Reponedor Almacén', department: 'Reposición & Merchandising', email: 'mflores@princedistributors.com', phone: '+51 984 111 204', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 7.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Almacén Central Norte', territory: 'Lima Norte', active: 1 },
-		{ id: 5, code: 'EMP-005', name: 'Ana Sofía Rivas', role: 'sales_rep', role_label: 'Ejecutiva de Cuentas B2B', department: 'Fuerza de Ventas B2B', email: 'arivas@princedistributors.com', phone: '+51 984 111 205', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 9.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 4, establishment_name: 'Supermercados Los Andes (Sede Central)', territory: 'Lima Centro', active: 1 },
-		{ id: 6, code: 'EMP-006', name: 'Diego Alonso Ramos', role: 'merchandiser', role_label: 'Reponedor Góndola', department: 'Reposición & Merchandising', email: 'dramos@princedistributors.com', phone: '+51 984 111 206', contract_type: 'part_time', contracted_hours: 40, hourly_cost: 7.50, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 4, establishment_name: 'Supermercados Los Andes (Sede Central)', territory: 'Lima Centro', active: 1 },
-		{ id: 7, code: 'EMP-007', name: 'Patricia Vega', role: 'supervisor', role_label: 'Supervisora Comercial Centro', department: 'Supervisión & Control', email: 'pvega@princedistributors.com', phone: '+51 984 111 207', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 12.50, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 4, establishment_name: 'Supermercados Los Andes (Sede Central)', territory: 'Lima Centro', active: 1 },
-		{ id: 8, code: 'EMP-008', name: 'Brenda Lucía Vargas', role: 'sales_rep', role_label: 'Preventista de Ruta Sur', department: 'Fuerza de Ventas B2B', email: 'bvargas@princedistributors.com', phone: '+51 984 111 208', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 8.50, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 5, establishment_name: 'Hipermercado Metro Sur', territory: 'Lima Sur', active: 1 },
-		{ id: 9, code: 'EMP-009', name: 'Fernando José Castro', role: 'merchandiser', role_label: 'Montacarguista y Reponedor', department: 'Operaciones & Logística', email: 'fcastro@princedistributors.com', phone: '+51 984 111 209', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 8.00, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 2, establishment_name: 'Almacén Callao Port', territory: 'Callao', active: 1 },
-		{ id: 10, code: 'EMP-010', name: 'Lucía Carmen Espinoza', role: 'merchandiser', role_label: 'Despachadora & Picking', department: 'Operaciones & Logística', email: 'lespinoza@princedistributors.com', phone: '+51 984 111 210', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 7.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 3, establishment_name: 'Distribuidora San Juan', territory: 'Lima Norte', active: 1 },
-		{ id: 11, code: 'EMP-011', name: 'Roberto Salcedo', role: 'supervisor', role_label: 'Supervisor Territorial Sur', department: 'Supervisión & Control', email: 'rsalcedo@princedistributors.com', phone: '+51 984 111 211', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 12.00, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 5, establishment_name: 'Hipermercado Metro Sur', territory: 'Lima Sur', active: 1 },
-		{ id: 12, code: 'EMP-012', name: 'Juan Carlos Benítez', role: 'sales_rep', role_label: 'Vendedor Mayorista Callao', department: 'Fuerza de Ventas B2B', email: 'jbenitez@princedistributors.com', phone: '+51 984 111 212', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 8.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 7, establishment_name: 'Centro Logístico Faucett', territory: 'Callao', active: 1 },
-		{ id: 13, code: 'EMP-013', name: 'Valeria Nicole Morales', role: 'merchandiser', role_label: 'Reponedora Nocturna', department: 'Reposición & Merchandising', email: 'vmorales@princedistributors.com', phone: '+51 984 111 213', contract_type: 'full_time', contracted_hours: 44, hourly_cost: 8.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 4, establishment_name: 'Supermercados Los Andes (Sede Central)', territory: 'Lima Centro', active: 1 },
-		{ id: 14, code: 'EMP-014', name: 'Kevin Alexander Gómez', role: 'merchandiser', role_label: 'Chofer & Despacho Mayorista', department: 'Operaciones & Logística', email: 'kgomez@princedistributors.com', phone: '+51 984 111 214', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 8.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 2, establishment_name: 'Almacén Callao Port', territory: 'Callao', active: 1 },
-		{ id: 15, code: 'EMP-015', name: 'María Elena Gutiérrez', role: 'sales_rep', role_label: 'Atención Cuentas Clave', department: 'Fuerza de Ventas B2B', email: 'mgutierrez@princedistributors.com', phone: '+51 984 111 215', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 9.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 6, establishment_name: 'Mercado Mayorista Santa Anita', territory: 'Lima Centro', active: 1 },
-		{ id: 16, code: 'EMP-016', name: 'Renzo Manuel Paucar', role: 'merchandiser', role_label: 'Reponedor de Carga', department: 'Reposición & Merchandising', email: 'rpaucar@princedistributors.com', phone: '+51 984 111 216', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 7.50, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 5, establishment_name: 'Hipermercado Metro Sur', territory: 'Lima Sur', active: 1 },
-		{ id: 17, code: 'EMP-017', name: 'Diana Carolina Paredes', role: 'sales_rep', role_label: 'Preventista Tradicional', department: 'Fuerza de Ventas B2B', email: 'dparedes@princedistributors.com', phone: '+51 984 111 217', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 8.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 3, establishment_name: 'Distribuidora San Juan', territory: 'Lima Norte', active: 1 },
-		{ id: 18, code: 'EMP-018', name: 'Andrés Felipe Soto', role: 'merchandiser', role_label: 'Operador de Racks WMS', department: 'Operaciones & Logística', email: 'asoto@princedistributors.com', phone: '+51 984 111 218', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 8.00, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 7, establishment_name: 'Centro Logístico Faucett', territory: 'Callao', active: 1 },
-		{ id: 19, code: 'EMP-019', name: 'Camila Fernanda Ruiz', role: 'merchandiser', role_label: 'Reponedora Express', department: 'Reposición & Merchandising', email: 'cruiz@princedistributors.com', phone: '+51 984 111 219', contract_type: 'part_time', contracted_hours: 36, hourly_cost: 7.50, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 8, establishment_name: 'Mini Market Express Miraflores', territory: 'Lima Centro', active: 1 },
-		{ id: 20, code: 'EMP-020', name: 'Gonzalo Javier Núñez', role: 'admin', role_label: 'Administrador General WFM', department: 'Dirección de Operaciones', email: 'gnunez@princedistributors.com', phone: '+51 984 111 220', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 14.00, supervisor_id: null, supervisor_name: 'Gerencia General', establishment_id: 1, establishment_name: 'Almacén Central Norte', territory: 'Lima Centro', active: 1 }
+		{ id: 1, code: 'EMP-001', name: 'Jorge Luis Quispe', role: 'sales_rep', role_label: 'Senior B2B Sales Representative', department: 'Fuerza de Ventas B2B', email: 'jquispe@princedistributors.com', phone: '+1 (954) 555-0101', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
+		{ id: 2, code: 'EMP-002', name: 'Rosa María Huamán', role: 'merchandiser', role_label: 'Lead Merchandiser', department: 'Reposición & Merchandising', email: 'rhuaman@princedistributors.com', phone: '+1 (954) 555-0102', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
+		{ id: 3, code: 'EMP-003', name: 'Carlos Mendoza', role: 'supervisor', role_label: 'Operations & Sales Supervisor', department: 'Supervisión & Control', email: 'cmendoza@princedistributors.com', phone: '+1 (954) 555-0103', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 26.00, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
+		{ id: 4, code: 'EMP-004', name: 'Miguel Ángel Flores', role: 'merchandiser', role_label: 'Warehouse & Shelf Stocker', department: 'Reposición & Merchandising', email: 'mflores@princedistributors.com', phone: '+1 (954) 555-0104', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.00, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
+		{ id: 5, code: 'EMP-005', name: 'Ana Sofía Rivas', role: 'sales_rep', role_label: 'Key Account Executive', department: 'Fuerza de Ventas B2B', email: 'arivas@princedistributors.com', phone: '+1 (305) 555-0105', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 19.50, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 2, establishment_name: 'Aventura Mall Retail Hub', territory: 'Miami-Dade North', active: 1 },
+		{ id: 6, code: 'EMP-006', name: 'Diego Alonso Ramos', role: 'merchandiser', role_label: 'Retail Merchandiser', department: 'Reposición & Merchandising', email: 'dramos@princedistributors.com', phone: '+1 (305) 555-0106', contract_type: 'part_time', contracted_hours: 40, hourly_cost: 16.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 2, establishment_name: 'Aventura Mall Retail Hub', territory: 'Miami-Dade North', active: 1 },
+		{ id: 7, code: 'EMP-007', name: 'Patricia Vega', role: 'supervisor', role_label: 'Commercial Supervisor Miami-Dade', department: 'Supervisión & Control', email: 'pvega@princedistributors.com', phone: '+1 (305) 555-0107', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 27.00, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 2, establishment_name: 'Aventura Mall Retail Hub', territory: 'Miami-Dade North', active: 1 },
+		{ id: 8, code: 'EMP-008', name: 'Brenda Lucía Vargas', role: 'sales_rep', role_label: 'Route Sales Representative', department: 'Fuerza de Ventas B2B', email: 'bvargas@princedistributors.com', phone: '+1 (954) 555-0108', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 3, establishment_name: 'Hollywood Boulevard Supercenter', territory: 'Broward South', active: 1 },
+		{ id: 9, code: 'EMP-009', name: 'Fernando José Castro', role: 'merchandiser', role_label: 'Forklift & Inventory Specialist', department: 'Operaciones & Logística', email: 'fcastro@princedistributors.com', phone: '+1 (954) 555-0109', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 17.50, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 4, establishment_name: 'Fort Lauderdale Logistics Hub', territory: 'Broward Central', active: 1 },
+		{ id: 10, code: 'EMP-010', name: 'Lucía Carmen Espinoza', role: 'merchandiser', role_label: 'Order Picker & Restocker', department: 'Operaciones & Logística', email: 'lespinoza@princedistributors.com', phone: '+1 (305) 555-0110', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 5, establishment_name: 'Miami Gardens Wholesale', territory: 'Miami-Dade North', active: 1 },
+		{ id: 11, code: 'EMP-011', name: 'Roberto Salcedo', role: 'supervisor', role_label: 'Territorial Supervisor Broward', department: 'Supervisión & Control', email: 'rsalcedo@princedistributors.com', phone: '+1 (954) 555-0111', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 26.50, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 4, establishment_name: 'Fort Lauderdale Logistics Hub', territory: 'Broward Central', active: 1 },
+		{ id: 12, code: 'EMP-012', name: 'Juan Carlos Benítez', role: 'sales_rep', role_label: 'Wholesale Account Rep', department: 'Fuerza de Ventas B2B', email: 'jbenitez@princedistributors.com', phone: '+1 (954) 555-0112', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 4, establishment_name: 'Fort Lauderdale Logistics Hub', territory: 'Broward Central', active: 1 },
+		{ id: 13, code: 'EMP-013', name: 'Valeria Nicole Morales', role: 'merchandiser', role_label: 'Night Restocker & FEFO Specialist', department: 'Reposición & Merchandising', email: 'vmorales@princedistributors.com', phone: '+1 (305) 555-0113', contract_type: 'full_time', contracted_hours: 44, hourly_cost: 17.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 6, establishment_name: 'Sunny Isles Gourmet Mart', territory: 'Miami-Dade North', active: 1 },
+		{ id: 14, code: 'EMP-014', name: 'Kevin Alexander Gómez', role: 'merchandiser', role_label: 'Dispatch Driver & Merchandiser', department: 'Operaciones & Logística', email: 'kgomez@princedistributors.com', phone: '+1 (954) 555-0114', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 17.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 7, establishment_name: 'Pembroke Pines Distribution', territory: 'Broward South', active: 1 },
+		{ id: 15, code: 'EMP-015', name: 'María Elena Gutiérrez', role: 'sales_rep', role_label: 'Specialty Accounts Rep', department: 'Fuerza de Ventas B2B', email: 'mgutierrez@princedistributors.com', phone: '+1 (305) 555-0115', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 19.50, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 6, establishment_name: 'Sunny Isles Gourmet Mart', territory: 'Miami-Dade North', active: 1 },
+		{ id: 16, code: 'EMP-016', name: 'Renzo Manuel Paucar', role: 'merchandiser', role_label: 'Heavy Stocker & Receiving', department: 'Reposición & Merchandising', email: 'rpaucar@princedistributors.com', phone: '+1 (954) 555-0116', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.00, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 7, establishment_name: 'Pembroke Pines Distribution', territory: 'Broward South', active: 1 },
+		{ id: 17, code: 'EMP-017', name: 'Diana Carolina Paredes', role: 'sales_rep', role_label: 'Territory Sales Rep', department: 'Fuerza de Ventas B2B', email: 'dparedes@princedistributors.com', phone: '+1 (954) 555-0117', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 3, establishment_name: 'Hollywood Boulevard Supercenter', territory: 'Broward South', active: 1 },
+		{ id: 18, code: 'EMP-018', name: 'Andrés Felipe Soto', role: 'merchandiser', role_label: 'WMS Inventory Specialist', department: 'Operaciones & Logística', email: 'asoto@princedistributors.com', phone: '+1 (954) 555-0118', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 17.00, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 8, establishment_name: 'Pompano Beach Central Depot', territory: 'Broward Central', active: 1 },
+		{ id: 19, code: 'EMP-019', name: 'Camila Fernanda Ruiz', role: 'merchandiser', role_label: 'Express Merchandiser', department: 'Reposición & Merchandising', email: 'cruiz@princedistributors.com', phone: '+1 (954) 555-0119', contract_type: 'part_time', contracted_hours: 36, hourly_cost: 16.00, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 8, establishment_name: 'Pompano Beach Central Depot', territory: 'Broward Central', active: 1 },
+		{ id: 20, code: 'EMP-020', name: 'Gonzalo Javier Núñez', role: 'admin', role_label: 'Global Workforce Director', department: 'Dirección de Operaciones', email: 'gnunez@princedistributors.com', phone: '+1 (954) 555-0120', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 32.00, supervisor_id: null, supervisor_name: 'Executive Board', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 }
+	];
+
+	// Tareas operacionales de demostración
+	const DEFAULT_TASKS = [
+		{ id: 1, title: 'Reposición Góndola Goya & Bebidas', description: 'Trasladar 15 cajas de Frijoles Goya y 20 packs de Pepsi de bodega a góndola frontal.', employee_id: 2, employee_name: 'Rosa María Huamán', supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', date: '2026-11-16', priority: 'high', status: 'in_progress', evidence_url: null, notes: 'Aplicar regla FEFO con lote LOT-2026-E15' },
+		{ id: 2, title: 'Auditoría FEFO y Vencimientos Lote 2026', description: 'Revisar fechas de expiración en estantes de snack y lácteos. Separar mermas menores a 15 días.', employee_id: 4, employee_name: 'Miguel Ángel Flores', supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', date: '2026-11-16', priority: 'urgent', status: 'pending', evidence_url: null, notes: 'Reportar cualquier producto vencido a Carlos Mendoza' },
+		{ id: 3, title: 'Conteo Cíclico con Escáner UPC', description: 'Escanear códigos UPC en pasillo 4 (Monster Energy, Arizona Tea y Doritos) y cuadrar contra stock bodega.', employee_id: 6, employee_name: 'Diego Alonso Ramos', supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 2, establishment_name: 'Aventura Mall Retail Hub', date: '2026-11-16', priority: 'normal', status: 'completed', evidence_url: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400', notes: 'Conteo verificado 100% cuadre' },
+		{ id: 4, title: 'Alineación de Precios y Planograma POS', description: 'Verificar etiquetas electrónicas y frentes de Inca Kola 2L y Coca-Cola 20oz según planograma aprobado.', employee_id: 9, employee_name: 'Fernando José Castro', supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 4, establishment_name: 'Fort Lauderdale Logistics Hub', date: '2026-11-16', priority: 'normal', status: 'pending', evidence_url: null, notes: 'Actualizar tags de promoción de fin de semana' },
+		{ id: 5, title: 'Recepción y Descarga Pallet PepsiCo', description: 'Recepcionar camión de despacho mayorista con 4 pallets de bebidas. Registrar en WMS.', employee_id: 10, employee_name: 'Lucía Carmen Espinoza', supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 5, establishment_name: 'Miami Gardens Wholesale', date: '2026-11-16', priority: 'high', status: 'pending', evidence_url: null, notes: 'Confirmar remisión con firma de chofer' },
+		{ id: 6, title: 'Inspección de Mermas y Devoluciones', description: 'Separar latas abolladas de Monster Energy y registrar merma operacional.', employee_id: 13, employee_name: 'Valeria Nicole Morales', supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 6, establishment_name: 'Sunny Isles Gourmet Mart', date: '2026-11-16', priority: 'low', status: 'pending', evidence_url: null, notes: 'Colocar en área de cuarentena' }
+	];
+
+	// Catálogo de Productos con UPC autenticados y control FEFO
+	const DEFAULT_UPC_PRODUCTS = [
+		{ id: 1, upc: '012000000133', sku: 'BEV-PEP-12', name: 'Pepsi Cola 12oz Pack (12pk)', category: 'Bebidas & Refrescos', lot: 'LOT-2026-A12', expiration_date: '2027-04-15', warehouse_stock: 140, shelf_stock: 35, shelf_capacity: 50, price: 6.99, cost: 4.20 },
+		{ id: 2, upc: '049000000443', sku: 'BEV-COK-20', name: 'Coca-Cola Classic 20oz Bottle', category: 'Bebidas & Refrescos', lot: 'LOT-2026-B04', expiration_date: '2027-02-28', warehouse_stock: 220, shelf_stock: 45, shelf_capacity: 60, price: 2.29, cost: 1.15 },
+		{ id: 3, upc: '028400064088', sku: 'SNK-DOR-92', name: 'Doritos Nacho Cheese 9.25oz', category: 'Snacks & Golosinas', lot: 'LOT-2026-C09', expiration_date: '2026-12-10', warehouse_stock: 85, shelf_stock: 18, shelf_capacity: 30, price: 4.49, cost: 2.60 },
+		{ id: 4, upc: '070847811169', sku: 'BEV-MON-16', name: 'Monster Energy Drink Original 16oz', category: 'Bebidas Energéticas', lot: 'LOT-2026-D16', expiration_date: '2027-08-30', warehouse_stock: 160, shelf_stock: 28, shelf_capacity: 40, price: 3.29, cost: 1.85 },
+		{ id: 5, upc: '041789001429', sku: 'GRO-GOY-15', name: 'Goya Black Beans (Frijoles Negros) 15.5oz', category: 'Abarrotes & Enlatados', lot: 'LOT-2026-E15', expiration_date: '2028-01-20', warehouse_stock: 310, shelf_stock: 60, shelf_capacity: 80, price: 1.79, cost: 0.95 },
+		{ id: 6, upc: '775015100102', sku: 'BEV-INC-2L', name: 'Inca Kola Botella 2L Importada', category: 'Bebidas Hispanas', lot: 'LOT-2026-F02', expiration_date: '2027-03-15', warehouse_stock: 95, shelf_stock: 22, shelf_capacity: 35, price: 3.89, cost: 2.10 },
+		{ id: 7, upc: '026400001221', sku: 'BEV-ARI-23', name: 'Arizona Green Tea Ginseng 23oz Can', category: 'Tés & Bebidas', lot: 'LOT-2026-G23', expiration_date: '2027-06-18', warehouse_stock: 190, shelf_stock: 40, shelf_capacity: 50, price: 1.29, cost: 0.65 },
+		{ id: 8, upc: '016000264601', sku: 'SNK-NAT-12', name: 'Nature Valley Oats & Honey Bars 12ct', category: 'Snacks & Barras', lot: 'LOT-2026-H12', expiration_date: '2026-11-28', warehouse_stock: 60, shelf_stock: 12, shelf_capacity: 25, price: 4.99, cost: 2.80 }
 	];
 
 	// Generador de turnos deterministas para las 4 semanas
 	function generateShiftsForWeek(weekCode, startDateStr, isHistorical) {
 		const shifts = [];
-		let shiftIdCounter = 1;
 		const startDate = new Date(startDateStr);
 
 		DEFAULT_EMPLOYEES.forEach((emp) => {
@@ -69,25 +92,25 @@
 				let net = 8.0;
 
 				if (dow === 7) {
-					// Domingo descanso para casi todos
+					// Domingo libre
 					sType = 'rest';
-					sLabel = 'Descanso';
+					sLabel = 'Descanso Semanal';
 					start = '00:00';
 					end = '00:00';
 					breakMin = 0;
 					net = 0;
 				} else if (emp.role === 'sales_rep') {
 					if (dow === 6) {
-						// Sábado medio día
+						// Sábado ruta corta
 						sType = 'standard';
-						sLabel = 'Seguimiento';
+						sLabel = 'Ruta Seguimiento';
 						start = '09:00';
 						end = '13:00';
 						breakMin = 0;
 						net = 4.0;
 					} else {
 						sType = 'standard';
-						sLabel = 'Ruta Preventa';
+						sLabel = 'Ruta Preventa B2B';
 						start = '08:00';
 						end = '17:00';
 						breakMin = 60;
@@ -96,21 +119,21 @@
 				} else if (emp.role === 'merchandiser') {
 					if (emp.id % 3 === 0) {
 						sType = 'opening';
-						sLabel = 'Apertura';
+						sLabel = 'Apertura & Recepción';
 						start = '07:00';
 						end = '15:30';
 						breakMin = 30;
 						net = 8.0;
 					} else if (emp.id % 3 === 1) {
 						sType = 'mid';
-						sLabel = 'Intermedio';
+						sLabel = 'Reposición Góndola';
 						start = '09:00';
 						end = '17:30';
 						breakMin = 30;
 						net = 8.0;
 					} else {
 						sType = 'closing';
-						sLabel = 'Cierre';
+						sLabel = 'Cierre & FEFO';
 						start = '13:30';
 						end = '22:00';
 						breakMin = 30;
@@ -118,7 +141,7 @@
 					}
 				} else if (emp.role === 'supervisor') {
 					sType = 'standard';
-					sLabel = 'Supervisión';
+					sLabel = 'Supervisión de Ruta';
 					start = '08:00';
 					end = '16:30';
 					breakMin = 30;
@@ -127,14 +150,14 @@
 					// Admin
 					if (dow <= 5) {
 						sType = 'standard';
-						sLabel = 'Gestión WFM';
+						sLabel = 'Gestión WFM Global';
 						start = '08:30';
 						end = '17:30';
 						breakMin = 60;
 						net = 8.0;
 					} else {
 						sType = 'rest';
-						sLabel = 'Descanso';
+						sLabel = 'Descanso Semanal';
 						start = '00:00';
 						end = '00:00';
 						breakMin = 0;
@@ -227,8 +250,8 @@
 
 	const DEFAULT_NOTIFICATIONS = [
 		{ id: 1, title: 'Programación Semana 47 Publicada', text: 'El horario para la semana del 16 al 22 de Noviembre ha sido publicado por Carlos Mendoza (v1).', time: 'Hace 2 horas', read: false, type: 'publish' },
-		{ id: 2, title: 'Alerta de Pico Mayorista', text: 'Demanda de $9,200 el Lunes 16 Noviembre requiere reforzar la apertura con 1 mercaderista adicional.', time: 'Hace 4 horas', read: false, type: 'alert' },
-		{ id: 3, title: 'Solicitud de Turno Aprobada', text: 'Marcos Huamán ha intercambiado su turno de viernes con Jorge Luis Quispe con visto bueno de supervisión.', time: 'Hace 1 día', read: true, type: 'request' }
+		{ id: 2, title: 'Alerta de Pico en Hallandale HQ', text: 'Demanda de $9,200 el Lunes 16 Noviembre requiere reforzar la apertura con 1 reponedor adicional.', time: 'Hace 4 horas', read: false, type: 'alert' },
+		{ id: 3, title: 'Turno Intercambiado en Aventura', text: 'Diego Alonso Ramos ha intercambiado su turno de viernes con Rosa Huamán con visto bueno de supervisión.', time: 'Hace 1 día', read: true, type: 'request' }
 	];
 
 	// =====================================================================
@@ -238,14 +261,17 @@
 	class PrinceDemoEngine {
 		constructor() {
 			this.listeners = {};
-			this.currentRole = 'admin'; // 'admin' | 'supervisor' | 'employee'
-			this.currentEmployeeId = 1; // Jorge Luis Quispe por defecto para vista de colaborador
+			this.currentRole = 'admin'; // 'admin' | 'supervisor' | 'sales_rep' | 'merchandiser'
+			this.currentEmployeeId = 2; // Rosa María Huamán por defecto para reponedor / jornada
 			this.activeWeek = '2026-W47';
 			this.activeEstablishment = 'Todos';
 			this.activeTerritory = 'Todos';
 			this.activeDepartment = 'Todos';
 			this.whatIfScenario = { salesDeltaPct: 0, absentCount: 0, prodFactor: 1.0 };
 			this.lastOptimizationBackup = null;
+
+			// Sistema de Asistencia / Clock-In / Jornada Activa
+			this.activeSessions = {};
 
 			this.init();
 		}
@@ -255,7 +281,7 @@
 			if (!this.state) {
 				this.resetToDefaults();
 			}
-			console.log('>>> [PrinceDemoEngine] Inicializado con éxito. Empleados:', this.state.employees.length, '| Semanas:', Object.keys(this.state.schedules).length);
+			console.log('>>> [PrinceDemoEngine] USA Florida WFM Engine inicializado. Empleados:', this.state.employees.length, '| Tareas:', (this.state.tasks || []).length);
 		}
 
 		loadFromStorage() {
@@ -263,7 +289,7 @@
 				const raw = localStorage.getItem(STORAGE_KEY);
 				if (!raw) return null;
 				const parsed = JSON.parse(raw);
-				if (!parsed.employees || parsed.employees.length < 20 || !parsed.schedules) {
+				if (!parsed.employees || parsed.employees.length < 20 || !parsed.schedules || !parsed.tasks || !parsed.inventory) {
 					return null;
 				}
 				return parsed;
@@ -286,7 +312,12 @@
 				establishments: JSON.parse(JSON.stringify(DEFAULT_ESTABLISHMENTS)),
 				employees: JSON.parse(JSON.stringify(DEFAULT_EMPLOYEES)),
 				schedules: JSON.parse(JSON.stringify(DEFAULT_SCHEDULES)),
+				tasks: JSON.parse(JSON.stringify(DEFAULT_TASKS)),
+				inventory: JSON.parse(JSON.stringify(DEFAULT_UPC_PRODUCTS)),
 				notifications: JSON.parse(JSON.stringify(DEFAULT_NOTIFICATIONS)),
+				attendance: [
+					{ id: 1, employee_id: 2, establishment_id: 1, type: 'clock_in', timestamp: '2026-11-16 08:58:12', notes: 'Turno iniciado a tiempo' }
+				],
 				auditLog: [
 					{ id: 1, time: '2026-11-15 18:00', user: 'Carlos Mendoza', action: 'SCHEDULE_PUBLISHED', details: 'Programación Semana 47 publicada (v1)' }
 				]
@@ -308,15 +339,29 @@
 					try { cb(payload); } catch (err) { console.error('Error in listener:', err); }
 				});
 			}
-			// Evento global para toda la app
 			if (typeof window !== 'undefined') {
 				window.dispatchEvent(new CustomEvent('prince:state-change', { detail: { event, payload } }));
 			}
 		}
 
 		// =================================================================
-		// 3. CONSULTAS Y CÁLCULOS MATEMÁTICOS COHERENTES
+		// 3. CONSULTAS Y CÁLCULOS MATEMÁTICOS COHERENTES (USD / EN-US)
 		// =================================================================
+
+		formatCurrency(amount) {
+			return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(amount) || 0);
+		}
+
+		format12h(timeStr) {
+			if (!timeStr || timeStr === '00:00') return 'Descanso';
+			const parts = timeStr.split(':');
+			let hours = parseInt(parts[0], 10);
+			const minutes = parts[1] || '00';
+			const ampm = hours >= 12 ? 'PM' : 'AM';
+			hours = hours % 12;
+			hours = hours ? hours : 12;
+			return `${hours}:${minutes} ${ampm}`;
+		}
 
 		getEmployees(filterDept = 'Todos', filterEst = 'Todos') {
 			return this.state.employees.filter(emp => {
@@ -355,22 +400,21 @@
 			}
 			const forecastedSales = baseSales * (1 + (this.whatIfScenario.salesDeltaPct / 100));
 
-			// 2. Horas Recomendadas (Ventas / $150/h estándar B2B ajustado por productividad)
+			// 2. Horas Recomendadas ($150/h objetivo de ventas por hora laboral estándar Retail B2B USA)
 			const salesPerHourTarget = 150.00 * (this.whatIfScenario.prodFactor || 1.0);
-			const minCoverageHours = 120.0; // Cobertura de seguridad básica
+			const minCoverageHours = 120.0;
 			const recommendedHours = Math.max(minCoverageHours, Math.round((forecastedSales / salesPerHourTarget) * 10) / 10);
 
-			// 3. Horas Programadas (Suma neta de turnos activos)
+			// 3. Horas Programadas & Costo Laboral Estimado
 			let scheduledHours = 0;
 			let estimatedCost = 0;
 
-			// Mapa de costos por hora de colaboradores
 			const empCostMap = {};
-			this.state.employees.forEach(e => empCostMap[e.id] = Number(e.hourly_cost || 7.50));
+			this.state.employees.forEach(e => empCostMap[e.id] = Number(e.hourly_cost || 16.50));
 
 			filteredShifts.forEach(shift => {
 				scheduledHours += Number(shift.net_hours || 0);
-				const rate = empCostMap[shift.employee_id] || 7.50;
+				const rate = empCostMap[shift.employee_id] || 16.50;
 				estimatedCost += (Number(shift.net_hours || 0) * rate);
 			});
 
@@ -431,7 +475,7 @@
 		}
 
 		// =================================================================
-		// 4. ACCIONES Y OPERACIONES SOBRE HORARIOS (REACTIVAS)
+		// 4. ACCIONES SOBRE HORARIOS
 		// =================================================================
 
 		addOrUpdateShift(shiftData) {
@@ -441,13 +485,12 @@
 			const emp = this.state.employees.find(e => e.id === Number(shiftData.employee_id));
 			if (!emp) return { success: false, error: 'Empleado no encontrado' };
 
-			// Calcular horas netas
 			const startParts = shiftData.start_time.split(':').map(Number);
 			const endParts = shiftData.end_time.split(':').map(Number);
 			const startMin = startParts[0] * 60 + startParts[1];
 			const endMin = endParts[0] * 60 + endParts[1];
 			let grossMin = endMin - startMin;
-			if (grossMin < 0) grossMin += 1440; // Turno nocturno
+			if (grossMin < 0) grossMin += 1440;
 			const breakMin = Number(shiftData.break_minutes || 0);
 			const netMin = Math.max(0, grossMin - breakMin);
 			const netHours = shiftData.shift_type === 'rest' ? 0 : Math.round((netMin / 60) * 10) / 10;
@@ -492,7 +535,6 @@
 			const shiftIndex = sched.shifts.findIndex(s => String(s.id) === String(shiftId));
 			if (shiftIndex >= 0) {
 				const removed = sched.shifts[shiftIndex];
-				// Convertir a descanso en lugar de eliminar la celda
 				sched.shifts[shiftIndex] = {
 					...removed,
 					start_time: '00:00',
@@ -500,7 +542,7 @@
 					break_minutes: 0,
 					net_hours: 0,
 					shift_type: 'rest',
-					shift_label: 'Descanso'
+					shift_label: 'Descanso Semanal'
 				};
 				this.recordAudit('SHIFT_DELETED', `Turno removido para ${removed.employee_name}`);
 				this.saveToStorage();
@@ -518,7 +560,6 @@
 			const targetEmp = this.state.employees.find(e => e.id === Number(targetEmpId));
 			if (!shift || !targetEmp) return { success: false };
 
-			// Mover horario
 			const oldEmpName = shift.employee_name;
 			shift.employee_id = targetEmp.id;
 			shift.employee_name = targetEmp.name;
@@ -561,10 +602,9 @@
 			sched.published_at = new Date().toISOString().replace('T', ' ').substring(0, 19);
 			sched.published_by = this.currentRole === 'admin' ? 'Gonzalo Javier Núñez (Admin)' : 'Carlos Mendoza (Supervisor)';
 
-			// Agregar notificación demo interna
 			this.addNotification({
 				title: `Programación ${weekCode} Publicada (v${sched.version})`,
-				text: `Horarios oficiales publicados por ${sched.published_by}. 20 colaboradores han sido actualizados en la app.`,
+				text: `Horarios oficiales publicados por ${sched.published_by}. 20 colaboradores sincronizados en Web & Mobile.`,
 				type: 'publish'
 			});
 
@@ -575,14 +615,200 @@
 		}
 
 		// =================================================================
-		// 5. OPTIMIZACIÓN INTELIGENTE (REGLAS DETERMINISTAS)
+		// 5. MOTOR DE TAREAS & OPERACIONES EN TIENDA (SHARED WEB & MOBILE)
+		// =================================================================
+
+		getTasks(filter = {}) {
+			let tasks = this.state.tasks || [];
+			if (filter.employee_id) {
+				tasks = tasks.filter(t => t.employee_id === Number(filter.employee_id));
+			}
+			if (filter.establishment_id) {
+				tasks = tasks.filter(t => t.establishment_id === Number(filter.establishment_id));
+			}
+			if (filter.status && filter.status !== 'all') {
+				tasks = tasks.filter(t => t.status === filter.status);
+			}
+			return tasks;
+		}
+
+		createTask(taskData) {
+			const newTask = {
+				id: Date.now(),
+				title: taskData.title,
+				description: taskData.description || '',
+				employee_id: Number(taskData.employee_id),
+				employee_name: taskData.employee_name || 'Colaborador',
+				supervisor_id: Number(taskData.supervisor_id || 3),
+				supervisor_name: taskData.supervisor_name || 'Carlos Mendoza',
+				establishment_id: Number(taskData.establishment_id || 1),
+				establishment_name: taskData.establishment_name || 'Prince Distributors — Hallandale HQ',
+				date: taskData.date || new Date().toISOString().slice(0, 10),
+				priority: taskData.priority || 'normal',
+				status: 'pending',
+				evidence_url: null,
+				notes: taskData.notes || ''
+			};
+
+			if (!this.state.tasks) this.state.tasks = [];
+			this.state.tasks.unshift(newTask);
+			this.saveToStorage();
+			this.emit('task:created', { task: newTask });
+			return { success: true, task: newTask };
+		}
+
+		updateTaskStatus(taskId, status, notes = '', evidenceUrl = null) {
+			if (!this.state.tasks) return { success: false };
+			const task = this.state.tasks.find(t => t.id === Number(taskId));
+			if (!task) return { success: false, error: 'Tarea no encontrada' };
+
+			task.status = status;
+			if (notes) task.notes = notes;
+			if (evidenceUrl) task.evidence_url = evidenceUrl;
+
+			this.recordAudit('TASK_STATUS_UPDATED', `Tarea #${taskId} (${task.title}) cambiada a ${status}`);
+			this.saveToStorage();
+			this.emit('task:updated', { task });
+			return { success: true, task };
+		}
+
+		deleteTask(taskId) {
+			if (!this.state.tasks) return { success: false };
+			const idx = this.state.tasks.findIndex(t => t.id === Number(taskId));
+			if (idx >= 0) {
+				this.state.tasks.splice(idx, 1);
+				this.saveToStorage();
+				this.emit('task:deleted', { taskId });
+				return { success: true };
+			}
+			return { success: false };
+		}
+
+		// =================================================================
+		// 6. CONTROL FEFO, ESCÁNER UPC & REPOSICIÓN BODEGA -> GÓNDOLA
+		// =================================================================
+
+		getInventory() {
+			return this.state.inventory || DEFAULT_UPC_PRODUCTS;
+		}
+
+		findProductByUpc(upc) {
+			const cleanUpc = String(upc).trim();
+			return (this.state.inventory || []).find(p => p.upc === cleanUpc || p.sku.toLowerCase() === cleanUpc.toLowerCase());
+		}
+
+		restockShelf(productId, quantity, lot = null) {
+			const prod = (this.state.inventory || []).find(p => p.id === Number(productId));
+			if (!prod) return { success: false, error: 'Producto no encontrado' };
+
+			const qty = Number(quantity) || 0;
+			if (qty <= 0) return { success: false, error: 'Cantidad inválida' };
+
+			// Validación de stock en bodega
+			if (prod.warehouse_stock < qty) {
+				return { success: false, error: `Stock insuficiente en bodega (${prod.warehouse_stock} disponibles)` };
+			}
+
+			// Traslado interno bodega a góndola (No cambia el stock total de la tienda)
+			prod.warehouse_stock -= qty;
+			prod.shelf_stock += qty;
+
+			this.recordAudit('SHELF_RESTOCKED', `Traslado interno: ${qty} unidades de ${prod.name} de bodega a góndola (FEFO: ${prod.lot})`);
+			this.saveToStorage();
+			this.emit('inventory:updated', { product: prod });
+			return { success: true, product: prod };
+		}
+
+		recordShrinkage(productId, quantity, reason = 'Merma operacional / daño') {
+			const prod = (this.state.inventory || []).find(p => p.id === Number(productId));
+			if (!prod) return { success: false };
+
+			const qty = Number(quantity) || 0;
+			prod.shelf_stock = Math.max(0, prod.shelf_stock - qty);
+
+			this.recordAudit('SHRINKAGE_RECORDED', `Merma registrada: ${qty} un. de ${prod.name}. Causa: ${reason}`);
+			this.saveToStorage();
+			this.emit('inventory:updated', { product: prod });
+			return { success: true, product: prod };
+		}
+
+		recordStockCount(productId, actualShelfStock, actualWarehouseStock = null) {
+			const prod = (this.state.inventory || []).find(p => p.id === Number(productId));
+			if (!prod) return { success: false };
+
+			const oldShelf = prod.shelf_stock;
+			prod.shelf_stock = Number(actualShelfStock);
+			if (actualWarehouseStock !== null) {
+				prod.warehouse_stock = Number(actualWarehouseStock);
+			}
+
+			this.recordAudit('STOCK_COUNTED', `Conteo cíclico ${prod.name}: Góndola antes=${oldShelf}, conteo=${prod.shelf_stock}`);
+			this.saveToStorage();
+			this.emit('inventory:updated', { product: prod });
+			return { success: true, product: prod };
+		}
+
+		// =================================================================
+		// 7. ASISTENCIA & SESIONES OPERATIVAS (MI JORNADA)
+		// =================================================================
+
+		clockIn(employeeId, establishmentId) {
+			const emp = this.state.employees.find(e => e.id === Number(employeeId));
+			const est = this.state.establishments.find(e => e.id === Number(establishmentId));
+			const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+			const session = {
+				id: Date.now(),
+				employee_id: emp ? emp.id : employeeId,
+				employee_name: emp ? emp.name : 'Colaborador',
+				establishment_id: est ? est.id : establishmentId,
+				establishment_name: est ? est.name : 'Prince Distributors — Hallandale HQ',
+				clock_in: nowStr,
+				clock_out: null,
+				status: 'in_progress',
+				tasks_completed: 0,
+				restocked_units: 0
+			};
+
+			this.activeSessions[employeeId] = session;
+			if (!this.state.attendance) this.state.attendance = [];
+			this.state.attendance.unshift(session);
+
+			this.recordAudit('CLOCK_IN', `Inicio de jornada para ${session.employee_name} en ${session.establishment_name}`);
+			this.saveToStorage();
+			this.emit('attendance:clock_in', { session });
+			return { success: true, session };
+		}
+
+		clockOut(employeeId, notes = '') {
+			const session = this.activeSessions[employeeId];
+			const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+			if (session) {
+				session.clock_out = nowStr;
+				session.status = 'completed';
+				session.notes = notes;
+				delete this.activeSessions[employeeId];
+			}
+
+			this.recordAudit('CLOCK_OUT', `Fin de jornada para colaborador #${employeeId}`);
+			this.saveToStorage();
+			this.emit('attendance:clock_out', { employeeId });
+			return { success: true };
+		}
+
+		getActiveSession(employeeId) {
+			return this.activeSessions[employeeId] || null;
+		}
+
+		// =================================================================
+		// 8. OPTIMIZACIÓN INTELIGENTE (REGLAS DETERMINISTAS FLORIDA)
 		// =================================================================
 
 		getOptimizationProposal(weekCode = this.activeWeek) {
 			const sched = this.state.schedules[weekCode];
 			const currentKpis = this.calculateKPIs(weekCode);
 
-			// Regla: Detectar si el lunes (pico mayorista) tiene menos de 4 reponedores en apertura
 			const mondayOpeningShifts = sched.shifts.filter(s => s.day_of_week === 1 && s.shift_type === 'opening');
 			const suggestions = [];
 
@@ -591,26 +817,25 @@
 					id: 'SUG-01',
 					type: 'coverage_boost',
 					title: 'Refuerzo en Pico Mayorista de Apertura (Lunes)',
-					description: 'Asignar a Miguel Ángel Flores (EMP-004) en turno de Apertura (07:00-15:30) para absorber descarga de 1,420 cajas master.',
+					description: 'Asignar a Miguel Ángel Flores (EMP-004) en turno de Apertura (07:00-15:30) en Hallandale HQ para absorber descarga de 1,420 cajas master.',
 					impact_hours: 8.0,
-					impact_cost: 60.00,
+					impact_cost: 128.00,
 					target_emp_id: 4,
 					target_dow: 1,
 					proposed_shift: { start: '07:00', end: '15:30', breakMin: 30, type: 'opening', label: 'Apertura WMS' }
 				});
 			}
 
-			// Regla: Compensar horas extras en viernes
 			suggestions.push({
 				id: 'SUG-02',
 				type: 'efficiency_trim',
 				title: 'Nivelación de Horas en Cierre (Viernes)',
-				description: 'Ajustar el turno de cierre a 7.5h netas en Almacén Callao Port para evitar sobrecosto sin afectar despacho.',
+				description: 'Ajustar el turno de cierre a 7.5h netas en Fort Lauderdale Hub para evitar sobrecosto sin afectar despacho.',
 				impact_hours: -0.5,
-				impact_cost: -4.00,
+				impact_cost: -8.75,
 				target_emp_id: 9,
 				target_dow: 5,
-				proposed_shift: { start: '14:00', end: '22:00', breakMin: 30, type: 'closing', label: 'Cierre Callao' }
+				proposed_shift: { start: '14:00', end: '22:00', breakMin: 30, type: 'closing', label: 'Cierre Logístico' }
 			});
 
 			const projectedHours = currentKpis.scheduled_hours + suggestions.reduce((acc, s) => acc + s.impact_hours, 0);
@@ -633,7 +858,6 @@
 			const sched = this.state.schedules[weekCode];
 			if (!sched) return { success: false };
 
-			// Guardar backup para permitir revertir
 			this.lastOptimizationBackup = JSON.parse(JSON.stringify(sched.shifts));
 
 			const proposal = this.getOptimizationProposal(weekCode);
@@ -646,7 +870,7 @@
 					break_minutes: s.proposed_shift.breakMin,
 					shift_type: s.proposed_shift.type,
 					shift_label: s.proposed_shift.label,
-					task_notes: 'Turno optimizado por algoritmo WFM'
+					task_notes: 'Turno optimizado por algoritmo WFM Florida'
 				});
 			});
 
@@ -670,12 +894,19 @@
 		}
 
 		// =================================================================
-		// 6. GESTIÓN DE ROLES & NOTIFICACIONES DEMO
+		// 9. ROLES, NOTIFICACIONES Y AUDITORÍA
 		// =================================================================
 
-		switchRole(newRole, employeeId = 1) {
+		switchRole(newRole, employeeId = null) {
 			this.currentRole = newRole;
-			this.currentEmployeeId = Number(employeeId);
+			if (employeeId !== null) {
+				this.currentEmployeeId = Number(employeeId);
+			} else {
+				if (newRole === 'merchandiser' || newRole === 'reponedor') this.currentEmployeeId = 2; // Rosa Huamán
+				else if (newRole === 'supervisor') this.currentEmployeeId = 3; // Carlos Mendoza
+				else if (newRole === 'sales_rep' || newRole === 'employee') this.currentEmployeeId = 1; // Jorge Quispe
+				else this.currentEmployeeId = 20; // Gonzalo Núñez
+			}
 			this.emit('role:changed', { role: newRole, employeeId: this.currentEmployeeId });
 		}
 
@@ -688,6 +919,7 @@
 				read: false,
 				type: notif.type || 'info'
 			};
+			if (!this.state.notifications) this.state.notifications = [];
 			this.state.notifications.unshift(item);
 			if (this.state.notifications.length > 20) this.state.notifications.pop();
 			this.saveToStorage();
@@ -698,7 +930,7 @@
 			const log = {
 				id: Date.now(),
 				time: new Date().toISOString().replace('T', ' ').substring(0, 19),
-				user: this.currentRole === 'admin' ? 'Gonzalo Javier Núñez (Admin)' : 'Carlos Mendoza (Supervisor)',
+				user: this.currentRole === 'admin' ? 'Gonzalo Javier Núñez (Admin)' : (this.currentRole === 'supervisor' ? 'Carlos Mendoza (Supervisor)' : 'Rosa Huamán (Merchandiser)'),
 				action: action,
 				details: details
 			};
@@ -770,7 +1002,7 @@
 				simulated_sales: simSales,
 				recommended_hours: recHours,
 				projected_coverage_pct: cov,
-				advice: cov >= 95 ? 'Dotación óptima para demanda proyectada.' : 'Se recomienda reforzar dotación para evitar quiebres OTIF.'
+				advice: cov >= 95 ? 'Dotación óptima para demanda proyectada en Florida.' : 'Se recomienda reforzar dotación para evitar quiebres de servicio.'
 			};
 		}
 
@@ -778,7 +1010,7 @@
 			const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state, null, 2));
 			const downloadAnchor = document.createElement('a');
 			downloadAnchor.setAttribute("href", dataStr);
-			downloadAnchor.setAttribute("download", `prince_wfm_demo_${new Date().toISOString().slice(0,10)}.json`);
+			downloadAnchor.setAttribute("download", `prince_wfm_demo_usa_${new Date().toISOString().slice(0,10)}.json`);
 			document.body.appendChild(downloadAnchor);
 			downloadAnchor.click();
 			downloadAnchor.remove();

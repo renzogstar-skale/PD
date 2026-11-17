@@ -67,10 +67,10 @@
 					<span class="hidden sm:inline">Rol:</span>
 				</label>
 				<select id="demo-active-role-select" onchange="handleDemoRoleSwitch(this.value)" class="text-xs font-semibold bg-transparent border-none text-slate-800 dark:text-slate-200 focus:ring-0 p-0 cursor-pointer">
-					<option value="admin">Administrador (Gonzalo Núñez)</option>
-					<option value="supervisor">Supervisor (Carlos Mendoza)</option>
-					<option value="employee">Vendedor (Jorge Quispe)</option>
-					<option value="reponedor">Reponedora (Rosa Huamán)</option>
+					<option value="admin">Administrador Global (Gonzalo Núñez)</option>
+					<option value="supervisor">Supervisor de Ventas (Carlos Mendoza)</option>
+					<option value="sales_rep">Vendedor Comercial (Jorge Quispe)</option>
+					<option value="merchandiser">Reponedor / Merchandiser (Rosa Huamán)</option>
 				</select>
 			</div>
 
@@ -118,6 +118,10 @@
 		<button id="wfm-navtab-settings" onclick="switchWfmTab('settings')" class="wfm-tab-btn px-3 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center gap-2 whitespace-nowrap">
 			<i data-lucide="sliders" class="w-4 h-4"></i>
 			<span>6. Configuración</span>
+		</button>
+		<button id="wfm-navtab-tasks" onclick="switchWfmTab('tasks')" class="wfm-tab-btn px-3 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center gap-2 whitespace-nowrap">
+			<i data-lucide="check-square" class="w-4 h-4"></i>
+			<span>7. Tareas & Operaciones</span>
 		</button>
 	</div>
 
@@ -373,14 +377,14 @@
 					<label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Establecimiento</label>
 					<select id="wfm-filter-establishment" onchange="refreshWfmSchedule()" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-2 font-medium">
 						<option value="Todos">Todos los Establecimientos (8)</option>
-						<option value="Almacén Central Norte" selected>Almacén Central Norte</option>
-						<option value="Supermercados Los Andes">Supermercados Los Andes</option>
-						<option value="Distribuidora San Juan">Distribuidora San Juan</option>
-						<option value="Mega Market Colonial">Mega Market Colonial</option>
-						<option value="Hipermercado Metro Plaza">Hipermercado Metro Plaza</option>
-						<option value="Cash & Carry Fiori">Cash & Carry Fiori</option>
-						<option value="Tiendas Mass Express">Tiendas Mass Express</option>
-						<option value="Centro Logístico Huachipa">Centro Logístico Huachipa</option>
+						<option value="Prince Distributors — Hallandale HQ" selected>Prince Distributors — Hallandale HQ</option>
+						<option value="Aventura Mall Retail Hub">Aventura Mall Retail Hub</option>
+						<option value="Hollywood Boulevard Supercenter">Hollywood Boulevard Supercenter</option>
+						<option value="Fort Lauderdale Logistics Hub">Fort Lauderdale Logistics Hub</option>
+						<option value="Miami Gardens Wholesale">Miami Gardens Wholesale</option>
+						<option value="Sunny Isles Gourmet Mart">Sunny Isles Gourmet Mart</option>
+						<option value="Pembroke Pines Distribution">Pembroke Pines Distribution</option>
+						<option value="Pompano Beach Central Depot">Pompano Beach Central Depot</option>
 					</select>
 				</div>
 
@@ -389,11 +393,9 @@
 					<label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Territorio</label>
 					<select id="wfm-filter-territory" onchange="refreshWfmSchedule()" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-2 font-medium">
 						<option value="Todos" selected>Todos los Territorios</option>
-						<option value="Lima Norte">Lima Norte</option>
-						<option value="Lima Centro">Lima Centro</option>
-						<option value="Lima Sur">Lima Sur</option>
-						<option value="Callao">Callao</option>
-						<option value="Lima Este">Lima Este</option>
+						<option value="Broward South">Broward South</option>
+						<option value="Miami-Dade North">Miami-Dade North</option>
+						<option value="Broward Central">Broward Central</option>
 					</select>
 				</div>
 
@@ -413,9 +415,10 @@
 					<label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Supervisor</label>
 					<select id="wfm-filter-supervisor" onchange="refreshWfmSchedule()" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-2 font-medium">
 						<option value="Todos">Todos los Supervisores</option>
-						<option value="Carlos Mendoza" selected>Carlos Mendoza (Dir. Ventas)</option>
-						<option value="María Torres">María Torres (Supervisora Operaciones)</option>
-						<option value="Gonzalo Núñez">Gonzalo Núñez (Gerente General)</option>
+						<option value="Carlos Mendoza" selected>Carlos Mendoza (Dir. Ventas / Ops)</option>
+						<option value="Patricia Vega">Patricia Vega (Supervisora Miami-Dade)</option>
+						<option value="Roberto Salcedo">Roberto Salcedo (Supervisor Broward)</option>
+						<option value="Gonzalo Núñez">Gonzalo Núñez (Director WFM Global)</option>
 					</select>
 				</div>
 			</div>
@@ -502,7 +505,7 @@
 								<h3 class="text-base font-bold text-slate-900 dark:text-white" id="wfm-emp-name">Jorge Quispe</h3>
 								<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300">Mi Horario Activo</span>
 							</div>
-							<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" id="wfm-emp-detail">Vendedor Comercial B2B • Lima Norte • Almacén Central Norte</p>
+							<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" id="wfm-emp-detail">Vendedor Comercial B2B • Broward South • Prince Distributors — Hallandale HQ</p>
 						</div>
 					</div>
 					<div class="flex items-center gap-2">
@@ -841,6 +844,93 @@
 				<div class="pt-2 text-[11px] text-slate-400">
 					✓ Todas las publicaciones generan un registro inmutable en la bitácora de auditoría.
 				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ========================================================
+	     PESTAÑA 7: TAREAS Y OPERACIONES EN TIENDA (SHARED WEB & MOBILE)
+	     ======================================================== -->
+	<div id="wfm-tab-content-tasks" class="hidden space-y-6">
+		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200 dark:border-slate-800">
+			<div>
+				<h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+					<span>Operaciones en Tienda, Tareas & Reposición FEFO</span>
+					<span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">USA Sincronizado</span>
+				</h3>
+				<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+					Seguimiento en tiempo real de actividades en góndola, escaneo UPC, traslados de almacén y registro de mermas.
+				</p>
+			</div>
+			<div class="flex items-center gap-2">
+				<button onclick="openCreateTaskModal()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-700 hover:bg-brand-800 text-white shadow-2xs transition-colors">
+					<i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+					<span>Asignar Nueva Tarea</span>
+				</button>
+			</div>
+		</div>
+
+		<!-- Listado de Tareas Operativas -->
+		<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden">
+			<div class="p-3.5 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/30">
+				<div class="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+					<i data-lucide="list-todo" class="w-4 h-4 text-brand-600"></i>
+					<span>Tareas Asignadas a la Fuerza de Campo</span>
+				</div>
+				<div class="flex items-center gap-2 text-xs">
+					<select id="wfm-tasks-filter-status" onchange="renderWfmTasksTable()" class="text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1.5">
+						<option value="all">Todos los estados</option>
+						<option value="pending">Pendientes</option>
+						<option value="in_progress">En progreso</option>
+						<option value="completed">Completadas</option>
+					</select>
+				</div>
+			</div>
+			<div class="overflow-x-auto">
+				<table class="w-full text-left border-collapse text-xs">
+					<thead>
+						<tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-500 uppercase">
+							<th class="p-3">Prioridad</th>
+							<th class="p-3">Título de la Tarea & Detalles</th>
+							<th class="p-3">Colaborador Asignado</th>
+							<th class="p-3">Establecimiento</th>
+							<th class="p-3 text-center">Estado</th>
+							<th class="p-3 text-right">Acción</th>
+						</tr>
+					</thead>
+					<tbody id="wfm-tasks-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+						<!-- Rellenado dinámicamente -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- Inventario FEFO, Stock Góndola vs Bodega & UPC -->
+		<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden">
+			<div class="p-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/30">
+				<div class="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+					<i data-lucide="scan-barcode" class="w-4 h-4 text-emerald-600"></i>
+					<span>Auditoría de Góndolas, Códigos UPC & Lotes FEFO (Bodega ➔ Exhibición)</span>
+				</div>
+				<span class="text-[11px] font-mono text-slate-500">Regla FEFO: First Expired, First Out</span>
+			</div>
+			<div class="overflow-x-auto">
+				<table class="w-full text-left border-collapse text-xs">
+					<thead>
+						<tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-500 uppercase">
+							<th class="p-3">Código UPC</th>
+							<th class="p-3">Producto / Presentación</th>
+							<th class="p-3">Lote & Vencimiento</th>
+							<th class="p-3 text-center">Stock Bodega</th>
+							<th class="p-3 text-center">Stock Góndola</th>
+							<th class="p-3 text-center">Capacidad</th>
+							<th class="p-3 text-right">Traslado Interno</th>
+						</tr>
+					</thead>
+					<tbody id="wfm-inventory-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+						<!-- Rellenado dinámicamente -->
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>

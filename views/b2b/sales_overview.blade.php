@@ -2763,22 +2763,21 @@
 									<input type="text" id="set-org-legal" value="Distribuidora Mayorista Prince del Perú S.A.C." class="w-full px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden" />
 								</div>
 								<div>
-									<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">RUC / Identificación Fiscal</label>
-									<input type="text" id="set-org-tax" value="20601234567" class="w-full px-3 py-1.5 text-xs font-mono bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden" />
+									<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">EIN / Identificación Fiscal USA</label>
+									<input type="text" id="set-org-tax" value="US-FL-954001" class="w-full px-3 py-1.5 text-xs font-mono bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden" />
 								</div>
 							</div>
 							<div class="grid grid-cols-2 gap-3">
 								<div>
 									<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Moneda Base Operativa</label>
 									<select id="set-org-currency" class="w-full px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden">
-										<option value="USD">Dólares Americanos (USD $)</option>
-										<option value="PEN">Soles Peruanos (PEN S/)</option>
+										<option value="USD" selected>US Dollars (USD $)</option>
 									</select>
 								</div>
 								<div>
-									<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Tasa Impositiva Estándar (IGV/IVA)</label>
+									<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Sales Tax (Florida)</label>
 									<div class="flex items-center gap-1.5">
-										<input type="number" id="set-tax-rate" value="18.0" step="0.5" class="w-full px-3 py-1.5 text-xs font-mono font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden" />
+										<input type="number" id="set-tax-rate" value="7.0" step="0.5" class="w-full px-3 py-1.5 text-xs font-mono font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden" />
 										<span class="text-xs text-slate-400 font-bold">%</span>
 									</div>
 								</div>
@@ -3100,12 +3099,12 @@
 
 						<div>
 							<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Ciudad</label>
-							<input type="text" id="cust-field-city" placeholder="Ej: Lima" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
+							<input type="text" id="cust-field-city" placeholder="Ej: Hallandale Beach" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
 						</div>
 
 						<div>
 							<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Estado / Región</label>
-							<input type="text" id="cust-field-state" placeholder="Ej: Lima" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
+							<input type="text" id="cust-field-state" placeholder="Ej: FL" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
 						</div>
 					</div>
 				</div>
@@ -3144,27 +3143,27 @@
 					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						<div>
 							<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Código de Tienda / Sucursal *</label>
-							<input type="text" id="est-field-code" required placeholder="Ej: EST-SI-01" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 uppercase font-mono">
+							<input type="text" id="est-field-code" required placeholder="Ej: EST-HB-01" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 uppercase font-mono">
 						</div>
 
 						<div>
 							<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Nombre de la Sucursal *</label>
-							<input type="text" id="est-field-name" required placeholder="Ej: Santa Isabel San Isidro" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
+							<input type="text" id="est-field-name" required placeholder="Ej: Hollywood Supercenter" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
 						</div>
 
 						<div class="sm:col-span-2">
 							<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Dirección de Entrega</label>
-							<input type="text" id="est-field-address" placeholder="Ej: Av. Conquistadores 450" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
+							<input type="text" id="est-field-address" placeholder="Ej: 3800 Hollywood Blvd" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
 						</div>
 
 						<div>
 							<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Ciudad</label>
-							<input type="text" id="est-field-city" placeholder="Ej: Lima" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
+							<input type="text" id="est-field-city" placeholder="Ej: Hollywood" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
 						</div>
 
 						<div>
 							<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Estado / Región</label>
-							<input type="text" id="est-field-state" placeholder="Ej: Lima" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
+							<input type="text" id="est-field-state" placeholder="Ej: FL" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
 						</div>
 
 						<div>
@@ -3174,12 +3173,12 @@
 
 						<div>
 							<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Teléfono Contacto</label>
-							<input type="text" id="est-field-phone" placeholder="Ej: +51 971 223 445" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
+							<input type="text" id="est-field-phone" placeholder="Ej: +1 (954) 555-1001" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
 						</div>
 
 						<div>
 							<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Correo Electrónico</label>
-							<input type="email" id="est-field-email" placeholder="Ej: psilva@santaisabel.com" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
+							<input type="email" id="est-field-email" placeholder="Ej: psilva@supercenter.com" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
 						</div>
 
 						<div>
@@ -3189,7 +3188,7 @@
 
 						<div class="sm:col-span-2">
 							<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Territorio / Zona</label>
-							<input type="text" id="est-field-territory" placeholder="Ej: Lima Sur - Troncal 1" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
+							<input type="text" id="est-field-territory" placeholder="Ej: Broward South" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
 						</div>
 					</div>
 				</div>
@@ -4282,9 +4281,9 @@
 							<span id="rep-dtl-status-badge" class="px-2 py-0.5 text-[11px] font-semibold rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">Activo</span>
 						</div>
 						<p class="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
-							<span id="rep-dtl-territory">Lima Centro Comercial</span> • 
+							<span id="rep-dtl-territory">Broward South Hub</span> • 
 							<span id="rep-dtl-email">c.mendoza@princedistributors.com</span> • 
-							<span id="rep-dtl-phone">+51 987 654 321</span>
+							<span id="rep-dtl-phone">+1 (954) 555-0103</span>
 						</p>
 					</div>
 				</div>
@@ -4502,22 +4501,22 @@
 				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 					<div>
 						<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Código Único <span class="text-rose-500">*</span></label>
-						<input type="text" id="ter-form-code" required placeholder="TER-LIM-NOR" class="w-full px-3 py-2 text-xs uppercase font-mono bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500">
+						<input type="text" id="ter-form-code" required placeholder="TER-FL-BRO-S" class="w-full px-3 py-2 text-xs uppercase font-mono bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500">
 					</div>
 					<div class="sm:col-span-2">
 						<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nombre del Territorio <span class="text-rose-500">*</span></label>
-						<input type="text" id="ter-form-name" required placeholder="Ej: Lima Norte Metropolitano" class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500">
+						<input type="text" id="ter-form-name" required placeholder="Ej: Broward South Retail" class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500">
 					</div>
 				</div>
 
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<div>
 						<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Ciudad / Región <span class="text-rose-500">*</span></label>
-						<input type="text" id="ter-form-city" required placeholder="Lima" class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500">
+						<input type="text" id="ter-form-city" required placeholder="Hallandale Beach" class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500">
 					</div>
 					<div>
 						<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Zona / Subzona</label>
-						<input type="text" id="ter-form-zone" placeholder="Los Olivos / Comas / Indep." class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500">
+						<input type="text" id="ter-form-zone" placeholder="Hallandale / Hollywood / Pines" class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500">
 					</div>
 				</div>
 
