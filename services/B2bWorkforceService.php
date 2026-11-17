@@ -11,15 +11,38 @@ use Exception;
  */
 class B2bWorkforceService extends BaseService
 {
+	private static bool $tablesChecked = false;
+
 	protected function getDatabaseService(): DatabaseService
 	{
 		return DatabaseService::GetInstance();
 	}
 
+	protected function getDb(): PDO
+	{
+		$db = $this->getDatabaseService()->GetDbConnectionRaw();
+		if (!self::$tablesChecked) {
+			try {
+				$check = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='wfm_schedules'")->fetchColumn();
+				if (!$check) {
+					require __DIR__ . '/../migrations/0340.php';
+				}
+			} catch (Exception $e) {
+				try {
+					require __DIR__ . '/../migrations/0340.php';
+				} catch (Exception $e2) {
+					// ignore
+				}
+			}
+			self::$tablesChecked = true;
+		}
+		return $db;
+	}
+
 	// 1. DASHBOARD KPIS & FILTROS GLOBALES
 	public function GetDashboardKPIs(array $filters = []): array
 	{
-		$db = $this->getDatabaseService()->GetDbConnectionRaw();
+		$db = $this->getDb();
 		$week = $filters['week'] ?? '2026-W47';
 
 		// Buscar programación de la semana
