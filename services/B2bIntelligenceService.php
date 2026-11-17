@@ -636,11 +636,25 @@ class B2bIntelligenceService
 				updated_at = datetime('now', 'localtime')
 			WHERE id = :id
 		");
-		return $stmt->execute([
+		$res = $stmt->execute([
 			':by' => trim($reviewedBy) ?: 'Dirección Comercial',
 			':notes' => trim($notes) ?: 'Revisado y accionado por el equipo comercial',
 			':id' => $alertId
 		]);
+
+		try {
+			$stmtAudit = $db->prepare("
+				INSERT INTO b2b_audit_log (organization_id, user_name, entity_type, entity_id, action, new_values, ip_address, created_at)
+				VALUES (1, :by, 'ALERT', :id, 'REVIEW', :val, '127.0.0.1', datetime('now', 'localtime'))
+			");
+			$stmtAudit->execute([
+				':by' => $reviewedBy,
+				':id' => $alertId,
+				':val' => json_encode(['notes' => $notes], JSON_UNESCAPED_UNICODE)
+			]);
+		} catch (\Throwable $e) {}
+
+		return $res;
 	}
 
 	public function GetExecutiveKPIs(array $filters = []): array

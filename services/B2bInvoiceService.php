@@ -227,6 +227,20 @@ class B2bInvoiceService extends BaseService
 			':user' => $user,
 			':comm' => $comment
 		]);
+
+		try {
+			$stmtAudit = $this->Db()->prepare("
+				INSERT INTO b2b_audit_log (organization_id, user_name, entity_type, entity_id, action, new_values, ip_address, created_at)
+				VALUES (1, :user, :ent, :eid, :act, :val, '127.0.0.1', datetime('now', 'localtime'))
+			");
+			$stmtAudit->execute([
+				':user' => $user,
+				':ent' => strtoupper($docType),
+				':eid' => $docId,
+				':act' => 'STATUS_CHANGE',
+				':val' => json_encode(['from_status' => $fromStatus, 'to_status' => $toStatus, 'comment' => $comment], JSON_UNESCAPED_UNICODE)
+			]);
+		} catch (\Throwable $e) {}
 	}
 
 	/**

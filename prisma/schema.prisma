@@ -1,0 +1,846 @@
+// Prisma Schema para Plataforma SaaS B2B — Prince Distributors
+// Arquitectura Centralizada PostgreSQL + Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// ENUMS DE NEGOCIO Y ESTADOS COMERCIALES
+// ==========================================
+
+enum CustomerType {
+  CADENA
+  SUPERMERCADO_INDEPENDIENTE
+  MINIMARKET
+  RESTAURANTE
+  INSTITUCIONAL
+  OTRO
+}
+
+enum QuoteStatus {
+  BORRADOR
+  PENDIENTE
+  APROBADA
+  RECHAZADA
+  CONVERTIDA
+  VENCIDA
+  CANCELADA
+}
+
+enum OrderStatus {
+  PENDIENTE
+  CONFIRMADO
+  EN_PREPARACION
+  DESPACHADO
+  ENTREGADO
+  CANCELADO
+}
+
+enum InvoiceStatus {
+  BORRADOR
+  EMITIDA
+  PARCIALMENTE_PAGADA
+  PAGADA
+  ANULADA
+}
+
+enum PaymentMethod {
+  TRANSFERENCIA
+  CHEQUE
+  EFECTIVO
+  TARJETA
+  DEPOSITO
+}
+
+enum CreditNoteReason {
+  DEVOLUCION
+  DIFERENCIA_PRECIO
+  DESCUENTO
+  AJUSTE_COMERCIAL
+}
+
+enum AlertSeverity {
+  CRITICA
+  ALTA
+  MEDIA
+  BAJA
+}
+
+enum AlertStatus {
+  ACTIVA
+  REVISADA
+  DESCARTADA
+}
+
+enum OpportunityStatus {
+  IDENTIFICADA
+  CONTACTADA
+  COTIZADA
+  CONVERTIDA
+  DESCARTADA
+}
+
+enum OpportunityType {
+  CHURN_RECOVERY
+  CROSS_SELLING
+  UPSELL
+  REACTIVACION
+}
+
+// ==========================================
+// 1. SISTEMA & MULTI-TENANCY
+// ==========================================
+
+model Organization {
+  id                Int       @id @default(autoincrement())
+  code              String    @unique @db.VarChar(50)
+  name              String    @db.VarChar(255)
+  legalName         String?   @map("legal_name") @db.VarChar(255)
+  taxId             String    @unique @map("tax_id") @db.VarChar(50)
+  email             String?   @db.VarChar(255)
+  phone             String?   @db.VarChar(50)
+  address           String?   @db.Text
+  city              String?   @default("Bogotá") @db.VarChar(100)
+  country           String?   @default("Colombia") @db.VarChar(100)
+  currency          String    @default("USD") @db.VarChar(10)
+  timezone          String    @default("America/Bogota") @db.VarChar(100)
+  creditPolicyDays  Int       @default(30) @map("credit_policy_days")
+  defaultTaxRate    Decimal   @default(18.00) @map("default_tax_rate") @db.Decimal(5, 2)
+  minOrderAmount    Decimal   @default(200.00) @map("min_order_amount") @db.Decimal(12, 2)
+  active            Boolean   @default(true)
+  settingsJson      Json?     @map("settings_json")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Relaciones
+  customers         Customer[]
+  establishments    CustomerEstablishment[]
+  contacts          CustomerContact[]
+  addresses         CustomerAddress[]
+  brands            Brand[]
+  categories        Category[]
+  products          Product[]
+  quotes            Quote[]
+  orders            Order[]
+  invoices          Invoice[]
+  creditNotes       CreditNote[]
+  salesReps         SalesRep[]
+  territories       Territory[]
+  salesQuotas       SalesQuota[]
+  commercialAlerts  CommercialAlert[]
+  opportunities     CommercialOpportunity[]
+  auditLogs         AuditLog[]
+  settings          B2bSetting[]
+
+  @@map("b2b_organizations")
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  username       String    @unique @db.VarChar(100)
+  name           String    @db.VarChar(255)
+  email          String    @unique @db.VarChar(255)
+  passwordHash   String    @map("password_hash") @db.VarChar(255)
+  role           String    @default("sales_rep") @db.VarChar(50)
+  active         Boolean   @default(true)
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  salesRep       SalesRep?
+  auditLogs      AuditLog[]
+
+  @@map("users")
+}
+
+model B2bSetting {
+  id              Int          @id @default(autoincrement())
+  organizationId  Int          @default(1) @map("organization_id")
+  settingKey      String       @map("setting_key") @db.VarChar(100)
+  settingValue    String       @map("setting_value") @db.Text
+  settingGroup    String       @default("general") @map("setting_group") @db.VarChar(50)
+  description     String?      @db.Text
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, settingKey])
+  @@index([organizationId, settingGroup])
+  @@map("b2b_settings")
+}
+
+model AuditLog {
+  id              Int          @id @default(autoincrement())
+  organizationId  Int          @default(1) @map("organization_id")
+  userId          Int?         @map("user_id")
+  userName        String       @default("Carlos Mendoza") @map("user_name") @db.VarChar(255)
+  entityType      String       @map("entity_type") @db.VarChar(50)
+  entityId        Int          @map("entity_id")
+  action          String       @db.VarChar(50)
+  oldValues       Json?        @map("old_values")
+  newValues       Json?        @map("new_values")
+  ipAddress       String?      @default("127.0.0.1") @map("ip_address") @db.VarChar(50)
+  createdAt       DateTime     @default(now()) @map("created_at")
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user            User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, entityType, entityId])
+  @@index([action, createdAt])
+  @@map("b2b_audit_log")
+}
+
+// ==========================================
+// 2. CLIENTES & ESTABLECIMIENTOS
+// ==========================================
+
+model Customer {
+  id              Int          @id @default(autoincrement())
+  organizationId  Int          @default(1) @map("organization_id")
+  taxId           String       @unique @map("tax_id") @db.VarChar(50)
+  name            String       @db.VarChar(255)
+  commercialName  String?      @map("commercial_name") @db.VarChar(255)
+  customerType    CustomerType @default(SUPERMERCADO_INDEPENDIENTE) @map("customer_type")
+  email           String?      @db.VarChar(255)
+  phone           String?      @db.VarChar(50)
+  address         String?      @db.Text
+  city            String?      @db.VarChar(100)
+  state           String?      @db.VarChar(100)
+  creditLimit     Decimal      @default(10000.00) @map("credit_limit") @db.Decimal(12, 2)
+  notes           String?      @db.Text
+  active          Boolean      @default(true)
+  isDemo          Boolean      @default(false) @map("is_demo")
+  createdAt       DateTime     @default(now()) @map("created_timestamp")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  establishments  CustomerEstablishment[]
+  contacts        CustomerContact[]
+  addresses       CustomerAddress[]
+  customerPrices  CustomerPrice[]
+  quotes          Quote[]
+  orders          Order[]
+  invoices        Invoice[]
+  creditNotes     CreditNote[]
+  opportunities   CommercialOpportunity[]
+
+  @@index([organizationId, active])
+  @@index([taxId])
+  @@map("customers")
+}
+
+model CustomerEstablishment {
+  id                     Int          @id @default(autoincrement())
+  organizationId         Int          @default(1) @map("organization_id")
+  customerId             Int          @map("customer_id")
+  code                   String       @db.VarChar(50)
+  name                   String       @db.VarChar(255)
+  address                String?      @db.Text
+  city                   String?      @db.VarChar(100)
+  state                  String?      @db.VarChar(100)
+  purchasingContactName  String?      @map("purchasing_contact_name") @db.VarChar(255)
+  purchasingContactPhone String?      @map("purchasing_contact_phone") @db.VarChar(50)
+  purchasingContactEmail String?      @map("purchasing_contact_email") @db.VarChar(255)
+  salesRepName           String?      @map("sales_rep_name") @db.VarChar(255)
+  territory              String?      @db.VarChar(100)
+  active                 Boolean      @default(true)
+  isDemo                 Boolean      @default(false) @map("is_demo")
+  createdAt              DateTime     @default(now()) @map("created_timestamp")
+  updatedAt              DateTime     @updatedAt @map("updated_timestamp")
+
+  organization           Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer               Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  contacts               CustomerContact[]
+  addresses              CustomerAddress[]
+  quotes                 Quote[]
+  orders                 Order[]
+  invoices               Invoice[]
+
+  @@unique([customerId, code])
+  @@index([organizationId, active])
+  @@index([customerId])
+  @@index([code])
+  @@map("customer_establishments")
+}
+
+model CustomerContact {
+  id              Int                   @id @default(autoincrement())
+  organizationId  Int                   @default(1) @map("organization_id")
+  customerId      Int                   @map("customer_id")
+  establishmentId Int?                  @map("establishment_id")
+  firstName       String                @map("first_name") @db.VarChar(150)
+  lastName        String?               @map("last_name") @db.VarChar(150)
+  jobTitle        String?               @map("job_title") @db.VarChar(150)
+  email           String?               @db.VarChar(255)
+  phone           String?               @db.VarChar(50)
+  isPrimary       Boolean               @default(false) @map("is_primary")
+  active          Boolean               @default(true)
+  createdAt       DateTime              @default(now()) @map("created_at")
+
+  organization    Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer        Customer              @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  establishment   CustomerEstablishment? @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
+
+  @@index([customerId, establishmentId])
+  @@map("b2b_customer_contacts")
+}
+
+model CustomerAddress {
+  id              Int                   @id @default(autoincrement())
+  organizationId  Int                   @default(1) @map("organization_id")
+  customerId      Int                   @map("customer_id")
+  establishmentId Int?                  @map("establishment_id")
+  addressType     String                @default("delivery") @map("address_type") @db.VarChar(50)
+  addressLine1    String                @map("address_line1") @db.VarChar(255)
+  addressLine2    String?               @map("address_line2") @db.VarChar(255)
+  city            String                @db.VarChar(100)
+  state           String                @db.VarChar(100)
+  postalCode      String?               @map("postal_code") @db.VarChar(20)
+  isDefault       Boolean               @default(false) @map("is_default")
+  active          Boolean               @default(true)
+  createdAt       DateTime              @default(now()) @map("created_at")
+
+  organization    Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer        Customer              @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  establishment   CustomerEstablishment? @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
+
+  @@index([customerId, establishmentId])
+  @@map("b2b_customer_addresses")
+}
+
+// ==========================================
+// 3. PRODUCTOS & PRECIOS B2B
+// ==========================================
+
+model Brand {
+  id              Int          @id @default(autoincrement())
+  organizationId  Int          @default(1) @map("organization_id")
+  name            String       @db.VarChar(150)
+  code            String?      @db.VarChar(50)
+  description     String?      @db.Text
+  active          Boolean      @default(true)
+  createdAt       DateTime     @default(now()) @map("created_at")
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, name])
+  @@map("b2b_brands")
+}
+
+model Category {
+  id              Int          @id @default(autoincrement())
+  organizationId  Int          @default(1) @map("organization_id")
+  name            String       @db.VarChar(150)
+  code            String?      @db.VarChar(50)
+  description     String?      @db.Text
+  active          Boolean      @default(true)
+  createdAt       DateTime     @default(now()) @map("created_at")
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, name])
+  @@map("b2b_categories")
+}
+
+model Product {
+  id                Int       @id @default(autoincrement())
+  organizationId    Int       @default(1) @map("organization_id")
+  sku               String    @unique @db.VarChar(100)
+  name              String    @db.VarChar(255)
+  description       String?   @db.Text
+  barcode           String?   @db.VarChar(100)
+  brand             String    @db.VarChar(150)
+  category          String    @db.VarChar(150)
+  unitName          String    @default("Unidad") @map("unit_name") @db.VarChar(50)
+  caseName          String    @default("Caja") @map("case_name") @db.VarChar(50)
+  conversionFactor  Int       @default(12) @map("conversion_factor")
+  basePriceUnit     Decimal   @map("base_price_unit") @db.Decimal(12, 2)
+  basePriceCase     Decimal   @map("base_price_case") @db.Decimal(12, 2)
+  currency          String    @default("USD") @db.VarChar(10)
+  active            Boolean   @default(true)
+  isDemo            Boolean   @default(false) @map("is_demo")
+  createdAt         DateTime  @default(now()) @map("created_timestamp")
+  updatedAt         DateTime  @updatedAt @map("updated_timestamp")
+
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  costs             ProductCost[]
+  costAdjustments   CostAdjustment[]
+  priceTiers        PriceTier[]
+  customerPrices    CustomerPrice[]
+  quoteItems        QuoteItem[]
+  orderItems        OrderItem[]
+  invoiceItems      InvoiceItem[]
+  creditNoteItems   CreditNoteItem[]
+  opportunities     CommercialOpportunity[]
+
+  @@index([organizationId, active])
+  @@index([brand])
+  @@index([category])
+  @@map("b2b_products")
+}
+
+model ProductCost {
+  id              Int       @id @default(autoincrement())
+  productId       Int       @map("product_id")
+  unitCost        Decimal   @map("unit_cost") @db.Decimal(12, 4)
+  effectiveFrom   DateTime  @map("effective_from") @db.Date
+  effectiveTo     DateTime? @map("effective_to") @db.Date
+  active          Boolean   @default(true)
+  notes           String?   @db.Text
+  createdAt       DateTime  @default(now()) @map("created_timestamp")
+
+  product         Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, effectiveFrom])
+  @@map("b2b_product_costs")
+}
+
+model CostAdjustment {
+  id              Int       @id @default(autoincrement())
+  productId       Int       @map("product_id")
+  oldUnitCost     Decimal?  @map("old_unit_cost") @db.Decimal(12, 4)
+  newUnitCost     Decimal   @map("new_unit_cost") @db.Decimal(12, 4)
+  reason          String    @db.Text
+  authorizedBy    String    @map("authorized_by") @db.VarChar(255)
+  effectiveDate   DateTime  @map("effective_date") @db.Date
+  createdAt       DateTime  @default(now()) @map("created_timestamp")
+
+  product         Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("b2b_cost_adjustments")
+}
+
+model PriceTier {
+  id              Int       @id @default(autoincrement())
+  productId       Int       @map("product_id")
+  minCases        Int       @map("min_cases")
+  discountPercent Decimal   @map("discount_percent") @db.Decimal(5, 2)
+  notes           String?   @db.Text
+  active          Boolean   @default(true)
+
+  product         Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("b2b_price_tiers")
+}
+
+model CustomerPrice {
+  id              Int       @id @default(autoincrement())
+  productId       Int       @map("product_id")
+  customerId      Int       @map("customer_id")
+  pricePerCase    Decimal   @map("price_per_case") @db.Decimal(12, 2)
+  pricePerUnit    Decimal?  @map("price_per_unit") @db.Decimal(12, 2)
+  validFrom       DateTime? @map("valid_from") @db.Date
+  validTo         DateTime? @map("valid_to") @db.Date
+  active          Boolean   @default(true)
+  notes           String?   @db.Text
+
+  product         Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customer        Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, customerId])
+  @@map("b2b_customer_prices")
+}
+
+// ==========================================
+// 4. COTIZACIONES & PEDIDOS
+// ==========================================
+
+model Quote {
+  id                Int                    @id @default(autoincrement())
+  organizationId    Int                    @default(1) @map("organization_id")
+  quoteNumber       String                 @unique @map("quote_number") @db.VarChar(50)
+  customerId        Int                    @map("customer_id")
+  establishmentId   Int?                   @map("establishment_id")
+  salesRep          String                 @map("sales_rep") @db.VarChar(255)
+  status            QuoteStatus            @default(BORRADOR)
+  validUntil        DateTime               @map("valid_until") @db.Date
+  subtotal          Decimal                @db.Decimal(12, 2)
+  taxRate           Decimal                @default(18.00) @map("tax_rate") @db.Decimal(5, 2)
+  taxAmount         Decimal                @map("tax_amount") @db.Decimal(12, 2)
+  discountAmount    Decimal                @default(0.00) @map("discount_amount") @db.Decimal(12, 2)
+  total             Decimal                @db.Decimal(12, 2)
+  notes             String?                @db.Text
+  convertedOrderId  Int?                   @map("converted_order_id")
+  isDemo            Boolean                @default(false) @map("is_demo")
+  createdAt         DateTime               @default(now()) @map("created_timestamp")
+  updatedAt         DateTime               @updatedAt @map("updated_timestamp")
+
+  organization      Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer          Customer               @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  establishment     CustomerEstablishment? @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
+
+  items             QuoteItem[]
+  orders            Order[]
+
+  @@index([organizationId, status])
+  @@index([customerId])
+  @@map("b2b_quotes")
+}
+
+model QuoteItem {
+  id                Int       @id @default(autoincrement())
+  quoteId           Int       @map("quote_id")
+  productId         Int       @map("product_id")
+  commercialUnit    String    @default("caja") @map("commercial_unit") @db.VarChar(20)
+  quantity          Int
+  conversionFactor  Int       @default(1) @map("conversion_factor")
+  totalUnits        Int       @map("total_units")
+  basePrice         Decimal   @map("base_price") @db.Decimal(12, 2)
+  unitPrice         Decimal   @map("unit_price") @db.Decimal(12, 2)
+  discountPercent   Decimal   @default(0.00) @map("discount_percent") @db.Decimal(5, 2)
+  discountAmount    Decimal   @default(0.00) @map("discount_amount") @db.Decimal(12, 2)
+  subtotal          Decimal   @db.Decimal(12, 2)
+
+  quote             Quote     @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  product           Product   @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([quoteId])
+  @@map("b2b_quote_items")
+}
+
+model Order {
+  id                Int                    @id @default(autoincrement())
+  organizationId    Int                    @default(1) @map("organization_id")
+  orderNumber       String                 @unique @map("order_number") @db.VarChar(50)
+  quoteId           Int?                   @map("quote_id")
+  customerId        Int                    @map("customer_id")
+  establishmentId   Int?                   @map("establishment_id")
+  salesRep          String                 @map("sales_rep") @db.VarChar(255)
+  status            OrderStatus            @default(CONFIRMADO)
+  subtotal          Decimal                @db.Decimal(12, 2)
+  taxRate           Decimal                @default(18.00) @map("tax_rate") @db.Decimal(5, 2)
+  taxAmount         Decimal                @map("tax_amount") @db.Decimal(12, 2)
+  discountAmount    Decimal                @default(0.00) @map("discount_amount") @db.Decimal(12, 2)
+  total             Decimal                @db.Decimal(12, 2)
+  notes             String?                @db.Text
+  isDemo            Boolean                @default(false) @map("is_demo")
+  createdAt         DateTime               @default(now()) @map("created_timestamp")
+  updatedAt         DateTime               @updatedAt @map("updated_timestamp")
+
+  organization      Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  quote             Quote?                 @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+  customer          Customer               @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  establishment     CustomerEstablishment? @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
+
+  items             OrderItem[]
+  invoices          Invoice[]
+
+  @@index([organizationId, status])
+  @@index([customerId])
+  @@index([createdTimestamp])
+  @@map("b2b_orders")
+}
+
+model OrderItem {
+  id                Int       @id @default(autoincrement())
+  orderId           Int       @map("order_id")
+  productId         Int       @map("product_id")
+  commercialUnit    String    @default("caja") @map("commercial_unit") @db.VarChar(20)
+  quantity          Int
+  conversionFactor  Int       @default(1) @map("conversion_factor")
+  totalUnits        Int       @map("total_units")
+  basePrice         Decimal   @map("base_price") @db.Decimal(12, 2)
+  unitPrice         Decimal   @map("unit_price") @db.Decimal(12, 2)
+  discountPercent   Decimal   @default(0.00) @map("discount_percent") @db.Decimal(5, 2)
+  discountAmount    Decimal   @default(0.00) @map("discount_amount") @db.Decimal(12, 2)
+  subtotal          Decimal   @db.Decimal(12, 2)
+
+  order             Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product           Product   @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@map("b2b_order_items")
+}
+
+// ==========================================
+// 5. FACTURACIÓN & NOTAS DE CRÉDITO
+// ==========================================
+
+model Invoice {
+  id                Int                    @id @default(autoincrement())
+  organizationId    Int                    @default(1) @map("organization_id")
+  invoiceNumber     String                 @unique @map("invoice_number") @db.VarChar(50)
+  orderId           Int?                   @map("order_id")
+  customerId        Int                    @map("customer_id")
+  establishmentId   Int?                   @map("establishment_id")
+  salesRep          String                 @map("sales_rep") @db.VarChar(255)
+  issueDate         DateTime               @map("issue_date") @db.Date
+  dueDate           DateTime               @map("due_date") @db.Date
+  paymentTerms      String                 @default("Crédito 30 días") @map("payment_terms") @db.VarChar(100)
+  status            InvoiceStatus          @default(EMITIDA)
+  currency          String                 @default("USD") @db.VarChar(10)
+  subtotal          Decimal                @db.Decimal(12, 2)
+  taxRate           Decimal                @default(18.00) @map("tax_rate") @db.Decimal(5, 2)
+  taxAmount         Decimal                @map("tax_amount") @db.Decimal(12, 2)
+  discountAmount    Decimal                @default(0.00) @map("discount_amount") @db.Decimal(12, 2)
+  total             Decimal                @db.Decimal(12, 2)
+  paidAmount        Decimal                @default(0.00) @map("paid_amount") @db.Decimal(12, 2)
+  creditAmount      Decimal                @default(0.00) @map("credit_amount") @db.Decimal(12, 2)
+  balance           Decimal                @db.Decimal(12, 2)
+  notes             String?                @db.Text
+  createdBy         String                 @default("Carlos Mendoza") @map("created_by") @db.VarChar(255)
+  isDemo            Boolean                @default(false) @map("is_demo")
+  createdAt         DateTime               @default(now()) @map("created_timestamp")
+  updatedAt         DateTime               @updatedAt @map("updated_timestamp")
+
+  organization      Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  order             Order?                 @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  customer          Customer               @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  establishment     CustomerEstablishment? @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
+
+  items             InvoiceItem[]
+  payments          InvoicePayment[]
+  creditNotes       CreditNote[]
+
+  @@index([organizationId, status, issueDate])
+  @@index([customerId])
+  @@index([dueDate])
+  @@map("b2b_invoices")
+}
+
+model InvoiceItem {
+  id                Int       @id @default(autoincrement())
+  invoiceId         Int       @map("invoice_id")
+  productId         Int       @map("product_id")
+  commercialUnit    String    @default("caja") @map("commercial_unit") @db.VarChar(20)
+  quantity          Int
+  conversionFactor  Int       @default(1) @map("conversion_factor")
+  totalUnits        Int       @map("total_units")
+  basePrice         Decimal   @map("base_price") @db.Decimal(12, 2)
+  unitPrice         Decimal   @map("unit_price") @db.Decimal(12, 2)
+  discountPercent   Decimal   @default(0.00) @map("discount_percent") @db.Decimal(5, 2)
+  discountAmount    Decimal   @default(0.00) @map("discount_amount") @db.Decimal(12, 2)
+  subtotal          Decimal   @db.Decimal(12, 2)
+  creditedQuantity  Int       @default(0) @map("credited_quantity")
+  unitCost          Decimal?  @map("unit_cost") @db.Decimal(12, 4)
+  costPrice         Decimal?  @map("cost_price") @db.Decimal(12, 4)
+  totalCost         Decimal?  @map("total_cost") @db.Decimal(12, 2)
+
+  invoice           Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  product           Product   @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([invoiceId])
+  @@map("b2b_invoice_items")
+}
+
+model InvoicePayment {
+  id                Int           @id @default(autoincrement())
+  paymentNumber     String        @unique @map("payment_number") @db.VarChar(50)
+  invoiceId         Int           @map("invoice_id")
+  paymentDate       DateTime      @map("payment_date") @db.Date
+  paymentMethod     PaymentMethod @default(TRANSFERENCIA) @map("payment_method")
+  amount            Decimal       @db.Decimal(12, 2)
+  reference         String?       @db.VarChar(100)
+  notes             String?       @db.Text
+  receivedBy        String        @default("Carlos Mendoza") @map("received_by") @db.VarChar(255)
+  createdAt         DateTime      @default(now()) @map("created_timestamp")
+
+  invoice           Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("b2b_invoice_payments")
+}
+
+model CreditNote {
+  id                Int               @id @default(autoincrement())
+  organizationId    Int               @default(1) @map("organization_id")
+  creditNoteNumber  String            @unique @map("credit_note_number") @db.VarChar(50)
+  invoiceId         Int               @map("invoice_id")
+  customerId        Int               @map("customer_id")
+  reason            CreditNoteReason  @default(DEVOLUCION)
+  status            String            @default("Emitida") @db.VarChar(50)
+  currency          String            @default("USD") @db.VarChar(10)
+  subtotal          Decimal           @db.Decimal(12, 2)
+  taxRate           Decimal           @default(18.00) @map("tax_rate") @db.Decimal(5, 2)
+  taxAmount         Decimal           @map("tax_amount") @db.Decimal(12, 2)
+  total             Decimal           @db.Decimal(12, 2)
+  notes             String?           @db.Text
+  createdBy         String            @default("Carlos Mendoza") @map("created_by") @db.VarChar(255)
+  isDemo            Boolean           @default(false) @map("is_demo")
+  createdAt         DateTime          @default(now()) @map("created_timestamp")
+  updatedAt         DateTime          @updatedAt @map("updated_timestamp")
+
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invoice           Invoice           @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  customer          Customer          @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  items             CreditNoteItem[]
+
+  @@index([organizationId, status])
+  @@index([invoiceId])
+  @@index([customerId])
+  @@map("b2b_credit_notes")
+}
+
+model CreditNoteItem {
+  id                Int        @id @default(autoincrement())
+  creditNoteId      Int        @map("credit_note_id")
+  productId         Int        @map("product_id")
+  commercialUnit    String     @default("caja") @map("commercial_unit") @db.VarChar(20)
+  quantity          Int
+  unitPrice         Decimal    @map("unit_price") @db.Decimal(12, 2)
+  subtotal          Decimal    @db.Decimal(12, 2)
+  unitCost          Decimal?   @map("unit_cost") @db.Decimal(12, 4)
+  costPrice         Decimal?   @map("cost_price") @db.Decimal(12, 4)
+  totalCost         Decimal?   @map("total_cost") @db.Decimal(12, 2)
+
+  creditNote        CreditNote @relation(fields: [creditNoteId], references: [id], onDelete: Cascade)
+  product           Product    @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([creditNoteId])
+  @@map("b2b_credit_note_items")
+}
+
+// ==========================================
+// 6. GESTIÓN COMERCIAL: VENDEDORES & TERRITORIOS
+// ==========================================
+
+model Territory {
+  id              Int          @id @default(autoincrement())
+  organizationId  Int          @default(1) @map("organization_id")
+  code            String       @unique @db.VarChar(50)
+  name            String       @db.VarChar(255)
+  description     String?      @db.Text
+  city            String       @db.VarChar(100)
+  zone            String       @db.VarChar(100)
+  active          Boolean      @default(true)
+  isDemo          Boolean      @default(false) @map("is_demo")
+  createdAt       DateTime     @default(now()) @map("created_timestamp")
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  salesReps       SalesRep[]
+
+  @@index([organizationId, active])
+  @@map("b2b_territories")
+}
+
+model SalesRep {
+  id              Int          @id @default(autoincrement())
+  organizationId  Int          @default(1) @map("organization_id")
+  userId          Int?         @unique @map("user_id")
+  code            String       @unique @db.VarChar(50)
+  name            String       @db.VarChar(255)
+  email           String       @unique @db.VarChar(255)
+  phone           String       @db.VarChar(50)
+  territoryId     Int?         @map("territory_id")
+  hireDate        DateTime     @map("hire_date") @db.Date
+  monthlyQuota    Decimal      @map("monthly_quota") @db.Decimal(12, 2)
+  active          Boolean      @default(true)
+  isDemo          Boolean      @default(false) @map("is_demo")
+  createdAt       DateTime     @default(now()) @map("created_timestamp")
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user            User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  territory       Territory?   @relation(fields: [territoryId], references: [id], onDelete: SetNull)
+
+  quotas          SalesQuota[]
+  opportunities   CommercialOpportunity[]
+
+  @@index([organizationId, active])
+  @@index([territoryId])
+  @@map("b2b_sales_reps")
+}
+
+model SalesQuota {
+  id              Int          @id @default(autoincrement())
+  organizationId  Int          @default(1) @map("organization_id")
+  salesRepId      Int          @map("sales_rep_id")
+  periodYear      Int          @map("period_year")
+  periodMonth     Int          @map("period_month")
+  targetAmount    Decimal      @map("target_amount") @db.Decimal(12, 2)
+  achievedAmount  Decimal      @default(0.00) @map("achieved_amount") @db.Decimal(12, 2)
+  commissionRate  Decimal      @default(2.50) @map("commission_rate") @db.Decimal(5, 2)
+  active          Boolean      @default(true)
+  createdAt       DateTime     @default(now()) @map("created_at")
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  salesRep        SalesRep     @relation(fields: [salesRepId], references: [id], onDelete: Cascade)
+
+  @@unique([salesRepId, periodYear, periodMonth])
+  @@index([organizationId, periodYear, periodMonth])
+  @@map("b2b_sales_quotas")
+}
+
+// ==========================================
+// 7. INTELIGENCIA COMERCIAL B2B
+// ==========================================
+
+model IntelligenceThreshold {
+  id             Int       @id @default(autoincrement())
+  thresholdKey   String    @unique @map("threshold_key") @db.VarChar(100)
+  thresholdValue Decimal   @map("threshold_value") @db.Decimal(10, 2)
+  label          String    @db.VarChar(255)
+  description    String?   @db.Text
+  unit           String?   @default("") @db.VarChar(20)
+  updatedAt      DateTime  @default(now()) @map("updated_at")
+
+  @@map("b2b_intelligence_thresholds")
+}
+
+model CommercialAlert {
+  id              Int           @id @default(autoincrement())
+  organizationId  Int           @default(1) @map("organization_id")
+  alertKey        String        @unique @map("alert_key") @db.VarChar(255)
+  alertType       String        @map("alert_type") @db.VarChar(100)
+  severity        AlertSeverity @default(MEDIA)
+  title           String        @db.VarChar(255)
+  description     String        @db.Text
+  evidenceData    Json?         @map("evidence_data")
+  suggestedAction String        @map("suggested_action") @db.Text
+  entityType      String        @map("entity_type") @db.VarChar(50)
+  entityId        Int?          @map("entity_id")
+  entityName      String?       @map("entity_name") @db.VarChar(255)
+  salesRepName    String?       @map("sales_rep_name") @db.VarChar(255)
+  territoryName   String?       @map("territory_name") @db.VarChar(255)
+  status          AlertStatus   @default(ACTIVA)
+  thresholdUsed   String?       @map("threshold_used") @db.VarChar(100)
+  reviewedAt      DateTime?     @map("reviewed_at")
+  reviewedBy      String?       @map("reviewed_by") @db.VarChar(255)
+  reviewNotes     String?       @map("review_notes") @db.Text
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, status])
+  @@index([severity])
+  @@index([alertType])
+  @@index([entityType, entityId])
+  @@map("b2b_commercial_alerts")
+}
+
+model CommercialOpportunity {
+  id              Int               @id @default(autoincrement())
+  organizationId  Int               @default(1) @map("organization_id")
+  customerId      Int               @map("customer_id")
+  productId       Int               @map("product_id")
+  opportunityType OpportunityType   @default(CROSS_SELLING) @map("opportunity_type")
+  title           String            @db.VarChar(255)
+  description     String?           @db.Text
+  potentialValue  Decimal           @default(0.00) @map("potential_value") @db.Decimal(12, 2)
+  confidenceScore Decimal           @default(0.00) @map("confidence_score") @db.Decimal(5, 2)
+  status          OpportunityStatus @default(IDENTIFICADA)
+  actionPlan      String?           @map("action_plan") @db.Text
+  salesRepId      Int?              @map("sales_rep_id")
+  notes           String?           @db.Text
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  organization    Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer        Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  product         Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  salesRep        SalesRep?         @relation(fields: [salesRepId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, status])
+  @@index([customerId])
+  @@index([productId])
+  @@map("b2b_commercial_opportunities")
+}

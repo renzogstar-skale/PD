@@ -552,6 +552,20 @@ class B2bCustomerService extends BaseService
 		$stmtEst->execute([':id' => $id]);
 		$customer['establishments'] = $stmtEst->fetchAll(PDO::FETCH_ASSOC);
 
+		// Obtener contactos asociados (Paso 13)
+		try {
+			$stmtCont = $db->prepare("SELECT * FROM b2b_customer_contacts WHERE customer_id = :id ORDER BY is_primary DESC, id ASC");
+			$stmtCont->execute([':id' => $id]);
+			$customer['contacts'] = $stmtCont->fetchAll(PDO::FETCH_ASSOC);
+		} catch (\Throwable $e) { $customer['contacts'] = []; }
+
+		// Obtener direcciones asociadas (Paso 13)
+		try {
+			$stmtAddr = $db->prepare("SELECT * FROM b2b_customer_addresses WHERE customer_id = :id ORDER BY is_default DESC, id ASC");
+			$stmtAddr->execute([':id' => $id]);
+			$customer['addresses'] = $stmtAddr->fetchAll(PDO::FETCH_ASSOC);
+		} catch (\Throwable $e) { $customer['addresses'] = []; }
+
 		return $customer;
 	}
 
@@ -614,6 +628,18 @@ class B2bCustomerService extends BaseService
 		]);
 
 		$id = (int)$db->lastInsertId();
+
+		try {
+			$stmtAudit = $db->prepare("
+				INSERT INTO b2b_audit_log (organization_id, user_name, entity_type, entity_id, action, new_values, ip_address, created_at)
+				VALUES (1, 'Carlos Mendoza', 'CUSTOMER', :eid, 'CREATE', :val, '127.0.0.1', datetime('now', 'localtime'))
+			");
+			$stmtAudit->execute([
+				':eid' => $id,
+				':val' => json_encode(['name' => $name, 'tax_id' => $taxId, 'customer_type' => $type], JSON_UNESCAPED_UNICODE)
+			]);
+		} catch (\Throwable $e) {}
+
 		return $this->GetCustomer($id);
 	}
 
@@ -685,6 +711,17 @@ class B2bCustomerService extends BaseService
 			':city' => $city,
 			':state' => $state
 		]);
+
+		try {
+			$stmtAudit = $db->prepare("
+				INSERT INTO b2b_audit_log (organization_id, user_name, entity_type, entity_id, action, new_values, ip_address, created_at)
+				VALUES (1, 'Carlos Mendoza', 'CUSTOMER', :eid, 'UPDATE', :val, '127.0.0.1', datetime('now', 'localtime'))
+			");
+			$stmtAudit->execute([
+				':eid' => $id,
+				':val' => json_encode(['name' => $name, 'tax_id' => $taxId, 'customer_type' => $type], JSON_UNESCAPED_UNICODE)
+			]);
+		} catch (\Throwable $e) {}
 
 		return $this->GetCustomer($id);
 	}

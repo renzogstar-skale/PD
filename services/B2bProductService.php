@@ -751,6 +751,18 @@ class B2bProductService extends BaseService
 		]);
 
 		$id = (int)$db->lastInsertId();
+
+		try {
+			$stmtAudit = $db->prepare("
+				INSERT INTO b2b_audit_log (organization_id, user_name, entity_type, entity_id, action, new_values, ip_address, created_at)
+				VALUES (1, 'Carlos Mendoza', 'PRODUCT', :eid, 'CREATE', :val, '127.0.0.1', datetime('now', 'localtime'))
+			");
+			$stmtAudit->execute([
+				':eid' => $id,
+				':val' => json_encode(['sku' => $sku, 'name' => $name, 'brand' => $brand, 'category' => $category, 'base_price_case' => $priceCase], JSON_UNESCAPED_UNICODE)
+			]);
+		} catch (\Throwable $e) {}
+
 		return $this->GetProduct($id);
 	}
 

@@ -1058,6 +1058,19 @@ class B2bProfitabilityService extends BaseService
 			':edate' => $effectiveDate
 		]);
 
+		try {
+			$stmtAuditLog = $db->prepare("
+				INSERT INTO b2b_audit_log (organization_id, user_name, entity_type, entity_id, action, old_values, new_values, ip_address, created_at)
+				VALUES (1, :user, 'COST_ADJUSTMENT', :eid, 'ADJUST_COST', :old, :new, '127.0.0.1', datetime('now', 'localtime'))
+			");
+			$stmtAuditLog->execute([
+				':user' => $authorizedBy,
+				':eid' => $productId,
+				':old' => json_encode(['unit_cost' => $oldUnitCost], JSON_UNESCAPED_UNICODE),
+				':new' => json_encode(['unit_cost' => $newUnitCost, 'reason' => $reason, 'effective_date' => $effectiveDate], JSON_UNESCAPED_UNICODE)
+			]);
+		} catch (\Throwable $e) {}
+
 		return [
 			'success' => true,
 			'message' => 'Ajuste de costo comercial registrado exitosamente en auditoría. Los márgenes históricos de facturas pasadas se mantienen inalterados.',
