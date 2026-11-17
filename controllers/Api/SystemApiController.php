@@ -63,6 +63,29 @@ class SystemApiController extends BaseApiController
 		return $this->ApiResponse($response, ApplicationService::GetInstance()->GetSystemInfo());
 	}
 
+	public function GetHealth(Request $request, Response $response, array $args): Response
+	{
+		try
+		{
+			$db = DatabaseService::GetInstance()->GetDbConnectionRaw();
+			$db->query("SELECT 1")->fetchColumn();
+			$dbStatus = 'connected';
+		}
+		catch (\Throwable $e)
+		{
+			return $this->GenericErrorResponse($response, 'Database error: ' . $e->getMessage(), 503);
+		}
+
+		return $this->ApiResponse($response, [
+			'status' => 'healthy',
+			'database' => $dbStatus,
+			'platform' => 'Prince Distributors — Wholesale B2B Suite',
+			'version' => '1.0.0',
+			'environment' => defined('GROCY_MODE') ? GROCY_MODE : 'production',
+			'timestamp' => date('c')
+		]);
+	}
+
 	public function GetSystemTime(Request $request, Response $response, array $args)
 	{
 		try

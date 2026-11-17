@@ -85,6 +85,7 @@ $app->group('', function (RouteCollectorProxy $group)
 {
 	// System routes (Redirige la raíz directamente a la Plataforma B2B Mayorista)
 	$group->get('/', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('root');
+	$group->get('/health', [SystemController::class, 'HealthCheck'])->setName('site.health');
 	$group->get('/app', [SystemController::class, 'AppEntry']);
 	$group->get('/about', [SystemController::class, 'About']);
 
@@ -330,6 +331,7 @@ $app->group('/api', function (RouteCollectorProxy $group)
 	$group->post('/subscription/requests/{id:[0-9]+}/decide', [SubscriptionApiController::class, 'DecideRequest']);
 
 	$group->get('/system/info', [SystemApiController::class, 'GetSystemInfo']);
+	$group->get('/system/health', [SystemApiController::class, 'GetHealth']);
 	$group->get('/system/time', [SystemApiController::class, 'GetSystemTime']);
 	$group->get('/system/db-changed-time', [SystemApiController::class, 'GetDbChangedTime']);
 	$group->get('/system/config', [SystemApiController::class, 'GetConfig']);

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: prince-distributors-app
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:80"
+    environment:
+      - GROCY_MODE=production
+      - GROCY_DEFAULT_LOCALE=es
+      - GROCY_TIMEZONE=America/Bogota
+      - GROCY_CURRENCY=USD
+    volumes:
+      - b2b_data:/var/www/html/data
+
+volumes:
+  b2b_data:
+    driver: local

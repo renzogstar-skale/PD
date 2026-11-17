@@ -183,4 +183,34 @@ class SystemController extends BaseController
 
 		return '/about';
 	}
+
+	public function HealthCheck(Request $request, Response $response, array $args): Response
+	{
+		try
+		{
+			$db = \Grocy\Services\DatabaseService::GetInstance()->GetDbConnectionRaw();
+			$db->query("SELECT 1")->fetchColumn();
+			$status = 'healthy';
+			$dbStatus = 'connected';
+			$code = 200;
+		}
+		catch (\Throwable $e)
+		{
+			$status = 'unhealthy';
+			$dbStatus = 'disconnected: ' . $e->getMessage();
+			$code = 503;
+		}
+
+		$payload = json_encode([
+			'status' => $status,
+			'database' => $dbStatus,
+			'platform' => 'Prince Distributors — Wholesale B2B Suite',
+			'version' => '1.0.0',
+			'environment' => defined('GROCY_MODE') ? GROCY_MODE : 'production',
+			'timestamp' => date('c')
+		], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+		$response->getBody()->write($payload);
+		return $response->withHeader('Content-Type', 'application/json')->withStatus($code);
+	}
 }
