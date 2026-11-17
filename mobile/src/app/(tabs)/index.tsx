@@ -1,85 +1,285 @@
-import React from 'react';
-import { Alert, Text, View } from 'react-native';
-import { api, ScheduleResp, TeamPerson } from '@/lib/api';
-import { clockLocation } from '@/lib/device';
-import { useSession } from '@/lib/session';
-import { Button, C, Card, dayLabel, ErrorBox, hhmm, Loading, Muted, Screen, Section, Tag, Title, useLoad } from '@/components/ui';
+/**
+ * Prince Distributors B2B — Tab 1: Inicio (Executive Commercial Dashboard)
+ */
 
-const LABEL: Record<string, string> = {
-  off: 'Sin turno ahora', upcoming: 'Su turno empieza pronto', due: 'Es hora de marcar entrada', late: 'Turno iniciado sin marcar entrada',
-  on_shift: 'En turno', overtime: 'Turno terminado: falta marcar salida', done: 'Turno de hoy completado',
-};
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTheme } from '../../lib/theme';
+import { ApiClient } from '../../lib/api';
+import { Card, Button, Badge, StatCard, Typography } from '../../components/ui';
+import { SalesOverviewKPIs, CommercialAlert } from '../../types';
 
-export default function Home() {
-  const { me, error: meErr, refresh } = useSession();
-  const sched = useLoad(() => api.get<ScheduleResp>('/m/schedule'), [me?.user_id]);
-  const team = useLoad(async () => (me?.can_team ? api.get<{ people: TeamPerson[]; coverage: { gaps: unknown[] } }>('/m/team' + (me.employee ? '?branch_id=' + me.employee.branch_id : '')) : null), [me?.user_id]);
+export default function HomeScreen() {
+  const { colors, t, settings } = useTheme();
+  const router = useRouter();
 
-  const clock = async (kind: 'in' | 'out') => {
+  const [kpis, setKpis] = useState<SalesOverviewKPIs | null>(null);
+  const [alerts, setAlerts] = useState<CommercialAlert[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadData = useCallback(async () => {
     try {
-      const geo = await clockLocation();
-      const r = await api.post<{ late_minutes?: number; hours?: number; geo?: { status: string; distance_m: number } }>('/schedule/clock-' + kind, { source: 'mobile', geo });
-      const g = r.geo ? (r.geo.status === 'inside' ? ' · en la sucursal' : r.geo.status === 'outside' ? ` · fuera del radio (${Math.round(r.geo.distance_m)} m)` : '') : '';
-      Alert.alert(kind === 'in' ? 'Entrada registrada' : 'Salida registrada', (kind === 'in' ? (r.late_minutes ? `${r.late_minutes} min tarde` : 'A tiempo') : `${r.hours ?? 0} h trabajadas`) + g);
-      sched.reload();
-    } catch (e) {
-      Alert.alert('No se registró', e instanceof Error ? e.message : 'Error');
+      const [overviewData, alertsData] = await Promise.all([
+        ApiClient.getSalesOverview(),
+        ApiClient.getCommercialAlerts(),
+      ]);
+      setKpis(overviewData);
+      setAlerts(alertsData);
+    } catch {
+      // Handled inside ApiClient with fallbacks
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
-  };
-  const confirm = async (id: number) => {
-    try {
-      await api.post('/m/shifts/' + id + '/confirm');
-      sched.reload();
-    } catch (e) {
-      Alert.alert('No se confirmó', e instanceof Error ? e.message : 'Error');
-    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    loadData();
   };
 
-  if (meErr) return <Screen><ErrorBox text={meErr} onRetry={refresh} /></Screen>;
-  if (!me) return <Loading />;
-  const st = sched.data?.state;
-  const present = team.data?.people.filter((p) => p.status === 'present' || p.clock_in).length ?? 0;
-  const absent = team.data?.people.filter((p) => p.status === 'absent').length ?? 0;
+  const roleLabels: Record<string, string> = {
+    sales_rep: 'Vendedor',
+    supervisor: 'Supervisor',
+    admin: 'Administrador',
+  };
 
   return (
-    <Screen refreshing={sched.loading} onRefresh={() => { sched.reload(); team.reload(); }}>
-      <Title>Hola, {me.name.split(' ')[0]}</Title>
-      <Muted>{me.role_label}{me.employee?.position ? ' · ' + me.employee.position : ''}</Muted>
-      <View style={{ height: 12 }} />
-      {sched.error && <ErrorBox text={sched.error} onRetry={sched.reload} />}
-      {sched.data && !sched.data.linked && me.role === 'employee' && (
-        <Card><Text style={{ color: C.text }}>Su usuario aún no está vinculado a una ficha de empleado. Pida a su gerente que lo vincule en Horarios.</Text></Card>
-      )}
-      {st && (
-        <Card>
-          <Text style={{ fontWeight: '700', fontSize: 16, color: st.state === 'late' ? C.danger : C.text }}>{LABEL[st.state]}</Text>
-          {st.current && <Text style={{ fontSize: 28, fontWeight: '700', marginTop: 6, color: C.text }}>{hhmm(st.current.start_time)} – {hhmm(st.current.end_time)}</Text>}
-          {st.open_attendance && <Muted>Entrada marcada a las {String(st.open_attendance.clock_in).slice(11, 16)}</Muted>}
-          {!st.current && st.next && (
-            <View style={{ marginTop: 6 }}>
-              <Muted>Próximo turno: {dayLabel(st.next.shift_date)} {hhmm(st.next.start_time)}–{hhmm(st.next.end_time)}</Muted>
-              {st.next.confirmed_at ? <Tag label="Confirmado" tone="ok" /> : <Button small label="Confirmar turno" onPress={() => confirm(st.next!.id)} />}
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      {/* Top App Header */}
+      <View
+        style={{
+          paddingHorizontal: 20,
+          paddingTop: 16,
+          paddingBottom: 12,
+          backgroundColor: colors.card,
+          borderBottomWidth: 1,
+          borderBottomColor: colors.border,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <View>
+          <Text style={{ fontSize: 12, fontWeight: '700', color: colors.primary, letterSpacing: 1 }}>
+            PRINCE DISTRIBUTORS
+          </Text>
+          <Text style={Typography.h2(colors.text)}>Panel B2B</Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => router.push('/settings' as any)}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: colors.primaryLight,
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            borderRadius: 20,
+          }}
+        >
+          <Text style={{ fontSize: 12, fontWeight: '600', color: colors.primary }}>
+            👤 {roleLabels[settings.role] || 'Comercial'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={{ padding: 18, paddingBottom: 40 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+      >
+        {/* Priority Action: Nuevo Pedido (One-handed prominent target) */}
+        <Card
+          style={{
+            backgroundColor: colors.primary,
+            borderColor: colors.primaryDark,
+            padding: 18,
+            marginBottom: 20,
+          }}
+        >
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View style={{ flex: 1, paddingRight: 10 }}>
+              <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: '700' }}>
+                🚀 {t('btn_new_order')}
+              </Text>
+              <Text style={{ color: '#E8F8F0', fontSize: 13, marginTop: 4 }}>
+                Cotización rápida en 3 pasos con validación de crédito y tarifas especiales.
+              </Text>
             </View>
-          )}
-          {!st.current && !st.next && <Muted>No tiene turnos publicados en los próximos 14 días.</Muted>}
-          {['upcoming', 'due', 'late'].includes(st.state) && !st.open_attendance && <Button label="Marcar entrada" tone={st.state === 'late' ? 'danger' : 'primary'} onPress={() => clock('in')} />}
-          {st.open_attendance && <Button label="Marcar salida" tone="ghost" onPress={() => clock('out')} />}
-          <Muted>Esta semana: {st.week_worked} h{st.contract ? ` de ${st.contract} h` : ''}</Muted>
+            <Button
+              title="Iniciar"
+              variant="secondary"
+              size="md"
+              onPress={() => router.push('/new-order' as any)}
+            />
+          </View>
         </Card>
-      )}
-      {me.can_team && (
-        <>
-          <Section>Mi equipo hoy</Section>
-          {team.loading ? <Loading /> : team.error ? <ErrorBox text={team.error} onRetry={team.reload} /> : team.data && (
-            <Card>
-              <Text style={{ fontSize: 16, color: C.text }}>{present} presentes · {absent} ausentes · {team.data.coverage.gaps.length} huecos de cobertura</Text>
-              {team.data.people.filter((p) => p.status === 'absent').slice(0, 6).map((p) => (
-                <Text key={p.employee_id} style={{ color: C.danger, marginTop: 6 }}>• {p.name} ({p.start}–{p.end}) sin marcar</Text>
-              ))}
+
+        {/* Commercial KPIs 2x2 Grid */}
+        <Text style={[Typography.h3(colors.text), { marginBottom: 12 }]}>
+          📈 Resumen de Operaciones
+        </Text>
+
+        <View style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
+          <StatCard
+            title={t('kpi_today_sales')}
+            value={`$${(kpis?.today_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+            icon="💵"
+            subtitle="Hoy vs ayer +12%"
+            color={colors.primary}
+          />
+          <StatCard
+            title={t('kpi_orders')}
+            value={String(kpis?.today_orders_count || 0)}
+            icon="📦"
+            subtitle="100% procesados"
+            color={colors.info}
+          />
+        </View>
+
+        <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
+          <StatCard
+            title={t('kpi_active_customers')}
+            value={String(kpis?.active_customers_count || 0)}
+            icon="👥"
+            subtitle="Cartera con compra"
+            color={colors.warning}
+          />
+          <StatCard
+            title={t('kpi_cxc')}
+            value={`$${(kpis?.total_cxc || 0).toLocaleString('en-US', { minimumFractionDigits: 0 })}`}
+            icon="💳"
+            subtitle="Por cobrar < 30 días"
+            color={colors.danger}
+          />
+        </View>
+
+        {/* Alerts & Commercial Intelligence preview */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <Text style={Typography.h3(colors.text)}>
+            🔔 {t('alerts_title')}
+          </Text>
+          <TouchableOpacity onPress={() => router.push('/intelligence' as any)}>
+            <Text style={{ fontSize: 13, color: colors.primary, fontWeight: '600' }}>
+              Ver todas ({alerts.length}) ›
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {alerts.length === 0 ? (
+          <Card style={{ padding: 20, alignItems: 'center' }}>
+            <Text style={Typography.body(colors.textMuted)}>{t('no_alerts')}</Text>
+          </Card>
+        ) : (
+          alerts.slice(0, 3).map((alert) => (
+            <Card
+              key={alert.id}
+              style={{ marginBottom: 10, borderLeftWidth: 4, borderLeftColor: alert.severity === 'critical' ? colors.danger : colors.warning }}
+              onPress={() => router.push('/intelligence' as any)}
+            >
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <Text style={[Typography.h3(colors.text), { flex: 1, fontSize: 15 }]}>
+                  {alert.title}
+                </Text>
+                <Badge
+                  label={alert.severity}
+                  variant={alert.severity === 'critical' ? 'danger' : 'warning'}
+                />
+              </View>
+
+              <Text style={[Typography.body(colors.textMuted), { marginTop: 6, fontSize: 13 }]}>
+                {alert.description}
+              </Text>
+
+              <View
+                style={{
+                  marginTop: 10,
+                  paddingTop: 8,
+                  borderTopWidth: 1,
+                  borderTopColor: colors.border,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={{ fontSize: 12, fontWeight: '600', color: colors.primary }}>
+                  💡 Sugerencia:
+                </Text>
+                <Text style={{ fontSize: 12, color: colors.text, marginLeft: 6, flex: 1 }} numberOfLines={1}>
+                  {alert.action_suggested}
+                </Text>
+              </View>
             </Card>
-          )}
-        </>
-      )}
-    </Screen>
+          ))
+        )}
+
+        {/* Quick Shortcuts */}
+        <Text style={[Typography.h3(colors.text), { marginTop: 14, marginBottom: 12 }]}>
+          ⚡ Accesos Rápidos
+        </Text>
+
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          <TouchableOpacity
+            onPress={() => router.push('/customers' as any)}
+            style={{
+              flex: 1,
+              backgroundColor: colors.card,
+              padding: 14,
+              borderRadius: 14,
+              borderWidth: 1,
+              borderColor: colors.border,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 24, marginBottom: 4 }}>👥</Text>
+            <Text style={Typography.caption(colors.text)}>Clientes</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => router.push('/products' as any)}
+            style={{
+              flex: 1,
+              backgroundColor: colors.card,
+              padding: 14,
+              borderRadius: 14,
+              borderWidth: 1,
+              borderColor: colors.border,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 24, marginBottom: 4 }}>🏷️</Text>
+            <Text style={Typography.caption(colors.text)}>Catálogo</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => router.push('/invoices' as any)}
+            style={{
+              flex: 1,
+              backgroundColor: colors.card,
+              padding: 14,
+              borderRadius: 14,
+              borderWidth: 1,
+              borderColor: colors.border,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 24, marginBottom: 4 }}>🧾</Text>
+            <Text style={Typography.caption(colors.text)}>Facturas</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

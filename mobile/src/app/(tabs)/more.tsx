@@ -1,93 +1,153 @@
+/**
+ * Prince Distributors B2B — Tab 5: Más (Modules Hub & Commercial Management)
+ */
+
 import React from 'react';
-import { Alert, Text, View } from 'react-native';
-import { router } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { api, Notice, saveConfig } from '@/lib/api';
-import { registerPush, unregisterPush } from '@/lib/device';
-import { useSession } from '@/lib/session';
-import { Button, C, Card, Empty, ErrorBox, Muted, Screen, Section, Tag, useLoad, when } from '@/components/ui';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTheme } from '../../lib/theme';
+import { Card, Typography } from '../../components/ui';
 
-type Task = { type: string; id: number; title: string; detail?: string; status?: string; due?: string; overdue?: boolean };
+interface ModuleItem {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon: string;
+  route: string;
+  badge?: string;
+}
 
-export default function More() {
-  const { me, refresh } = useSession();
-  const notes = useLoad(() => api.get<{ items: Notice[]; unread: number }>('/m/notifications'));
-  const tasks = useLoad(() => api.get<{ items: Task[] }>('/m/tasks?scope=mine'));
-  const devices = useLoad(() => api.get<{ devices: { id: number; device_name: string; last_seen_at: string }[] }>('/m/push/devices'));
-  const [push, setPush] = React.useState<string | null>(null);
+export default function MoreScreen() {
+  const { colors, t, settings } = useTheme();
+  const router = useRouter();
 
-  const enablePush = async () => {
-    const r = await registerPush();
-    if (r.ok) {
-      await AsyncStorage.setItem('daily.pushToken', r.token);
-      setPush('Notificaciones activadas en este teléfono');
-      devices.reload();
-    } else {
-      setPush('No activadas: ' + r.reason);
-    }
-  };
-  const logout = async () => {
-    const t = await AsyncStorage.getItem('daily.pushToken');
-    if (t) await unregisterPush(t);
-    await AsyncStorage.removeItem('daily.pushToken');
-    await saveConfig(null);
-    await refresh();
-    router.replace('/setup');
-  };
+  const modules: ModuleItem[] = [
+    {
+      id: 'invoices',
+      title: t('mod_invoices'),
+      subtitle: 'Facturas emitidas, amortización de pagos y notas de crédito',
+      icon: '🧾',
+      route: '/invoices',
+    },
+    {
+      id: 'sales_reps',
+      title: t('mod_sales_reps'),
+      subtitle: 'Cumplimiento de metas, comisiones y territorios de venta',
+      icon: '🎯',
+      route: '/sales-reps',
+    },
+    {
+      id: 'profitability',
+      title: t('mod_profitability'),
+      subtitle: 'Análisis financiero: ventas, costos, utilidad y margen %',
+      icon: '📈',
+      route: '/profitability',
+    },
+    {
+      id: 'intelligence',
+      title: t('mod_intelligence'),
+      subtitle: 'Clientes inactivos, alertas de recompra y riesgo comercial',
+      icon: '🧠',
+      route: '/intelligence',
+      badge: 'Alertas',
+    },
+    {
+      id: 'settings',
+      title: t('mod_settings'),
+      subtitle: 'Roles, tema claro/oscuro, idioma, API y sincronización',
+      icon: '⚙️',
+      route: '/settings',
+    },
+  ];
 
   return (
-    <Screen refreshing={notes.loading} onRefresh={() => { notes.reload(); tasks.reload(); devices.reload(); }}>
-      <Section>Notificaciones push</Section>
-      <Card>
-        {devices.data && devices.data.devices.length > 0
-          ? <Text style={{ color: C.ok }}>Registrado en {devices.data.devices.length} dispositivo(s): {devices.data.devices.map((d) => d.device_name).join(', ')}</Text>
-          : <Muted>Este usuario no tiene dispositivos registrados: los avisos solo se ven dentro de la app.</Muted>}
-        <Button small label="Activar en este teléfono" onPress={enablePush} />
-        {push && <Muted>{push}</Muted>}
-      </Card>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      {/* Header */}
+      <View
+        style={{
+          paddingHorizontal: 20,
+          paddingTop: 16,
+          paddingBottom: 14,
+          backgroundColor: colors.card,
+          borderBottomWidth: 1,
+          borderBottomColor: colors.border,
+        }}
+      >
+        <Text style={Typography.h2(colors.text)}>☰ {t('more_title')}</Text>
+        <Text style={[Typography.caption(colors.textMuted), { marginTop: 2 }]}>
+          Gestión avanzada de Prince Distributors B2B Suite
+        </Text>
+      </View>
 
-      {me?.can_approve && (
-        <Card>
-          <Text style={{ fontWeight: '700', color: C.text }}>Aprobaciones</Text>
-          <Muted>Mermas y ajustes por conteo pendientes de su decisión.</Muted>
-          <Button small label="Abrir aprobaciones" onPress={() => router.push('/approvals')} />
-        </Card>
-      )}
+      <ScrollView contentContainerStyle={{ padding: 18, gap: 12 }}>
+        {modules.map((mod) => (
+          <Card
+            key={mod.id}
+            onPress={() => router.push(mod.route as any)}
+            style={{ padding: 16 }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 14,
+                  backgroundColor: colors.primaryLight,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: 14,
+                }}
+              >
+                <Text style={{ fontSize: 24 }}>{mod.icon}</Text>
+              </View>
 
-      <Section>Mis tareas</Section>
-      {tasks.error ? <ErrorBox text={tasks.error} onRetry={tasks.reload} /> : (tasks.data?.items.length ?? 0) === 0 ? <Empty text="Sin tareas pendientes" /> : tasks.data!.items.slice(0, 15).map((t) => (
-        <Card key={t.type + t.id}>
-          <Text style={{ fontWeight: '700', color: C.text }}>{t.title}</Text>
-          {t.detail ? <Muted>{t.detail.slice(0, 140)}</Muted> : null}
-          <View style={{ flexDirection: 'row', gap: 6 }}>
-            {t.status ? <Tag label={t.status} tone="info" /> : null}
-            {t.overdue ? <Tag label="Vencida" tone="danger" /> : null}
-          </View>
-          {t.type === 'task' && <Button small label="Marcar como hecha" onPress={async () => {
-            try {
-              await api.post('/m/tasks/' + t.id + '/complete', { notes: 'Completada desde la app' });
-              tasks.reload();
-            } catch (e) {
-              Alert.alert('No se pudo', e instanceof Error ? e.message : 'Error');
-            }
-          }} />}
-        </Card>
-      ))}
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={Typography.h3(colors.text)}>{mod.title}</Text>
+                  {mod.badge ? (
+                    <View
+                      style={{
+                        backgroundColor: colors.danger,
+                        paddingHorizontal: 6,
+                        paddingVertical: 2,
+                        borderRadius: 10,
+                      }}
+                    >
+                      <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '700' }}>
+                        {mod.badge}
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+                <Text style={[Typography.caption(colors.textMuted), { marginTop: 4 }]} numberOfLines={2}>
+                  {mod.subtitle}
+                </Text>
+              </View>
 
-      <Section>Avisos recientes</Section>
-      {notes.error ? <ErrorBox text={notes.error} onRetry={notes.reload} /> : (notes.data?.items.length ?? 0) === 0 ? <Empty text="Sin avisos" /> : notes.data!.items.slice(0, 20).map((n) => (
-        <Card key={n.key} style={n.unread ? { borderColor: C.primary } : undefined}>
-          <Text style={{ fontWeight: n.unread ? '700' : '500', color: C.text }}>{n.title}</Text>
-          {n.detail ? <Muted>{n.detail}</Muted> : null}
-          <Muted>{when(n.at)}</Muted>
-        </Card>
-      ))}
+              <Text style={{ fontSize: 20, color: colors.textMuted, marginLeft: 8 }}>›</Text>
+            </View>
+          </Card>
+        ))}
 
-      <Section>Cuenta</Section>
-      <Card>
-        <Text style={{ color: C.text }}>{me?.name} · {me?.role_label}</Text>
-        <Button small tone="ghost" label="Desconectar este teléfono" onPress={logout} />
-      </Card>
-    </Screen>
+        {/* Corporate Footer */}
+        <View style={{ alignItems: 'center', marginTop: 30, marginBottom: 20 }}>
+          <Text style={{ fontSize: 12, fontWeight: '700', color: colors.primary }}>
+            PRINCE DISTRIBUTORS S.A.C.
+          </Text>
+          <Text style={[Typography.caption(colors.textMuted), { marginTop: 2 }]}>
+            Versión Móvil 1.0.0 (Build B2B-2026)
+          </Text>
+          <Text style={[Typography.caption(colors.textMuted), { marginTop: 2 }]}>
+            Rol: {settings.role.toUpperCase()} • Modo {settings.theme.toUpperCase()}
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
