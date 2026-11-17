@@ -5005,25 +5005,6 @@
 				openCommercialFormModal('order');
 			}
 		}
-				openCustomerModal();
-			} else if (currentSection === 'products') {
-				openProductModal();
-			} else if (currentSection === 'orders') {
-				openCommercialFormModal('order');
-			} else if (currentSection === 'invoices') {
-				openGenerateInvoiceModal();
-			} else if (currentSection === 'sales-reps') {
-				openCreateSalesRepModal();
-			} else if (currentSection === 'profitability') {
-				openCostAdjustmentModal();
-			} else if (currentSection === 'reports') {
-				triggerIntelligenceEngine();
-			} else if (currentSection === 'settings') {
-				saveB2bSettings();
-			} else {
-				alert('La creación de nuevas órdenes B2B se habilitará en el Paso correspondiente.');
-			}
-		}
 
 		/* ========================================================
 		   MÓDULO FUNCIONAL DE CLIENTES Y ALMACENES (PASO 4)
@@ -9207,14 +9188,12 @@
 				if (typeof lucide !== 'undefined') lucide.createIcons();
 			} catch (err) {
 				console.error('Error opening sales rep detail:', err);
-				alert('No se pudo cargar la información del vendedor.');
 			}
 		}
 
 		function closeSalesRepDetailModal() {
 			const modal = document.getElementById('modal-sales-rep-detail');
 			if (modal) modal.classList.add('hidden');
-			currentDetailRepId = null;
 		}
 
 		function switchSalesRepDetailSubTab(tab) {
@@ -9226,8 +9205,8 @@
 			const tabInactive = document.getElementById('rep-dtl-tab-inactive');
 			const tabOrders = document.getElementById('rep-dtl-tab-orders');
 
-			const activeClass = 'pb-2.5 text-xs font-bold border-b-2 border-brand-600 text-brand-600 dark:text-brand-400 flex items-center gap-1.5';
-			const inactiveClass = 'pb-2.5 text-xs font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1.5';
+			const activeClass = 'px-3 py-1.5 text-xs font-semibold rounded-md bg-white dark:bg-slate-700 text-brand-800 dark:text-white shadow-xs transition-all';
+			const inactiveClass = 'px-3 py-1.5 text-xs font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all';
 
 			if (btnClients) btnClients.className = tab === 'clients' ? activeClass : inactiveClass;
 			if (btnInactive) btnInactive.className = tab === 'inactive' ? activeClass : inactiveClass;

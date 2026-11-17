@@ -155,10 +155,13 @@
 			</div>
 		</div>
 
-		<!-- Footer con Botones Siguiente / Anterior / Publicar -->
+		<!-- Footer con Botones Siguiente / Anterior / Guardar Borrador / Publicar -->
 		<div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/60 dark:bg-slate-900/40">
 			<button id="wfm-btn-prev" onclick="navigateWizard(-1)" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition-colors hidden">
 				‹ Anterior
+			</button>
+			<button type="button" onclick="saveScheduleDraft(); closeWfmModal('modal-wfm-wizard');" class="px-3.5 py-2 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors">
+				Guardar borrador y continuar después
 			</button>
 			<div class="flex items-center gap-2 ml-auto">
 				<button id="wfm-btn-next" onclick="navigateWizard(1)" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition-colors">

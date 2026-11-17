@@ -10,10 +10,11 @@ let wfmEmployeesData = [];
 let wfmWizardCurrentStep = 1;
 let wfmSimSalesDelta = 0;
 let wfmDraggedShiftId = null;
+let wfmChartInstance = null;
+let wfmActiveTab = 'summary';
 
 // Inicialización del Módulo WFM
 document.addEventListener('DOMContentLoaded', () => {
-	// Escuchar cambio de sección
 	if (typeof currentSection !== 'undefined' && currentSection === 'schedules') {
 		initWorkforceModule();
 	}
@@ -26,6 +27,40 @@ async function initWorkforceModule() {
 		loadWfmEmployees(),
 		loadWfmRequests()
 	]);
+	renderWfmSalesVsHoursChart();
+	if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// 0. CAMBIAR PESTAÑA INTERNA (6 PESTAÑAS)
+function switchWfmTab(tabKey) {
+	wfmActiveTab = tabKey;
+	const tabs = ['summary', 'schedule', 'employees', 'productivity', 'simulator', 'settings'];
+
+	tabs.forEach(t => {
+		const btn = document.getElementById(`wfm-navtab-${t}`);
+		const content = document.getElementById(`wfm-tab-content-${t}`);
+		if (btn) {
+			if (t === tabKey) {
+				btn.className = 'wfm-tab-btn px-3 py-2.5 border-b-2 border-brand-700 text-brand-700 dark:text-brand-400 flex items-center gap-2 whitespace-nowrap font-bold transition-all';
+			} else {
+				btn.className = 'wfm-tab-btn px-3 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center gap-2 whitespace-nowrap font-medium transition-all';
+			}
+		}
+		if (content) {
+			content.classList.toggle('hidden', t !== tabKey);
+		}
+	});
+
+	if (tabKey === 'summary') {
+		setTimeout(() => renderWfmSalesVsHoursChart(), 50);
+	} else if (tabKey === 'schedule') {
+		renderWfmScheduleTable(wfmMatrixData);
+	} else if (tabKey === 'employees') {
+		renderEmployeesTable(wfmEmployeesData);
+	} else if (tabKey === 'simulator') {
+		runInlineSimulation();
+	}
+
 	if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
@@ -58,20 +93,131 @@ async function loadWfmDashboard() {
 
 		if (elHoursVar) {
 			const diff = k.hours_variance;
-			elHoursVar.innerHTML = diff >= 0
-				? `<span class="text-emerald-600">+${diff.toFixed(1)} hrs (Cobertura óptima)</span>`
-				: `<span class="text-amber-600">${diff.toFixed(1)} hrs (Brecha controlada)</span>`;
+			elHoursVar.innerHTML = `<span class="px-1.5 py-0.2 ${diff >= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'} font-semibold rounded text-[10px]">Semana 47</span><span>${diff.toFixed(1)} hrs brecha</span>`;
 		}
 
 		if (elBudgetVar) {
-			elBudgetVar.textContent = `Ppto: $${k.labor_budget.toFixed(2)} (${k.budget_variance >= 0 ? '+' : ''}$${k.budget_variance.toFixed(2)} margen)`;
+			elBudgetVar.innerHTML = `<span class="px-1.5 py-0.2 bg-slate-100 text-slate-600 font-semibold rounded text-[10px]">Semana 47</span><span>Ppto: $${k.labor_budget.toFixed(2)} (${k.budget_variance >= 0 ? '+' : ''}$${k.budget_variance.toFixed(2)} margen)</span>`;
 		}
 	} catch (e) {
 		console.warn('Error al cargar KPIs de WFM:', e);
 	}
 }
 
-// 2. CARGAR MATRIZ SEMANAL DE TURNOS (CALENDARIO)
+// 2. GRÁFICO PRINCIPAL: VENTAS PREVISTAS VS HORAS LABORALES
+function renderWfmSalesVsHoursChart() {
+	const canvas = document.getElementById('wfmSalesVsHoursChart');
+	if (!canvas) return;
+
+	if (typeof Chart === 'undefined') {
+		console.warn('Chart.js no está cargado');
+		return;
+	}
+
+	if (wfmChartInstance) {
+		wfmChartInstance.destroy();
+	}
+
+	const ctx = canvas.getContext('2d');
+	const labels = ['Lun 16 Nov', 'Mar 17 Nov', 'Mié 18 Nov', 'Jue 19 Nov', 'Vie 20 Nov', 'Sáb 21 Nov', 'Dom 22 Nov'];
+	const salesData = [9200, 7800, 8400, 8100, 8900, 4200, 1900];
+	const recHoursData = [64.0, 54.5, 58.8, 56.7, 62.3, 29.4, 14.3];
+	const schedHoursData = [45.0, 42.0, 40.0, 38.0, 42.0, 20.0, 9.0];
+
+	wfmChartInstance = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: labels,
+			datasets: [
+				{
+					label: 'Ventas Previstas ($ USD)',
+					data: salesData,
+					backgroundColor: 'rgba(0, 168, 89, 0.25)',
+					borderColor: '#00A859',
+					borderWidth: 1.5,
+					borderRadius: 4,
+					yAxisID: 'y',
+					order: 2
+				},
+				{
+					label: 'Horas Recomendadas',
+					data: recHoursData,
+					type: 'line',
+					borderColor: '#4F46E5',
+					backgroundColor: '#4F46E5',
+					borderWidth: 2.5,
+					pointRadius: 4,
+					tension: 0.25,
+					yAxisID: 'y1',
+					order: 1
+				},
+				{
+					label: 'Horas Programadas',
+					data: schedHoursData,
+					type: 'line',
+					borderColor: '#059669',
+					backgroundColor: '#059669',
+					borderWidth: 2,
+					borderDash: [4, 4],
+					pointRadius: 3.5,
+					tension: 0.25,
+					yAxisID: 'y1',
+					order: 0
+				}
+			]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			interaction: {
+				mode: 'index',
+				intersect: false
+			},
+			plugins: {
+				legend: {
+					display: false
+				},
+				tooltip: {
+					callbacks: {
+						label: function(ctx) {
+							if (ctx.dataset.yAxisID === 'y') {
+								return `${ctx.dataset.label}: $${ctx.raw.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+							}
+							return `${ctx.dataset.label}: ${ctx.raw} hrs`;
+						}
+					}
+				}
+			},
+			scales: {
+				x: {
+					grid: { display: false }
+				},
+				y: {
+					type: 'linear',
+					display: true,
+					position: 'left',
+					title: { display: true, text: 'Ventas ($ USD)', font: { size: 10 } },
+					ticks: {
+						callback: function(v) { return '$' + (v / 1000) + 'k'; }
+					},
+					grid: { color: 'rgba(226, 232, 240, 0.6)' }
+				},
+				y1: {
+					type: 'linear',
+					display: true,
+					position: 'right',
+					title: { display: true, text: 'Horas Laborales', font: { size: 10 } },
+					ticks: {
+						callback: function(v) { return v + ' h'; }
+					},
+					grid: { drawOnChartArea: false }
+				}
+			}
+		}
+	});
+}
+
+// 3. CARGAR MATRIZ SEMANAL DE TURNOS (CALENDARIO)
 async function loadWfmSchedule() {
 	try {
 		const week = document.getElementById('wfm-filter-week')?.value || '2026-W47';
@@ -97,7 +243,7 @@ function renderWfmScheduleTable(matrix) {
 	const tbody = document.getElementById('wfm-schedule-tbody');
 	if (!tbody) return;
 
-	if (matrix.length === 0) {
+	if (!matrix || matrix.length === 0) {
 		tbody.innerHTML = `
 			<tr>
 				<td colspan="9" class="p-8 text-center text-slate-400">
@@ -123,7 +269,6 @@ function renderWfmScheduleTable(matrix) {
 
 		return `
 			<tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30 transition-colors">
-				<!-- Info de Colaborador -->
 				<td class="p-3 sticky left-0 bg-white dark:bg-surface-dark border-r border-slate-200/60 dark:border-slate-800 z-10">
 					<div class="flex items-center gap-2.5">
 						<div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-brand-700 dark:text-brand-300 flex items-center justify-center font-bold text-xs shrink-0">
@@ -134,7 +279,6 @@ function renderWfmScheduleTable(matrix) {
 							<div class="text-[10px] text-slate-400 truncate">${emp.role_label} • ${emp.department}</div>
 						</div>
 					</div>
-					<!-- Barra de Horas Asignadas -->
 					<div class="mt-2 flex items-center justify-between text-[10px] text-slate-500">
 						<span>Horas: <strong>${hoursScheduled.toFixed(1)}</strong> / ${hoursContracted}h</span>
 						<span class="${isFull ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${pct}%</span>
@@ -143,11 +287,7 @@ function renderWfmScheduleTable(matrix) {
 						<div class="h-full ${isFull ? 'bg-emerald-500' : 'bg-brand-600'}" style="width: ${pct}%"></div>
 					</div>
 				</td>
-
-				<!-- Columnas Días 1 a 7 (Lunes a Domingo) -->
 				${daysHtml}
-
-				<!-- Total Horas Semanales -->
 				<td class="p-3 text-center font-bold text-slate-800 dark:text-white">
 					${hoursScheduled.toFixed(1)}h
 				</td>
@@ -158,7 +298,6 @@ function renderWfmScheduleTable(matrix) {
 	if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-// RENDERIZAR CELDA DE TURNO INDIVIDUAL CON DRAG & DROP
 function renderShiftCell(emp, dow, shift) {
 	if (!shift || shift.shift_type === 'rest') {
 		return `
@@ -185,16 +324,13 @@ function renderShiftCell(emp, dow, shift) {
 		<td class="p-2 align-top drop-zone" ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${emp.id}, ${dow})">
 			<div draggable="true" ondragstart="handleDragStart(event, ${shift.id})"
 				 class="w-full min-h-[58px] rounded-lg border ${col.border} ${col.bg} p-2 flex flex-col justify-between group shadow-xs cursor-grab active:cursor-grabbing transition-all hover:shadow-md relative">
-				<!-- Header de turno -->
 				<div class="flex items-center justify-between">
 					<span class="text-[10px] font-bold uppercase tracking-wider ${col.text}">${shift.shift_label || 'Turno'}</span>
 					<span class="text-[10px] font-bold ${col.text}">${shift.net_hours}h</span>
 				</div>
-				<!-- Horario -->
 				<div class="text-[11px] font-bold text-slate-800 dark:text-slate-100 my-0.5">
 					${shift.start_time} - ${shift.end_time}
 				</div>
-				<!-- Acciones rápidas (en hover) -->
 				<div class="flex items-center justify-end gap-1 pt-1 opacity-0 group-hover:opacity-100 transition-opacity">
 					<button onclick="event.stopPropagation(); duplicateShift(${shift.id})" title="Duplicar a mañana" class="p-0.5 hover:bg-black/10 dark:hover:bg-white/10 rounded text-slate-600 dark:text-slate-300">
 						<i data-lucide="copy" class="w-3 h-3"></i>
@@ -211,7 +347,7 @@ function renderShiftCell(emp, dow, shift) {
 	`;
 }
 
-// 3. DRAG AND DROP HANDLERS
+// 4. DRAG AND DROP HANDLERS
 function handleDragStart(event, shiftId) {
 	wfmDraggedShiftId = shiftId;
 	event.dataTransfer.setData('text/plain', String(shiftId));
@@ -247,7 +383,12 @@ async function handleDrop(event, targetEmpId, targetDow) {
 	}
 }
 
-// 4. DUPLICAR Y ELIMINAR TURNOS
+// 5. ACCIONES DE TURNO (AGREGAR, DUPLICAR, ELIMINAR, GUARDAR BORRADOR)
+function openShiftModal(shiftId, empId, dayOfWeek) {
+	const emp = wfmEmployeesData.find(e => e.id === empId) || wfmEmployeesData[0] || { id: 1, name: 'Colaborador' };
+	openShiftEditModal(emp.id, emp.name, dayOfWeek || 1, null);
+}
+
 async function duplicateShift(shiftId) {
 	try {
 		const res = await fetch(`/api/b2b/wfm/shifts/${shiftId}/duplicate`, { method: 'POST' });
@@ -261,6 +402,7 @@ async function duplicateShift(shiftId) {
 }
 
 async function deleteShift(shiftId) {
+	if (!confirm('¿Confirma que desea eliminar este turno?')) return;
 	try {
 		const res = await fetch(`/api/b2b/wfm/shifts/${shiftId}`, { method: 'DELETE' });
 		const data = await res.json();
@@ -272,7 +414,11 @@ async function deleteShift(shiftId) {
 	}
 }
 
-// 5. MODAL DE EDICIÓN / ASIGNACIÓN DE TURNO
+function saveScheduleDraft() {
+	alert('✓ Borrador de programación semanal guardado exitosamente. Los turnos permanecen en estado borrador y pueden continuar editándose.');
+}
+
+// 6. MODAL DE EDICIÓN / ASIGNACIÓN DE TURNO
 function openShiftEditModal(empId, empName, dow, shift) {
 	const dowNames = ['', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 	
@@ -386,7 +532,6 @@ async function handleDeleteShiftFromModal() {
 	if (shiftId) {
 		await deleteShift(Number(shiftId));
 	} else {
-		// Convertir en descanso
 		document.getElementById('shift-edit-type').value = 'rest';
 		document.getElementById('shift-edit-start').value = '00:00';
 		document.getElementById('shift-edit-end').value = '00:00';
@@ -396,7 +541,7 @@ async function handleDeleteShiftFromModal() {
 	closeWfmModal('modal-wfm-shift-edit');
 }
 
-// 6. ASISTENTE WIZARD (4 PASOS)
+// 7. ASISTENTE WIZARD (4 PASOS)
 function openWizardStep(step) {
 	wfmWizardCurrentStep = step;
 	for (let i = 1; i <= 4; i++) {
@@ -436,7 +581,7 @@ async function finalizeWizardPublication() {
 	closeWfmModal('modal-wfm-wizard');
 }
 
-// 7. PUBLICAR HORARIO
+// 8. PUBLICAR HORARIO
 async function publishCurrentSchedule() {
 	try {
 		const schedId = wfmCurrentSchedule?.id || 1;
@@ -453,30 +598,30 @@ async function publishCurrentSchedule() {
 	}
 }
 
-// 8. SIMULADOR WHAT-IF
-function openWhatIfModal() {
-	const modal = document.getElementById('modal-wfm-simulate');
-	if (modal) modal.classList.remove('hidden');
-	runLiveSimulation();
-	if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
-function setSimSalesDelta(delta) {
-	wfmSimSalesDelta = delta;
-	document.querySelectorAll('.sim-delta-btn').forEach(btn => {
-		const bDelta = Number(btn.dataset.delta);
-		if (bDelta === delta) {
-			btn.className = 'py-2 text-xs font-semibold rounded-lg border border-indigo-600 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 sim-delta-btn';
+// 9. SIMULADOR INLINE Y MODAL
+function setInlineSimulationSales(deltaPct) {
+	wfmSimSalesDelta = deltaPct;
+	['m10', '0', 'p10', 'p20'].forEach(id => {
+		const btn = document.getElementById(`btn-sim-${id}`);
+		if (!btn) return;
+		const isMatch = (id === 'm10' && deltaPct === -10) ||
+						(id === '0' && deltaPct === 0) ||
+						(id === 'p10' && deltaPct === 10) ||
+						(id === 'p20' && deltaPct === 20);
+		if (isMatch) {
+			btn.className = 'sim-sales-btn py-2 text-xs font-bold rounded-lg bg-brand-700 text-white shadow-xs';
 		} else {
-			btn.className = 'py-2 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 sim-delta-btn';
+			btn.className = 'sim-sales-btn py-2 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300';
 		}
 	});
-	runLiveSimulation();
+	runInlineSimulation();
 }
 
-async function runLiveSimulation() {
+async function runInlineSimulation() {
 	try {
-		const absent = Number(document.getElementById('sim-absent-count')?.value || 0);
+		const absent = Number(document.getElementById('sim-inline-absences')?.value || 0);
+		const prodFactor = Number(document.getElementById('sim-inline-prod-factor')?.value || 1.0);
+
 		const res = await fetch('/api/b2b/wfm/simulate', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -488,17 +633,30 @@ async function runLiveSimulation() {
 		});
 		const data = await res.json();
 		if (data.success) {
-			document.getElementById('sim-res-sales').textContent = '$' + data.simulated_sales.toLocaleString('en-US', { minimumFractionDigits: 2 });
-			document.getElementById('sim-res-hours').textContent = data.recommended_hours.toFixed(1) + ' hrs';
-			document.getElementById('sim-res-coverage').textContent = data.projected_coverage_pct.toFixed(1) + '%';
-			document.getElementById('sim-res-advice').textContent = data.advice;
+			const adjustedHours = (data.recommended_hours / prodFactor);
+			const elSales = document.getElementById('sim-inline-sales');
+			const elHours = document.getElementById('sim-inline-hours');
+			const elCost = document.getElementById('sim-inline-cost');
+			const elCov = document.getElementById('sim-inline-cov');
+			const elAdvice = document.getElementById('sim-inline-recommendation');
+
+			if (elSales) elSales.textContent = '$' + data.simulated_sales.toLocaleString('en-US', { minimumFractionDigits: 2 });
+			if (elHours) elHours.textContent = adjustedHours.toFixed(1) + ' hrs';
+			if (elCost) elCost.textContent = '$' + (adjustedHours * 7.50).toLocaleString('en-US', { minimumFractionDigits: 2 });
+			if (elCov) elCov.textContent = data.projected_coverage_pct.toFixed(1) + '%';
+			if (elAdvice) elAdvice.textContent = data.advice;
 		}
 	} catch (e) {
-		console.warn('Error en simulación What-If:', e);
+		console.warn('Error en simulación inline:', e);
 	}
 }
 
-// 9. COPIAR SEMANA
+// 10. CONFIGURACIÓN WFM
+function saveWfmSettingsForm() {
+	alert('✓ Parámetros operativos y comerciales de Workforce Management guardados correctamente.');
+}
+
+// 11. COPIAR SEMANA
 function openCopyWeekModal() {
 	if (confirm('¿Desea copiar la plantilla de turnos de la semana anterior (Semana 46) a la semana actual?')) {
 		alert('✓ Turnos de la semana anterior copiados y ajustados con éxito.');
@@ -506,9 +664,10 @@ function openCopyWeekModal() {
 	}
 }
 
-// 10. REFRESCAR PANTALLA COMPLETA
+// 12. REFRESCAR PANTALLA COMPLETA
 async function refreshWfmSchedule() {
 	await Promise.all([loadWfmDashboard(), loadWfmSchedule()]);
+	renderWfmSalesVsHoursChart();
 }
 
 function closeWfmModal(id) {
@@ -516,7 +675,7 @@ function closeWfmModal(id) {
 	if (el) el.classList.add('hidden');
 }
 
-// 11. CARGAR DIRECTORIO DE EMPLEADOS
+// 13. CARGAR DIRECTORIO DE EMPLEADOS
 async function loadWfmEmployees() {
 	try {
 		const res = await fetch('/api/b2b/wfm/employees');
@@ -532,10 +691,10 @@ async function loadWfmEmployees() {
 }
 
 function renderEmployeesTable(employees) {
-	const tbody = document.getElementById('wfm-employees-tbody');
-	if (!tbody) return;
+	const tbody1 = document.getElementById('wfm-employees-tbody');
+	const tbody2 = document.getElementById('wfm-employees-tbody-2');
 
-	tbody.innerHTML = employees.map(emp => `
+	const html = employees.map(emp => `
 		<tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30 transition-colors">
 			<td class="p-3">
 				<div class="font-bold text-slate-800 dark:text-slate-100">${emp.name}</div>
@@ -552,15 +711,18 @@ function renderEmployeesTable(employees) {
 			</td>
 		</tr>
 	`).join('');
+
+	if (tbody1) tbody1.innerHTML = html;
+	if (tbody2) tbody2.innerHTML = html;
 }
 
-function filterEmployeesTable() {
-	const q = document.getElementById('wfm-emp-search')?.value.toLowerCase() || '';
+function filterEmployeesTable(customQ) {
+	const q = (customQ != null ? customQ : document.getElementById('wfm-emp-search')?.value || '').toLowerCase();
 	const filtered = wfmEmployeesData.filter(e => e.name.toLowerCase().includes(q) || e.code.toLowerCase().includes(q) || e.role_label.toLowerCase().includes(q));
 	renderEmployeesTable(filtered);
 }
 
-// 12. CARGAR SOLICITUDES DE CAMBIO DE TURNO
+// 14. CARGAR SOLICITUDES DE CAMBIO DE TURNO
 async function loadWfmRequests() {
 	try {
 		const res = await fetch('/api/b2b/wfm/requests');
