@@ -1238,7 +1238,15 @@ $app->group('/api', function (RouteCollectorProxy $group)
 	$group->get('/b2b/intelligence/thresholds', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'GetThresholds']);
 	$group->post('/b2b/intelligence/thresholds', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'UpdateThresholds']);
 	$group->post('/b2b/intelligence/run', [\Grocy\Controllers\Api\B2bIntelligenceApiController::class, 'RunEngine']);
-})->add(new CorsMiddleware($container, $app->getResponseFactory()))->add(new JsonMiddleware($container, $app->getResponseFactory()));
+
+	// Módulo 8: Seguridad Empresarial, RBAC y API Keys (Paso 15)
+	$group->get('/b2b/security/roles', [\Grocy\Controllers\Api\B2bSecurityApiController::class, 'GetRoles']);
+	$group->get('/b2b/security/api-keys', [\Grocy\Controllers\Api\B2bSecurityApiController::class, 'GetApiKeys']);
+	$group->post('/b2b/security/api-keys', [\Grocy\Controllers\Api\B2bSecurityApiController::class, 'CreateApiKey']);
+	$group->post('/b2b/security/api-keys/{id:[0-9]+}/revoke', [\Grocy\Controllers\Api\B2bSecurityApiController::class, 'RevokeApiKey']);
+	$group->get('/b2b/security/audit-log', [\Grocy\Controllers\Api\B2bSecurityApiController::class, 'GetAuditLog']);
+	$group->post('/b2b/security/verify-access', [\Grocy\Controllers\Api\B2bSecurityApiController::class, 'VerifyAccess']);
+})->add(new \Grocy\Middleware\B2bSecurityMiddleware($container, $app->getResponseFactory()))->add(new CorsMiddleware($container, $app->getResponseFactory()))->add(new JsonMiddleware($container, $app->getResponseFactory()));
 
 
 // For CORS preflight OPTIONS requests

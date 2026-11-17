@@ -4,6 +4,11 @@ namespace Grocy\Services;
 
 class B2bAuditService extends BaseService
 {
+	protected function getDatabaseService(): DatabaseService
+	{
+		return DatabaseService::GetInstance();
+	}
+
 	public function Log(string $entityType, int $entityId, string $action, ?array $oldValues = null, ?array $newValues = null, string $userName = 'Carlos Mendoza', int $orgId = 1): int
 	{
 		$db = $this->getDatabaseService()->GetDbConnectionRaw();
