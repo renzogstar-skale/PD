@@ -54,13 +54,29 @@ class B2bSalesOverviewController extends BaseController
 			{
 				$section = 'settings';
 			}
+			elseif (str_contains($path, 'schedules'))
+			{
+				$section = 'schedules';
+			}
+			elseif (str_contains($path, 'employees'))
+			{
+				$section = 'employees';
+			}
+			elseif (str_contains($path, 'attendance'))
+			{
+				$section = 'attendance';
+			}
+			elseif (str_contains($path, 'shift-requests'))
+			{
+				$section = 'shift-requests';
+			}
 			else
 			{
 				$section = 'sales';
 			}
 		}
 
-		$validSections = ['sales', 'customers', 'products', 'orders', 'invoices', 'sales-reps', 'profitability', 'reports', 'settings'];
+		$validSections = ['sales', 'customers', 'products', 'orders', 'invoices', 'sales-reps', 'profitability', 'reports', 'settings', 'schedules', 'employees', 'attendance', 'shift-requests'];
 		if (!in_array($section, $validSections, true))
 		{
 			$section = 'sales';

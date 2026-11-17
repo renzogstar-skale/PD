@@ -1246,6 +1246,20 @@ $app->group('/api', function (RouteCollectorProxy $group)
 	$group->post('/b2b/security/api-keys/{id:[0-9]+}/revoke', [\Grocy\Controllers\Api\B2bSecurityApiController::class, 'RevokeApiKey']);
 	$group->get('/b2b/security/audit-log', [\Grocy\Controllers\Api\B2bSecurityApiController::class, 'GetAuditLog']);
 	$group->post('/b2b/security/verify-access', [\Grocy\Controllers\Api\B2bSecurityApiController::class, 'VerifyAccess']);
+
+	// Módulo 9: Gestión Inteligente de Horarios y Cobertura (WFM)
+	$group->get('/b2b/wfm/dashboard', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'GetDashboard']);
+	$group->get('/b2b/wfm/schedule', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'GetSchedule']);
+	$group->post('/b2b/wfm/shifts', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'SaveShift']);
+	$group->delete('/b2b/wfm/shifts/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'DeleteShift']);
+	$group->post('/b2b/wfm/shifts/{id:[0-9]+}/move', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'MoveShift']);
+	$group->post('/b2b/wfm/shifts/{id:[0-9]+}/duplicate', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'DuplicateShift']);
+	$group->post('/b2b/wfm/recommendations', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'GetRecommendations']);
+	$group->post('/b2b/wfm/simulate', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'RunSimulation']);
+	$group->post('/b2b/wfm/schedules/{id:[0-9]+}/publish', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'PublishSchedule']);
+	$group->get('/b2b/wfm/employees', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'GetEmployees']);
+	$group->get('/b2b/wfm/requests', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'GetRequests']);
+	$group->post('/b2b/wfm/requests/{id:[0-9]+}/review', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'ReviewRequest']);
 })->add(new \Grocy\Middleware\B2bSecurityMiddleware($container, $app->getResponseFactory()))->add(new CorsMiddleware($container, $app->getResponseFactory()))->add(new JsonMiddleware($container, $app->getResponseFactory()));
 
 

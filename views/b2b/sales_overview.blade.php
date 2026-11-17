@@ -235,6 +235,46 @@
 						<span class="nav-tooltip" data-i18n="nav_settings">Configuración</span>
 					</a>
 				</nav>
+
+				<!-- GRUPO: OPERACIONES Y PERSONAL -->
+				<div class="nav-group-title px-3 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-4 mb-2">
+					Operaciones y Personal
+				</div>
+				<nav class="space-y-1" id="b2b-wfm-nav">
+					<!-- 9. Horarios y Cobertura -->
+					<a href="{{ $U('/b2b/schedules') }}" data-section="schedules" class="nav-item flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group relative" onclick="handleNavClick(event, 'schedules')">
+						<div class="flex items-center gap-3">
+							<i data-lucide="calendar-clock" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 shrink-0"></i>
+							<span class="nav-text">Horarios y Cobertura</span>
+						</div>
+						<span class="nav-badge px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300">WFM</span>
+						<span class="nav-tooltip">Horarios y Cobertura</span>
+					</a>
+
+					<!-- 10. Empleados -->
+					<a href="{{ $U('/b2b/employees') }}" data-section="employees" class="nav-item flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group relative" onclick="handleNavClick(event, 'employees')">
+						<i data-lucide="user-check" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 shrink-0"></i>
+						<span class="nav-text">Empleados</span>
+						<span class="nav-tooltip">Empleados</span>
+					</a>
+
+					<!-- 11. Asistencia -->
+					<a href="{{ $U('/b2b/attendance') }}" data-section="attendance" class="nav-item flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group relative" onclick="handleNavClick(event, 'attendance')">
+						<i data-lucide="clock" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 shrink-0"></i>
+						<span class="nav-text">Asistencia</span>
+						<span class="nav-tooltip">Asistencia</span>
+					</a>
+
+					<!-- 12. Solicitudes -->
+					<a href="{{ $U('/b2b/shift-requests') }}" data-section="shift-requests" class="nav-item flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group relative" onclick="handleNavClick(event, 'shift-requests')">
+						<div class="flex items-center gap-3">
+							<i data-lucide="clipboard-check" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 shrink-0"></i>
+							<span class="nav-text">Solicitudes</span>
+						</div>
+						<span id="nav-shift-reqs-badge" class="nav-badge px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300">3</span>
+						<span class="nav-tooltip">Solicitudes</span>
+					</a>
+				</nav>
 			</div>
 		</div>
 
@@ -2847,6 +2887,9 @@
 				</div>
 			</div>
 
+			{{-- MÓDULO OPERACIONES Y PERSONAL: GESTIÓN INTELIGENTE DE HORARIOS Y COBERTURA --}}
+			@include('b2b.workforce_sections')
+
 			<div id="section-placeholder" class="hidden space-y-6">
 				<div class="pb-4 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 					<div class="flex items-center gap-3">
@@ -4758,7 +4801,11 @@
 			'sales-reps': { icon: 'users', title_es: 'Vendedores y Territorios', title_en: 'Sales Reps & Territories', desc_es: 'Estructura comercial de ejecutivos de cuenta mayorista, asignación geográfica de clientes y control de metas.', desc_en: 'Commercial organization of wholesale account executives, geographical territories, and quota tracking.' },
 			profitability: { icon: 'trending-up', title_es: 'Rentabilidad Comercial', title_en: 'Commercial Profitability', desc_es: 'Análisis detallado de margen de contribución por cliente corporativo, línea de producto y canal de distribución.', desc_en: 'In-depth contribution margin analysis by corporate client, product category, and distribution channel.' },
 			reports: { icon: 'bar-chart-3', title_es: 'Reportes y Analítica', title_en: 'Reports & Analytics', desc_es: 'Centro de reportes consolidados para dirección comercial, auditoría de precios, OTIF y rotación mayorista.', desc_en: 'Consolidated executive reports hub for commercial leadership, pricing audits, OTIF, and inventory turns.' },
-			settings: { icon: 'settings', title_es: 'Configuración', title_en: 'Settings', desc_es: 'Parámetros generales de la plataforma de ventas B2B, integración con ERP/EDI y políticas de crédito.', desc_en: 'General B2B sales system configuration, ERP/EDI integrations, and credit policy parameters.' }
+			settings: { icon: 'settings', title_es: 'Configuración', title_en: 'Settings', desc_es: 'Parámetros generales de la plataforma de ventas B2B, integración con ERP/EDI y políticas de crédito.', desc_en: 'General B2B sales system configuration, ERP/EDI integrations, and credit policy parameters.' },
+			schedules: { icon: 'calendar-clock', title_es: 'Horarios y Cobertura', title_en: 'Schedules & Coverage', desc_es: 'Planificación laboral optimizada según ventas, demanda B2B, productividad por rol y presupuesto.', desc_en: 'Smart shift planning, demand coverage, and labor budget optimization.' },
+			employees: { icon: 'user-check', title_es: 'Directorio de Personal', title_en: 'Staff Directory', desc_es: 'Colaboradores operacionales, reponedores, fuerza de ventas y personal logístico.', desc_en: 'Commercial staffing, merchandisers, and operations personnel.' },
+			attendance: { icon: 'clock', title_es: 'Asistencia y Puntualidad', title_en: 'Attendance & Punctuality', desc_es: 'Comparativa de horas programadas vs trabajadas, horas productivas y control de tardanzas.', desc_en: 'Tracking worked vs scheduled hours.' },
+			'shift-requests': { icon: 'clipboard-check', title_es: 'Solicitudes de Personal', title_en: 'Shift Requests', desc_es: 'Aprobación de cambios de turno, solicitudes de vacaciones y permisos por horas.', desc_en: 'Shift swaps, permissions, and vacations.' }
 		};
 
 		let currentSection = getSectionFromPath() || document.body.dataset.initialSection || 'sales';
@@ -4808,7 +4855,7 @@
 			}
 
 			// Actualizar clases de links en Sidebar
-			const navLinks = document.querySelectorAll('#b2b-sidebar-nav .nav-item');
+			const navLinks = document.querySelectorAll('#b2b-sidebar-nav .nav-item, #b2b-wfm-nav .nav-item');
 			navLinks.forEach(link => {
 				const linkSection = link.dataset.section;
 				const icon = link.querySelector('i');
@@ -4848,6 +4895,8 @@
 					headerActionText.textContent = currentLang === 'es' ? 'Motor Analítico' : 'Run Engine';
 				} else if (sectionId === 'settings') {
 					headerActionText.textContent = currentLang === 'es' ? 'Guardar Cambios' : 'Save Settings';
+				} else if (sectionId === 'schedules') {
+					headerActionText.textContent = currentLang === 'es' ? 'Crear programación' : 'Create Schedule';
 				} else {
 					headerActionText.textContent = currentLang === 'es' ? 'Nueva Orden B2B' : 'New B2B Order';
 				}
@@ -4863,6 +4912,10 @@
 			const profContainer = document.getElementById('section-profitability');
 			const repHubContainer = document.getElementById('section-reports');
 			const settContainer = document.getElementById('section-settings');
+			const schedContainer = document.getElementById('section-schedules');
+			const empContainer = document.getElementById('section-employees');
+			const attContainer = document.getElementById('section-attendance');
+			const reqContainer = document.getElementById('section-shift-requests');
 			const placeholderContainer = document.getElementById('section-placeholder');
 
 			salesContainer.classList.add('hidden');
@@ -4874,6 +4927,10 @@
 			if (profContainer) profContainer.classList.add('hidden');
 			if (repHubContainer) repHubContainer.classList.add('hidden');
 			if (settContainer) settContainer.classList.add('hidden');
+			if (schedContainer) schedContainer.classList.add('hidden');
+			if (empContainer) empContainer.classList.add('hidden');
+			if (attContainer) attContainer.classList.add('hidden');
+			if (reqContainer) reqContainer.classList.add('hidden');
 			placeholderContainer.classList.add('hidden');
 
 			if (sectionId === 'sales') {
@@ -4902,6 +4959,17 @@
 				fetchIntelligenceModule();
 			} else if (sectionId === 'settings') {
 				if (settContainer) settContainer.classList.remove('hidden');
+			} else if (sectionId === 'schedules') {
+				if (schedContainer) schedContainer.classList.remove('hidden');
+				if (typeof initWorkforceModule === 'function') initWorkforceModule();
+			} else if (sectionId === 'employees') {
+				if (empContainer) empContainer.classList.remove('hidden');
+				if (typeof loadWfmEmployees === 'function') loadWfmEmployees();
+			} else if (sectionId === 'attendance') {
+				if (attContainer) attContainer.classList.remove('hidden');
+			} else if (sectionId === 'shift-requests') {
+				if (reqContainer) reqContainer.classList.remove('hidden');
+				if (typeof loadWfmRequests === 'function') loadWfmRequests();
 			} else {
 				placeholderContainer.classList.remove('hidden');
 				const iconEl = document.getElementById('placeholder-icon');
@@ -4916,6 +4984,27 @@
 
 		function handleHeaderNewAction() {
 			if (currentSection === 'customers') {
+				openCustomerModal();
+			} else if (currentSection === 'products') {
+				openProductModal();
+			} else if (currentSection === 'orders') {
+				openCommercialFormModal('order');
+			} else if (currentSection === 'invoices') {
+				openGenerateInvoiceModal();
+			} else if (currentSection === 'sales-reps') {
+				openCreateSalesRepModal();
+			} else if (currentSection === 'profitability') {
+				openCostAdjustmentModal();
+			} else if (currentSection === 'reports') {
+				triggerIntelligenceEngine();
+			} else if (currentSection === 'settings') {
+				saveB2bSettings();
+			} else if (currentSection === 'schedules') {
+				openWizardStep(1);
+			} else {
+				openCommercialFormModal('order');
+			}
+		}
 				openCustomerModal();
 			} else if (currentSection === 'products') {
 				openProductModal();
@@ -11497,5 +11586,9 @@
 		}
 
 	</script>
+
+	{{-- MODALES Y SCRIPTS WFM --}}
+	@include('b2b.workforce_modals')
+	@include('b2b.workforce_scripts')
 </body>
 </html>
