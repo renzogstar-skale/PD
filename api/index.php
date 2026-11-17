@@ -6,7 +6,15 @@ $data = '/tmp/data';
 $seedDb = $seed . '/grocy_es.db';
 $targetDb = $data . '/grocy_es.db';
 
-if (!file_exists($targetDb) || (file_exists($seedDb) && filemtime($seedDb) > filemtime($targetDb)))
+$seedVerFile = $seed . '/seed_version.txt';
+$targetVerFile = $data . '/seed_version.txt';
+$seedVer = file_exists($seedVerFile) ? trim((string)@file_get_contents($seedVerFile)) : '';
+$targetVer = file_exists($targetVerFile) ? trim((string)@file_get_contents($targetVerFile)) : '';
+
+$seedSize = file_exists($seedDb) ? (int)@filesize($seedDb) : 0;
+$targetSize = file_exists($targetDb) ? (int)@filesize($targetDb) : 0;
+
+if (!file_exists($targetDb) || $seedVer !== $targetVer || $seedSize !== $targetSize)
 {
 	foreach (['', '/viewcache', '/storage', '/plugins', '/logs'] as $dir)
 	{
@@ -14,6 +22,10 @@ if (!file_exists($targetDb) || (file_exists($seedDb) && filemtime($seedDb) > fil
 	}
 	@copy($seed . '/config.php', $data . '/config.php');
 	@copy($seedDb, $targetDb);
+	if (file_exists($seedVerFile))
+	{
+		@copy($seedVerFile, $targetVerFile);
+	}
 }
 
 define('GROCY_IS_EMBEDDED_INSTALL', false);
