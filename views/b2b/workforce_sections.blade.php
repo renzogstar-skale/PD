@@ -40,6 +40,59 @@
 		</div>
 	</div>
 
+	<!-- BANNER DE CONTROL DEMOSTRACIÓN EMPRESARIAL -->
+	<div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-slate-50 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-slate-900 border border-emerald-200/80 dark:border-emerald-800/80 rounded-xl p-3.5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+		<div class="flex items-center gap-3">
+			<div class="relative flex h-3 w-3 items-center justify-center shrink-0">
+				<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+				<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+			</div>
+			<div>
+				<div class="flex items-center gap-2">
+					<span class="text-xs font-bold text-emerald-900 dark:text-emerald-200 tracking-wide uppercase">Modo Demostración Activo</span>
+					<span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300">Motor Central Sincronizado</span>
+				</div>
+				<p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
+					20 colaboradores, 8 establecimientos y 4 semanas con persistencia local y recálculo matemático reactivo.
+				</p>
+			</div>
+		</div>
+
+		<!-- Controles de Demo: Selector de Rol, Notificaciones, Optimización y Configuración -->
+		<div class="flex items-center flex-wrap gap-2">
+			<!-- Selector de Rol Activo -->
+			<div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs">
+				<label for="demo-active-role-select" class="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+					<i data-lucide="user-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+					<span class="hidden sm:inline">Rol:</span>
+				</label>
+				<select id="demo-active-role-select" onchange="handleDemoRoleSwitch(this.value)" class="text-xs font-semibold bg-transparent border-none text-slate-800 dark:text-slate-200 focus:ring-0 p-0 cursor-pointer">
+					<option value="admin">Administrador (Gonzalo Núñez)</option>
+					<option value="supervisor">Supervisor (Carlos Mendoza)</option>
+					<option value="employee">Vendedor (Jorge Quispe)</option>
+					<option value="reponedor">Reponedora (Rosa Huamán)</option>
+				</select>
+			</div>
+
+			<!-- Botón Optimizar Semana -->
+			<button onclick="openOptimizationModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white shadow-2xs transition-colors" title="Optimizar dotación y cobertura de la semana de forma determinista">
+				<i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+				<span>Optimizar semana</span>
+			</button>
+
+			<!-- Botón Centro de Notificaciones con Badge -->
+			<button onclick="openDemoNotificationsModal()" class="relative inline-flex items-center justify-center p-2 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-colors" title="Centro de Notificaciones Internas">
+				<i data-lucide="bell" class="w-4 h-4"></i>
+				<span id="demo-unread-badge" class="absolute -top-1 -right-1 px-1.5 py-0.2 min-w-4 text-[10px] font-bold rounded-full bg-red-600 text-white flex items-center justify-center">3</span>
+			</button>
+
+			<!-- Botón Ajustes de Demostración (Persistencia / Exportar / Resetear) -->
+			<button onclick="openDemoSettingsModal()" class="inline-flex items-center justify-center p-2 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-colors" title="Ajustes de persistencia y exportación de datos demo">
+				<i data-lucide="settings-2" class="w-4 h-4"></i>
+			</button>
+		</div>
+	</div>
+
 	<!-- NAVEGACIÓN INTERNA EN 6 PESTAÑAS (DISEÑO NATIVO PRINCE DISTRIBUTORS) -->
 	<div class="border-b border-slate-200 dark:border-slate-800 flex items-center gap-1 sm:gap-2 overflow-x-auto text-xs font-semibold">
 		<button id="wfm-navtab-summary" onclick="switchWfmTab('summary')" class="wfm-tab-btn px-3 py-2.5 border-b-2 border-brand-700 text-brand-700 dark:text-brand-400 flex items-center gap-2 whitespace-nowrap">
@@ -308,8 +361,10 @@
 				<div>
 					<label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Semana</label>
 					<select id="wfm-filter-week" onchange="refreshWfmSchedule()" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-2 font-medium">
+						<option value="2026-W46">Semana 46: 09 Nov – 15 Nov (Anterior)</option>
 						<option value="2026-W47" selected>Semana 47: 16 Nov – 22 Nov (Actual)</option>
 						<option value="2026-W48">Semana 48: 23 Nov – 29 Nov (Próxima)</option>
+						<option value="2026-W49">Semana 49: 30 Nov – 06 Dic (Siguiente)</option>
 					</select>
 				</div>
 
@@ -317,10 +372,15 @@
 				<div>
 					<label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Establecimiento</label>
 					<select id="wfm-filter-establishment" onchange="refreshWfmSchedule()" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-2 font-medium">
-						<option value="Todos">Todos los Establecimientos</option>
+						<option value="Todos">Todos los Establecimientos (8)</option>
 						<option value="Almacén Central Norte" selected>Almacén Central Norte</option>
 						<option value="Supermercados Los Andes">Supermercados Los Andes</option>
 						<option value="Distribuidora San Juan">Distribuidora San Juan</option>
+						<option value="Mega Market Colonial">Mega Market Colonial</option>
+						<option value="Hipermercado Metro Plaza">Hipermercado Metro Plaza</option>
+						<option value="Cash & Carry Fiori">Cash & Carry Fiori</option>
+						<option value="Tiendas Mass Express">Tiendas Mass Express</option>
+						<option value="Centro Logístico Huachipa">Centro Logístico Huachipa</option>
 					</select>
 				</div>
 
@@ -333,6 +393,7 @@
 						<option value="Lima Centro">Lima Centro</option>
 						<option value="Lima Sur">Lima Sur</option>
 						<option value="Callao">Callao</option>
+						<option value="Lima Este">Lima Este</option>
 					</select>
 				</div>
 
@@ -353,70 +414,133 @@
 					<select id="wfm-filter-supervisor" onchange="refreshWfmSchedule()" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-2 font-medium">
 						<option value="Todos">Todos los Supervisores</option>
 						<option value="Carlos Mendoza" selected>Carlos Mendoza (Dir. Ventas)</option>
+						<option value="María Torres">María Torres (Supervisora Operaciones)</option>
+						<option value="Gonzalo Núñez">Gonzalo Núñez (Gerente General)</option>
 					</select>
 				</div>
 			</div>
 		</div>
 
-		<!-- CALENDARIO SEMANAL INTERACTIVO -->
-		<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden">
-			<!-- Cabecera de Tabla con Leyenda y Botón Agregar Turno -->
-			<div class="p-4 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/30">
-				<div>
-					<h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-						<i data-lucide="calendar" class="w-4 h-4 text-brand-700"></i>
-						<span>Matriz de Turnos Semanal — Colaboradores vs Días</span>
-					</h2>
-					<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-						Haga clic en un turno para editarlo/eliminarlo o en una celda vacía para agregar turno. Arrastre (drag & drop) para mover de día.
-					</p>
+		<!-- VISTA ADMINISTRADOR / SUPERVISOR: MATRIZ COMPLETA DE TURNOS -->
+		<div id="wfm-admin-schedule-view" class="space-y-6">
+			<!-- CALENDARIO SEMANAL INTERACTIVO -->
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden">
+				<!-- Cabecera de Tabla con Leyenda y Botón Agregar Turno -->
+				<div class="p-4 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/30">
+					<div>
+						<h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+							<i data-lucide="calendar" class="w-4 h-4 text-brand-700"></i>
+							<span>Matriz de Turnos Semanal — Colaboradores vs Días</span>
+						</h2>
+						<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+							Haga clic en un turno para editarlo/eliminarlo o en una celda vacía para agregar turno. Arrastre (drag & drop) para mover de día.
+						</p>
+					</div>
+
+					<div class="flex items-center gap-2">
+						<button onclick="openShiftModal(null, 1, 1)" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-700 hover:bg-brand-800 text-white transition-colors">
+							<i data-lucide="plus" class="w-3.5 h-3.5"></i>
+							<span>Agregar turno</span>
+						</button>
+					</div>
 				</div>
 
-				<div class="flex items-center gap-2">
-					<button onclick="openShiftModal(null, 1, 1)" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-700 hover:bg-brand-800 text-white transition-colors">
-						<i data-lucide="plus" class="w-3.5 h-3.5"></i>
-						<span>Agregar turno</span>
-					</button>
+				<!-- Leyenda de colores de turnos -->
+				<div class="px-4 py-2 border-b border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-2 text-[11px] bg-white dark:bg-slate-900">
+					<span class="text-slate-400 font-semibold mr-1">Turnos:</span>
+					<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+						<span class="w-2 h-2 rounded-full bg-emerald-600"></span> Apertura (07:00 - 15:30)
+					</span>
+					<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+						<span class="w-2 h-2 rounded-full bg-blue-600"></span> Intermedio (09:00 - 18:00)
+					</span>
+					<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+						<span class="w-2 h-2 rounded-full bg-purple-600"></span> Cierre (13:30 - 22:00)
+					</span>
+					<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+						<span class="w-2 h-2 rounded-full bg-amber-600"></span> Vacaciones / Ausencia
+					</span>
+					<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+						<span class="w-2 h-2 rounded-full bg-slate-400"></span> Descanso
+					</span>
+				</div>
+
+				<!-- Matriz Semanal (Table) -->
+				<div class="overflow-x-auto">
+					<table class="w-full text-left border-collapse min-w-[950px]" id="wfm-schedule-table">
+						<thead>
+							<tr class="bg-slate-100/70 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+								<th class="p-3 w-64 sticky left-0 bg-slate-100 dark:bg-slate-800 z-10">Colaborador / Rol</th>
+								<th class="p-2.5 text-center w-36">Lun 16 Nov</th>
+								<th class="p-2.5 text-center w-36">Mar 17 Nov</th>
+								<th class="p-2.5 text-center w-36">Mié 18 Nov</th>
+								<th class="p-2.5 text-center w-36">Jue 19 Nov</th>
+								<th class="p-2.5 text-center w-36">Vie 20 Nov</th>
+								<th class="p-2.5 text-center w-36">Sáb 21 Nov</th>
+								<th class="p-2.5 text-center w-36">Dom 22 Nov</th>
+								<th class="p-3 text-center w-28">Total Horas</th>
+							</tr>
+						</thead>
+						<tbody id="wfm-schedule-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+							<!-- Rellenado dinámicamente con JavaScript -->
+						</tbody>
+					</table>
 				</div>
 			</div>
+		</div>
 
-			<!-- Leyenda de colores de turnos -->
-			<div class="px-4 py-2 border-b border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-2 text-[11px] bg-white dark:bg-slate-900">
-				<span class="text-slate-400 font-semibold mr-1">Turnos:</span>
-				<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-					<span class="w-2 h-2 rounded-full bg-emerald-600"></span> Apertura (07:00 - 15:30)
-				</span>
-				<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-					<span class="w-2 h-2 rounded-full bg-blue-600"></span> Intermedio (09:00 - 18:00)
-				</span>
-				<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-					<span class="w-2 h-2 rounded-full bg-purple-600"></span> Cierre (13:30 - 22:00)
-				</span>
-				<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-					<span class="w-2 h-2 rounded-full bg-slate-400"></span> Descanso
-				</span>
-			</div>
+		<!-- VISTA PERSONALIZADA DEL COLABORADOR (SOLO CUANDO EL ROL ES EMPLEADO / REPONEDOR) -->
+		<div id="wfm-employee-personal-view" class="hidden space-y-6">
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs">
+				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+					<div class="flex items-center gap-3">
+						<div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 flex items-center justify-center font-bold text-base" id="wfm-emp-avatar">
+							JQ
+						</div>
+						<div>
+							<div class="flex items-center gap-2">
+								<h3 class="text-base font-bold text-slate-900 dark:text-white" id="wfm-emp-name">Jorge Quispe</h3>
+								<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300">Mi Horario Activo</span>
+							</div>
+							<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" id="wfm-emp-detail">Vendedor Comercial B2B • Lima Norte • Almacén Central Norte</p>
+						</div>
+					</div>
+					<div class="flex items-center gap-2">
+						<button onclick="requestPersonalShiftSwap()" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-brand-700 hover:bg-brand-800 text-white shadow-2xs transition-colors">
+							<i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i>
+							<span>Solicitar cambio de turno</span>
+						</button>
+					</div>
+				</div>
 
-			<!-- Matriz Semanal (Table) -->
-			<div class="overflow-x-auto">
-				<table class="w-full text-left border-collapse min-w-[950px]" id="wfm-schedule-table">
-					<thead>
-						<tr class="bg-slate-100/70 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
-							<th class="p-3 w-64 sticky left-0 bg-slate-100 dark:bg-slate-800 z-10">Colaborador / Rol</th>
-							<th class="p-2.5 text-center w-36">Lun 16 Nov</th>
-							<th class="p-2.5 text-center w-36">Mar 17 Nov</th>
-							<th class="p-2.5 text-center w-36">Mié 18 Nov</th>
-							<th class="p-2.5 text-center w-36">Jue 19 Nov</th>
-							<th class="p-2.5 text-center w-36">Vie 20 Nov</th>
-							<th class="p-2.5 text-center w-36">Sáb 21 Nov</th>
-							<th class="p-2.5 text-center w-36">Dom 22 Nov</th>
-							<th class="p-3 text-center w-28">Total Horas</th>
-						</tr>
-					</thead>
-					<tbody id="wfm-schedule-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
-						<!-- Rellenado dinámicamente con JavaScript -->
-					</tbody>
-				</table>
+				<div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+					<div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
+						<span class="text-slate-500 dark:text-slate-400 text-[11px] block">Horas contratadas</span>
+						<span class="text-base font-bold text-slate-800 dark:text-slate-200" id="wfm-emp-contracted-hours">48.0 hrs / sem</span>
+					</div>
+					<div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
+						<span class="text-slate-500 dark:text-slate-400 text-[11px] block">Horas asignadas</span>
+						<span class="text-base font-bold text-emerald-600 dark:text-emerald-400" id="wfm-emp-scheduled-hours">48.0 hrs</span>
+					</div>
+					<div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
+						<span class="text-slate-500 dark:text-slate-400 text-[11px] block">Sede asignada</span>
+						<span class="text-xs font-bold text-slate-800 dark:text-slate-200" id="wfm-emp-establishment">Almacén Central Norte</span>
+					</div>
+					<div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
+						<span class="text-slate-500 dark:text-slate-400 text-[11px] block">Supervisor a cargo</span>
+						<span class="text-xs font-bold text-slate-800 dark:text-slate-200" id="wfm-emp-supervisor">Carlos Mendoza</span>
+					</div>
+				</div>
+
+				<div class="mt-6">
+					<div class="flex items-center justify-between mb-3">
+						<h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Mis Turnos de la Semana</h4>
+						<span class="text-xs text-slate-500" id="wfm-emp-week-label">Semana 47 (16 Nov – 22 Nov)</span>
+					</div>
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3" id="wfm-emp-schedule-cards">
+						<!-- Rellenado dinámicamente con las tarjetas de los 7 días -->
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

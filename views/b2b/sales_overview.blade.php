@@ -11568,6 +11568,7 @@
 
 	{{-- MODALES Y SCRIPTS WFM --}}
 	@include('b2b.workforce_modals')
+	@include('b2b.demo_engine_scripts')
 	@include('b2b.workforce_scripts')
 </body>
 </html>

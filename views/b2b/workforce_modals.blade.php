@@ -345,3 +345,142 @@
 		</div>
 	</div>
 </div>
+
+{{-- MODAL 4: OPTIMIZACIÓN INTELIGENTE DE TURNOS (REGLAS DETERMINISTAS) --}}
+<div id="modal-wfm-optimize" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+	<div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
+		<div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-gradient-to-r from-emerald-900/40 to-slate-900/20">
+			<div>
+				<h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+					<i data-lucide="sparkles" class="w-5 h-5 text-emerald-600"></i>
+					<span>Optimización Inteligente de Semana (Algoritmo Determinista WFM)</span>
+				</h3>
+				<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+					Analiza la demanda de pedidos, picos de almacén y reglas laborales para proponer ajustes de dotación.
+				</p>
+			</div>
+			<button onclick="closeWfmModal('modal-wfm-optimize')" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg">
+				<i data-lucide="x" class="w-5 h-5"></i>
+			</button>
+		</div>
+
+		<div class="p-6 space-y-4">
+			<!-- Comparativa Antes vs Propuesta -->
+			<div class="grid grid-cols-2 gap-3 text-xs">
+				<div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40">
+					<span class="text-[10px] uppercase font-bold text-slate-400">Estado Actual de la Semana</span>
+					<div class="mt-2 space-y-1">
+						<div class="flex justify-between"><span>Horas Programadas:</span> <strong id="opt-cur-hours" class="text-slate-800 dark:text-white">236.0h</strong></div>
+						<div class="flex justify-between"><span>Costo Estimado:</span> <strong id="opt-cur-cost" class="text-slate-800 dark:text-white">$1,884.00</strong></div>
+						<div class="flex justify-between"><span>Cobertura de Personal:</span> <strong id="opt-cur-cov" class="text-amber-600">69.4%</strong></div>
+						<div class="flex justify-between"><span>Margen Presupuestario:</span> <strong id="opt-cur-margin" class="text-emerald-600">+$916.00</strong></div>
+					</div>
+				</div>
+
+				<div class="p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/30">
+					<span class="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-300">Propuesta Optimizada WFM</span>
+					<div class="mt-2 space-y-1 text-emerald-900 dark:text-emerald-200">
+						<div class="flex justify-between"><span>Horas Proyectadas:</span> <strong id="opt-prop-hours" class="font-bold">243.5h</strong></div>
+						<div class="flex justify-between"><span>Costo Proyectado:</span> <strong id="opt-prop-cost" class="font-bold">$1,940.00</strong></div>
+						<div class="flex justify-between"><span>Nueva Cobertura:</span> <strong id="opt-prop-cov" class="font-bold text-emerald-600">71.6% (+2.2%)</strong></div>
+						<div class="flex justify-between"><span>Margen Resultante:</span> <strong id="opt-prop-margin" class="font-bold text-emerald-600">+$860.00</strong></div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Lista de Sugerencias Específicas -->
+			<div class="space-y-2">
+				<div class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+					Ajustes Deterministas Recomendados
+				</div>
+				<div id="opt-suggestions-list" class="space-y-2 text-xs">
+					<!-- Rellenado dinámicamente -->
+				</div>
+			</div>
+		</div>
+
+		<div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/60 dark:bg-slate-900/40">
+			<button id="btn-revert-opt" onclick="revertCurrentOptimization()" class="px-3.5 py-2 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 text-slate-700 dark:text-slate-300 transition-colors hidden">
+				Revertir Optimización
+			</button>
+			<div class="flex items-center gap-2 ml-auto">
+				<button onclick="closeWfmModal('modal-wfm-optimize')" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+					Cancelar
+				</button>
+				<button id="btn-apply-opt" onclick="applyCurrentOptimization()" class="px-5 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center gap-1.5 transition-colors">
+					<i data-lucide="check" class="w-4 h-4"></i>
+					<span>Aplicar Optimización al Borrador</span>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+{{-- MODAL 5: BANDEJA DE NOTIFICACIONES DEMO INTERNAS --}}
+<div id="modal-wfm-notifications" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+	<div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
+		<div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/60 dark:bg-slate-900/40">
+			<div class="flex items-center gap-2">
+				<i data-lucide="bell" class="w-5 h-5 text-amber-500"></i>
+				<h3 class="text-sm font-bold text-slate-900 dark:text-white">Centro de Notificaciones Internas Demo</h3>
+			</div>
+			<button onclick="closeWfmModal('modal-wfm-notifications')" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg">
+				<i data-lucide="x" class="w-5 h-5"></i>
+			</button>
+		</div>
+
+		<div class="p-4 space-y-2 max-h-96 overflow-y-auto" id="wfm-notifications-container">
+			<!-- Renderizado dinámicamente -->
+		</div>
+
+		<div class="px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50/60 dark:bg-slate-900/40">
+			<button onclick="markAllNotificationsRead()" class="text-xs text-brand-700 dark:text-brand-400 font-semibold hover:underline">
+				Marcar todas como leídas
+			</button>
+			<button onclick="closeWfmModal('modal-wfm-notifications')" class="px-4 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-white">
+				Cerrar
+			</button>
+		</div>
+	</div>
+</div>
+
+{{-- MODAL 6: PANEL DE CONTROL DEMO (RESTABLECER, EXPORTAR, AUDITORÍA) --}}
+<div id="modal-wfm-demo-settings" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+	<div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
+		<div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/60 dark:bg-slate-900/40">
+			<div class="flex items-center gap-2">
+				<i data-lucide="settings-2" class="w-5 h-5 text-brand-700"></i>
+				<h3 class="text-sm font-bold text-slate-900 dark:text-white">Herramientas & Estado del Modo Demo</h3>
+			</div>
+			<button onclick="closeWfmModal('modal-wfm-demo-settings')" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg">
+				<i data-lucide="x" class="w-5 h-5"></i>
+			</button>
+		</div>
+
+		<div class="p-6 space-y-4 text-xs">
+			<div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300">
+				<div class="font-bold">Persistencia Local Activa (IndexedDB / LocalStorage)</div>
+				<p class="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">
+					Cualquier turno creado, editado o movido se guarda automáticamente en tu navegador y persiste al recargar la página.
+				</p>
+			</div>
+
+			<div class="space-y-2">
+				<button onclick="exportDemoDatasetJson()" class="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors">
+					<i data-lucide="download" class="w-4 h-4"></i>
+					<span>Exportar Dataset Demo Completo (JSON)</span>
+				</button>
+				<button onclick="confirmResetDemoData()" class="w-full py-2.5 px-3 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 rounded-lg font-semibold border border-rose-200 dark:border-rose-800 flex items-center justify-center gap-2 transition-colors">
+					<i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+					<span>Restablecer Datos Demo a Valores de Fábrica</span>
+				</button>
+			</div>
+		</div>
+
+		<div class="px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-slate-50/60 dark:bg-slate-900/40">
+			<button onclick="closeWfmModal('modal-wfm-demo-settings')" class="px-4 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-white">
+				Cerrar
+			</button>
+		</div>
+	</div>
+</div>
