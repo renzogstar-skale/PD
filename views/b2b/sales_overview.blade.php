@@ -8039,6 +8039,33 @@
 							${o.items_count} ítems
 						</span>
 					</td>
+					<td class="py-3 px-4 text-right font-mono text-slate-600 dark:text-slate-300">
+						$${parseFloat(o.subtotal || 0).toFixed(2)}
+					</td>
+					<td class="py-3 px-4 text-right font-mono font-bold text-slate-900 dark:text-white text-sm">
+						$${parseFloat(o.total || 0).toFixed(2)}
+					</td>
+					<td class="py-3 px-4 text-center">
+						${statusBadge}
+					</td>
+					<td class="py-3 px-4 text-right">
+						<div class="flex items-center justify-end gap-1.5">
+							<button onclick="openCommercialDetailModal('order', ${o.id})" class="p-1.5 text-brand-700 dark:text-brand-300 hover:bg-brand-50 dark:hover:bg-brand-950/60 rounded-lg transition-colors" title="Ver Detalle y Auditoría">
+								<i data-lucide="eye" class="w-4 h-4"></i>
+							</button>
+							<button onclick="duplicateOrderAction(${o.id})" class="p-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Duplicar Pedido">
+								<i data-lucide="copy" class="w-4 h-4"></i>
+							</button>
+							${o.status === 'Borrador' ? `
+								<button onclick="confirmUpdateOrderStatus(${o.id}, 'Confirmado')" class="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-lg transition-colors" title="Confirmar Pedido">
+									<i data-lucide="check" class="w-4 h-4"></i>
+								</button>
+							` : ''}
+							${o.status === 'Confirmado' ? `
+								<button onclick="openGenerateInvoiceModal(${o.id})" class="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-lg transition-colors" title="Facturar Pedido">
+									<i data-lucide="receipt" class="w-4 h-4"></i>
+								</button>
+								<button onclick="confirmUpdateOrderStatus(${o.id}, 'Cancelado')" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors" title="Cancelar Pedido">
 									<i data-lucide="x-circle" class="w-4 h-4"></i>
 								</button>
 							` : ''}
