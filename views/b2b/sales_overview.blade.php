@@ -362,6 +362,19 @@
 					<button id="lang-btn-en" onclick="switchLanguage('en')" class="px-2 py-1 rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">EN</button>
 				</div>
 
+				<!-- Botón Glosario de Negocios -->
+				<button onclick="openGlossaryModal()" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors shadow-2xs" title="Consultar glosario de términos del negocio con definiciones y ejemplos">
+					<i data-lucide="book-open" class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400"></i>
+					<span class="hidden md:inline" data-i18n="btn_glossary">Glosario</span>
+				</button>
+
+				<!-- Botón Aprender a usar este tablero (Guía Interactiva) -->
+				<button onclick="startDashboardTour()" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/80 transition-colors shadow-2xs" title="Guía visual interactiva paso a paso para aprender a usar este tablero">
+					<i data-lucide="help-circle" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
+					<span class="hidden lg:inline" data-i18n="btn_learn_board">Aprender a usar este tablero</span>
+					<span class="lg:hidden">Guía</span>
+				</button>
+
 				<!-- Quick Theme Toggle -->
 				<button onclick="toggleTheme()" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Alternar Modo Oscuro/Claro">
 					<i data-lucide="moon" class="w-4 h-4 hidden dark:block"></i>
@@ -455,7 +468,12 @@
 					<!-- KPI 1: Ventas Netas Facturadas -->
 					<div id="kpi-net-sales-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Ventas netas = Facturación válida antes de impuestos − Notas de crédito válidas antes de impuestos.">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_net_sales">Ventas Netas B2B</span>
+							<div class="flex items-center gap-1.5">
+								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_net_sales">Ventas Netas B2B</span>
+								<button type="button" onclick="openKpiHelp('net_sales')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
+									<i data-lucide="info" class="w-3.5 h-3.5"></i>
+								</button>
+							</div>
 							<div class="w-7 h-7 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center">
 								<i data-lucide="dollar-sign" class="w-4 h-4"></i>
 							</div>
@@ -477,7 +495,12 @@
 					<!-- KPI 2: Pedidos Confirmados -->
 					<div id="kpi-orders-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Total de pedidos comerciales en estado 'Confirmado' registrados en el período.">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_confirmed_orders">Pedidos Confirmados</span>
+							<div class="flex items-center gap-1.5">
+								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_confirmed_orders">Pedidos Confirmados</span>
+								<button type="button" onclick="openKpiHelp('orders')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
+									<i data-lucide="info" class="w-3.5 h-3.5"></i>
+								</button>
+							</div>
 							<div class="w-7 h-7 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
 								<i data-lucide="package-check" class="w-4 h-4"></i>
 							</div>
@@ -499,7 +522,12 @@
 					<!-- KPI 3: Clientes Activos -->
 					<div id="kpi-customers-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Clientes comerciales con al menos un pedido confirmado o factura emitida en el período.">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_active_customers">Clientes Activos</span>
+							<div class="flex items-center gap-1.5">
+								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_active_customers">Clientes Activos</span>
+								<button type="button" onclick="openKpiHelp('active_customers')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
+									<i data-lucide="info" class="w-3.5 h-3.5"></i>
+								</button>
+							</div>
 							<div class="w-7 h-7 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center">
 								<i data-lucide="users" class="w-4 h-4"></i>
 							</div>
@@ -521,7 +549,12 @@
 					<!-- KPI 4: Ticket Promedio Facturado -->
 					<div id="kpi-ticket-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Ticket Promedio = Ventas Netas Facturadas / Cantidad de Facturas Válidas.">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_average_ticket">Ticket Promedio</span>
+							<div class="flex items-center gap-1.5">
+								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_average_ticket">Ticket Promedio</span>
+								<button type="button" onclick="openKpiHelp('ticket')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
+									<i data-lucide="info" class="w-3.5 h-3.5"></i>
+								</button>
+							</div>
 							<div class="w-7 h-7 rounded-md bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 flex items-center justify-center">
 								<i data-lucide="receipt" class="w-4 h-4"></i>
 							</div>
@@ -543,7 +576,12 @@
 					<!-- KPI 5: Cuentas por Cobrar -->
 					<div id="kpi-receivable-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Saldo pendiente total exigible de facturas emitidas y parciales, deduciendo pagos y notas de crédito.">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_accounts_receivable">Cuentas por Cobrar</span>
+							<div class="flex items-center gap-1.5">
+								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_accounts_receivable">Cuentas por Cobrar</span>
+								<button type="button" onclick="openKpiHelp('receivable')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
+									<i data-lucide="info" class="w-3.5 h-3.5"></i>
+								</button>
+							</div>
 							<div class="w-7 h-7 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center">
 								<i data-lucide="wallet" class="w-4 h-4"></i>
 							</div>
@@ -565,7 +603,12 @@
 					<!-- KPI 6: Variación vs. Período Anterior -->
 					<div id="kpi-variation-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Cálculo porcentual: (Período actual − Período anterior) / Período anterior × 100. Si período anterior es 0, muestra N/D.">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_sales_variation">Variación Ventas</span>
+							<div class="flex items-center gap-1.5">
+								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_sales_variation">Variación Ventas</span>
+								<button type="button" onclick="openKpiHelp('sales_variation')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
+									<i data-lucide="info" class="w-3.5 h-3.5"></i>
+								</button>
+							</div>
 							<div class="w-7 h-7 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center">
 								<i data-lucide="trending-up" class="w-4 h-4"></i>
 							</div>
@@ -590,6 +633,10 @@
 							<div>
 								<h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
 									<span data-i18n="chart_sales_trend_title">Evolución de Facturación & Margen B2B</span>
+									<button type="button" onclick="openChartHelp('sales_trend')" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/60 dark:hover:text-indigo-300 transition-colors" title="¿Cómo interpretar este gráfico?">
+										<i data-lucide="help-circle" class="w-3 h-3"></i>
+										<span>Explicar gráfico</span>
+									</button>
 									<span id="dash-granularity-badge" class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">Serie Diaria</span>
 								</h3>
 								<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="chart_sales_trend_desc">Desempeño diario en dólares facturados frente al margen bruto alcanzado.</p>
@@ -6172,7 +6219,16 @@
 				badge_in_development: 'Módulo en desarrollo',
 				module_specs_title: 'Especificaciones de Arquitectura B2B',
 				features_included: 'Funcionalidades en preparación:',
-				btn_back_to_sales: 'Volver al Resumen de Ventas'
+				btn_back_to_sales: 'Volver al Resumen de Ventas',
+				btn_glossary: 'Glosario',
+				btn_learn_board: 'Aprender a usar este tablero',
+				help_view_as: 'Ver consejos para:',
+				kpi_net_sales_plain: 'Total Facturado Real (sin impuestos)',
+				kpi_orders_plain: 'Pedidos Listos para Despacho',
+				kpi_active_customers_plain: 'Clientes con Compras en el Período',
+				kpi_ticket_plain: 'Venta Promedio por Factura',
+				kpi_receivable_plain: 'Dinero Pendiente de Cobro',
+				kpi_sales_variation_plain: 'Crecimiento vs Período Anterior'
 			},
 			en: {
 				demo_mode_active: 'B2B Demo Mode Active',
@@ -6225,7 +6281,16 @@
 				badge_in_development: 'Module in development',
 				module_specs_title: 'B2B Architecture Specifications',
 				features_included: 'Features under preparation:',
-				btn_back_to_sales: 'Back to Sales Summary'
+				btn_back_to_sales: 'Back to Sales Summary',
+				btn_glossary: 'Glossary',
+				btn_learn_board: 'Learn how to use this board',
+				help_view_as: 'View tips for:',
+				kpi_net_sales_plain: 'Actual Billed Sales (excl. Tax)',
+				kpi_orders_plain: 'Orders Ready for Dispatch',
+				kpi_active_customers_plain: 'Purchasing Clients in Period',
+				kpi_ticket_plain: 'Average Invoiced Amount',
+				kpi_receivable_plain: 'Outstanding Collections',
+				kpi_sales_variation_plain: 'Sales Growth vs Prior Period'
 			}
 		};
 
@@ -13233,5 +13298,6 @@
 	@include('b2b.demo_engine_scripts')
 	@include('b2b.workforce_scripts')
 	@include('b2b.product_lifecycle_scripts')
+	@include('b2b.interactive_help_system')
 </body>
 </html>

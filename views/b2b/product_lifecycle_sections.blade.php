@@ -26,17 +26,21 @@
 
 		<!-- Botones de Acción Global -->
 		<div class="flex flex-wrap items-center gap-2">
-			<button onclick="openMarkdownSimulatorModal()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 transition-colors shadow-xs" title="Simulador de descuentos por elasticidad y liquidación">
+			<button onclick="openMarkdownSimulatorModal()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 transition-colors shadow-xs" title="Simulador interactivo de descuentos por elasticidad de demanda y liquidación">
 				<i data-lucide="percent" class="w-3.5 h-3.5"></i>
-				<span>Simulador Markdown</span>
+				<span>Simular Descuentos</span>
 			</button>
-			<button onclick="openDataImportModal()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors shadow-xs" title="Asistente de importación CSV o Excel">
+			<button onclick="openDataImportModal()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors shadow-xs" title="Importar datos desde planillas Excel o archivos CSV">
 				<i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
-				<span>Asistente Importación</span>
+				<span>Importar Datos (Excel / CSV)</span>
 			</button>
-			<button onclick="refreshLifecycleData()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-700 hover:bg-brand-800 text-white shadow-xs transition-colors" title="Recalcular métricas de ciclo de vida">
+			<button onclick="refreshLifecycleData()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-700 hover:bg-brand-800 text-white shadow-xs transition-colors" title="Actualizar todos los indicadores con las últimas ventas y conteos">
 				<i data-lucide="rotate-cw" id="btn-refresh-icon" class="w-3.5 h-3.5"></i>
-				<span>Recalcular Motor</span>
+				<span>Actualizar Indicadores</span>
+			</button>
+			<button onclick="startDashboardTour()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/60 dark:hover:bg-amber-900/80 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 transition-colors shadow-xs" title="Guía interactiva explicativa paso a paso">
+				<i data-lucide="help-circle" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
+				<span>Guía del Módulo</span>
 			</button>
 		</div>
 	</div>
@@ -129,13 +133,12 @@
 		<!-- KPI 1: Sell-through -->
 		<div onclick="openKpiDrilldownModal('sell_through')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
-				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">1. Sell-through</span>
-				<div class="relative group/tip">
+				<span class="text-xs font-semibold text-slate-700 dark:text-slate-300">1. Ventas del Inventario <span class="text-[10px] text-slate-400 font-mono">(Sell-through)</span></span>
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('sell_through')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						(Unidades vendidas / Unidades disponibles en período) × 100. Mide velocidad de absorción comercial.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="val-kpi-sell-through">58.4%</div>
@@ -152,13 +155,12 @@
 		<!-- KPI 2: Rotación de Inventario -->
 		<div onclick="openKpiDrilldownModal('turnover')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
-				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">2. Rotación Inventario</span>
-				<div class="relative group/tip">
+				<span class="text-xs font-semibold text-slate-700 dark:text-slate-300">2. Renovación Inventario <span class="text-[10px] text-slate-400 font-mono">(Rotación)</span></span>
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('turnover')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						COGS anualizado / Inventario Promedio a Costo. Mide cuántas veces rota el capital.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="val-kpi-turnover">1.38x</div>
@@ -175,13 +177,12 @@
 		<!-- KPI 3: Cobertura en Días (DIO) -->
 		<div onclick="openKpiDrilldownModal('coverage_dio')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
-				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">3. Cobertura (DIO)</span>
-				<div class="relative group/tip">
+				<span class="text-xs font-semibold text-slate-700 dark:text-slate-300">3. Días Stock Disponible <span class="text-[10px] text-slate-400 font-mono">(Cobertura)</span></span>
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('coverage_dio')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						Stock disponible / Demanda diaria esperada. Días de venta garantizados con inventario actual.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="val-kpi-coverage">24.2 d</div>
@@ -198,13 +199,12 @@
 		<!-- KPI 4: GMROI -->
 		<div onclick="openKpiDrilldownModal('gmroi')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
-				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">4. GMROI</span>
-				<div class="relative group/tip">
+				<span class="text-xs font-semibold text-slate-700 dark:text-slate-300">4. Retorno por Dólar en Stock <span class="text-[10px] text-slate-400 font-mono">(GMROI)</span></span>
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('gmroi')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						Margen Bruto Total ($) / Inventario Promedio a Costo ($). Retorno por cada dólar inmovilizado.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="val-kpi-gmroi">$3.15</div>
@@ -221,13 +221,12 @@
 		<!-- KPI 5: GMROS -->
 		<div onclick="openKpiDrilldownModal('gmros')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
-				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">5. GMROS</span>
-				<div class="relative group/tip">
+				<span class="text-xs font-semibold text-slate-700 dark:text-slate-300">5. Ganancia por Espacio <span class="text-[10px] text-slate-400 font-mono">(GMROS)</span></span>
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('gmros')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						Margen Bruto Total ($) / Espacio de Piso o Góndola Asignado (m²). Rentabilidad del espacio físico.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="val-kpi-gmros">$415/m²</div>
@@ -245,12 +244,11 @@
 		<div onclick="openKpiDrilldownModal('growth_skus')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
 				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">6. En Crecimiento</span>
-				<div class="relative group/tip">
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('growth_skus')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						% de SKUs con incremento sostenido de demanda (> +10%) sin quiebre de stock.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400" id="val-kpi-growth">21.4%</div>
@@ -268,12 +266,11 @@
 		<div onclick="openKpiDrilldownModal('maturity_skus')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
 				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">7. En Madurez</span>
-				<div class="relative group/tip">
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('maturity_skus')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						% de SKUs con demanda consolidada y ventas estables. Núcleo generador de flujo de caja.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400" id="val-kpi-maturity">28.6%</div>
@@ -291,12 +288,11 @@
 		<div onclick="openKpiDrilldownModal('decline_skus')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
 				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">8. En Declive</span>
-				<div class="relative group/tip">
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('decline_skus')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						% de SKUs con contracción sostenida de demanda (< -10%) en al menos 2 períodos seguidos.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400" id="val-kpi-decline">14.3%</div>
@@ -313,13 +309,12 @@
 		<!-- KPI 9: Capital Inmovilizado ($) -->
 		<div onclick="openKpiDrilldownModal('immobilized_capital')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-red-400 dark:hover:border-red-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
-				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">9. Capital Inmovilizado</span>
-				<div class="relative group/tip">
+				<span class="text-xs font-semibold text-slate-700 dark:text-slate-300">9. Dinero Detenido en Stock sin Venta</span>
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('immobilized_capital')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						Valor a costo de inventario lento, obsoleto o sin movimiento por más de 60-90 días.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-red-600 dark:text-red-400" id="val-kpi-immobilized">$17,215</div>
@@ -336,13 +331,12 @@
 		<!-- KPI 10: Riesgo Quiebre de Stock -->
 		<div onclick="openKpiDrilldownModal('stockout_risk')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-red-400 dark:hover:border-red-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
-				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">10. Riesgo Quiebre Stock</span>
-				<div class="relative group/tip">
+				<span class="text-xs font-semibold text-slate-700 dark:text-slate-300">10. Riesgo de Quedarse sin Stock</span>
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('stockout_risk')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						% de SKUs con días de cobertura menores al Lead Time de reposición del proveedor.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400" id="val-kpi-stockout">14.3%</div>
@@ -359,13 +353,12 @@
 		<!-- KPI 11: Margen Bruto Post-Descuentos -->
 		<div onclick="openKpiDrilldownModal('net_margin_post_discounts')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
-				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">11. Margen Post-Descuento</span>
-				<div class="relative group/tip">
+				<span class="text-xs font-semibold text-slate-700 dark:text-slate-300">11. Margen Real tras Descuentos</span>
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('net_margin_post_discounts')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						((Ventas Netas - Descuentos Comerciales - COGS) / Ventas Netas) × 100.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="val-kpi-margin">24.2%</div>
@@ -382,13 +375,12 @@
 		<!-- KPI 12: Precisión del Pronóstico -->
 		<div onclick="openKpiDrilldownModal('forecast_accuracy')" class="group cursor-pointer bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 rounded-xl p-4 shadow-xs transition-all hover:shadow-md">
 			<div class="flex items-center justify-between">
-				<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">12. Precisión Pronóstico</span>
-				<div class="relative group/tip">
+				<span class="text-xs font-semibold text-slate-700 dark:text-slate-300">12. Exactitud de la Estimación de Ventas</span>
+				<button type="button" onclick="event.stopPropagation(); openKpiHelp('forecast_accuracy')" class="relative group/tip p-1 -m-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
 					<i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i>
 					<div class="invisible group-hover/tip:visible opacity-0 group-hover/tip:opacity-100 transition-opacity absolute right-0 top-5 z-50 w-60 p-2 text-[11px] leading-tight text-white bg-slate-900 rounded-lg shadow-lg pointer-events-none">
 						(1 - WMAPE medio) × 100. Comparativa entre previsión estadística y ventas reales ejecutadas.
-					</div>
-				</div>
+					</div></button>
 			</div>
 			<div class="mt-2 flex items-baseline justify-between">
 				<div class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="val-kpi-forecast">92.4%</div>
