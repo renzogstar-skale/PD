@@ -54,6 +54,21 @@ class B2bWorkforceApiController extends BaseApiController
 		}
 	}
 
+	public function GetActiveShift(Request $request, Response $response, array $args): Response
+	{
+		try {
+			$params = $request->getQueryParams();
+			$empId = (int)($params['employee_id'] ?? 2);
+			$data = $this->WfmService()->GetActiveShiftForEmployee($empId);
+			return $this->JsonResponse($response, [
+				'success' => true,
+				'shift' => $data
+			]);
+		} catch (Exception $ex) {
+			return $this->GenericErrorResponse($response, $ex->getMessage(), 400);
+		}
+	}
+
 	public function SaveShift(Request $request, Response $response, array $args): Response
 	{
 		try {

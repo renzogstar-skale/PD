@@ -25,17 +25,43 @@ class B2bCustomerApiController extends BaseApiController
 			$filters = [
 				'search' => $queryParams['search'] ?? null,
 				'type' => $queryParams['type'] ?? null,
-				'active' => $queryParams['active'] ?? null
+				'active' => $queryParams['active'] ?? null,
+				'territory' => $queryParams['territory'] ?? null,
+				'sales_rep' => $queryParams['sales_rep'] ?? null,
+				'branch_id' => $queryParams['branch_id'] ?? null
 			];
 
 			$service = $this->CustomerService();
-			$metrics = $service->GetMetrics();
+			$metrics = $service->GetMetrics($queryParams);
 			$customers = $service->GetCustomers($filters);
+			$filterOptions = $service->GetFilterOptions();
 
 			return $this->ApiResponse($response, [
 				'success' => true,
 				'metrics' => $metrics,
-				'customers' => $customers
+				'customers' => $customers,
+				'filter_options' => $filterOptions
+			]);
+		}
+		catch (Exception $ex)
+		{
+			return $this->GenericErrorResponse($response, $ex->getMessage());
+		}
+	}
+
+	public function GetKpis(Request $request, Response $response, array $args): Response
+	{
+		try
+		{
+			$queryParams = $request->getQueryParams();
+			$service = $this->CustomerService();
+			$metrics = $service->GetMetrics($queryParams);
+			$filterOptions = $service->GetFilterOptions();
+
+			return $this->ApiResponse($response, [
+				'success' => true,
+				'metrics' => $metrics,
+				'filter_options' => $filterOptions
 			]);
 		}
 		catch (Exception $ex)

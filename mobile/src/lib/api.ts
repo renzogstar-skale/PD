@@ -3,6 +3,7 @@
  */
 
 import { Storage } from './storage';
+import { supabase } from './supabase';
 import {
   Customer,
   Product,
@@ -566,7 +567,7 @@ export class ApiClient {
   }
 
   // =========================================================================
-  // 8. TAREAS & OPERACIONES EN TIENDA (WFM FIELD OPERATIONS)
+  // 8. TAREAS & OPERACIONES EN TIENDA (SUPABASE POSTGRESQL + REALTIME)
   // =========================================================================
 
   private static mockTasks: Task[] = [
@@ -580,9 +581,9 @@ export class ApiClient {
       supervisor_name: 'Carlos Mendoza',
       establishment_id: 1,
       establishment_name: 'Prince Distributors — Hallandale HQ',
-      date: '2026-11-16',
+      date: '2026-11-17',
       priority: 'high',
-      status: 'in_progress',
+      status: 'pending',
       notes: 'Aplicar regla FEFO con lote LOT-2026-E15',
     },
     {
@@ -595,41 +596,10 @@ export class ApiClient {
       supervisor_name: 'Carlos Mendoza',
       establishment_id: 1,
       establishment_name: 'Prince Distributors — Hallandale HQ',
-      date: '2026-11-16',
+      date: '2026-11-17',
       priority: 'urgent',
       status: 'pending',
       notes: 'Reportar cualquier producto vencido a Carlos Mendoza',
-    },
-    {
-      id: 3,
-      title: 'Conteo Cíclico con Escáner UPC',
-      description: 'Escanear códigos UPC en pasillo 4 (Monster Energy, Arizona Tea y Doritos) y cuadrar contra stock bodega.',
-      employee_id: 2,
-      employee_name: 'Rosa María Huamán',
-      supervisor_id: 3,
-      supervisor_name: 'Carlos Mendoza',
-      establishment_id: 1,
-      establishment_name: 'Prince Distributors — Hallandale HQ',
-      date: '2026-11-16',
-      priority: 'normal',
-      status: 'completed',
-      evidence_url: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400',
-      notes: 'Conteo verificado 100% cuadre',
-    },
-    {
-      id: 4,
-      title: 'Alineación de Precios y Planograma POS',
-      description: 'Verificar etiquetas electrónicas y frentes de Inca Kola 2L y Coca-Cola 20oz.',
-      employee_id: 2,
-      employee_name: 'Rosa María Huamán',
-      supervisor_id: 3,
-      supervisor_name: 'Carlos Mendoza',
-      establishment_id: 1,
-      establishment_name: 'Prince Distributors — Hallandale HQ',
-      date: '2026-11-16',
-      priority: 'normal',
-      status: 'pending',
-      notes: 'Actualizar tags de promoción',
     }
   ];
 
@@ -648,21 +618,60 @@ export class ApiClient {
     { id: 8, upc: '016000264601', sku: 'SNK-NAT-12', name: 'Nature Valley Oats & Honey Bars 12ct', category: 'Snacks & Barras', lot: 'LOT-2026-H12', expiration_date: '2026-11-28', warehouse_stock: 60, shelf_stock: 12, shelf_capacity: 25, price: 4.99, cost: 2.80 },
   ];
 
-  private static activeSession: VisitSession | null = {
-    id: 101,
-    employee_id: 2,
-    employee_name: 'Rosa María Huamán',
-    establishment_id: 1,
-    establishment_name: 'Prince Distributors — Hallandale HQ',
-    clock_in: '08:58 AM',
-    clock_out: null,
-    status: 'in_progress',
-    tasks_completed: 1,
-    restocked_units: 45,
-    notes: 'Jornada activa en Hallandale Beach'
-  };
+  private static activeSession: VisitSession | null = null;
 
+  // 8.1 Obtener tareas con persistencia real en Supabase PostgreSQL
   static async getTasks(filter?: { employee_id?: number; establishment_id?: number; status?: string }): Promise<Task[]> {
+    try {
+      let query = supabase
+        .from('prince_tasks')
+        .select(`
+          id,
+          title,
+          description,
+          priority,
+          status,
+          date,
+          notes,
+          evidence_url,
+          employee_id,
+          supervisor_id,
+          branch_id,
+          prince_employees!prince_tasks_employee_id_fkey(name),
+          prince_branches(name)
+        `)
+        .order('id', { ascending: false });
+
+      if (filter?.employee_id) {
+        query = query.eq('employee_id', filter.employee_id);
+      }
+      if (filter?.status && filter.status !== 'all') {
+        query = query.eq('status', filter.status);
+      }
+
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) {
+        return data.map((t: any) => ({
+          id: t.id,
+          title: t.title,
+          description: t.description,
+          employee_id: t.employee_id,
+          employee_name: t.prince_employees?.name || 'Rosa María Huamán',
+          supervisor_id: t.supervisor_id || 3,
+          supervisor_name: 'Carlos Mendoza',
+          establishment_id: t.branch_id || 1,
+          establishment_name: t.prince_branches?.name || 'Prince Distributors — Hallandale HQ',
+          date: t.date || '2026-11-17',
+          priority: t.priority || 'normal',
+          status: t.status || 'pending',
+          evidence_url: t.evidence_url,
+          notes: t.notes
+        }));
+      }
+    } catch {
+      // Fallback a mock si la conexión falla temporalmente
+    }
+
     let list = [...this.mockTasks];
     if (filter?.status && filter.status !== 'all') {
       list = list.filter(t => t.status === filter.status);
@@ -670,7 +679,57 @@ export class ApiClient {
     return list;
   }
 
+  // 8.2 Actualizar estado de tarea mediante RPC seguro en Supabase
   static async updateTaskStatus(taskId: number, status: Task['status'], notes?: string): Promise<Task> {
+    try {
+      if (status === 'completed') {
+        const { data, error } = await supabase.rpc('prince_fn_complete_task', {
+          p_task_id: taskId,
+          p_employee_id: 2,
+          p_notes: notes || 'Completada desde Expo Go',
+          p_evidence_url: null
+        });
+        if (!error && data) {
+          const task = this.mockTasks.find(t => t.id === taskId);
+          if (task) {
+            task.status = 'completed';
+            if (notes) task.notes = notes;
+          }
+          return task || {
+            id: taskId,
+            title: 'Tarea Operativa',
+            description: '',
+            employee_id: 2,
+            employee_name: 'Rosa María Huamán',
+            supervisor_id: 3,
+            supervisor_name: 'Carlos Mendoza',
+            establishment_id: 1,
+            establishment_name: 'Prince Distributors — Hallandale HQ',
+            date: '2026-11-17',
+            priority: 'normal',
+            status: 'completed',
+            notes
+          };
+        }
+      } else {
+        const { error } = await supabase
+          .from('prince_tasks')
+          .update({ status, notes, updated_at: new Date().toISOString() })
+          .eq('id', taskId);
+
+        if (!error) {
+          const task = this.mockTasks.find(t => t.id === taskId);
+          if (task) {
+            task.status = status;
+            if (notes) task.notes = notes;
+            return task;
+          }
+        }
+      }
+    } catch {
+      // Offline fallback
+    }
+
     const task = this.mockTasks.find(t => t.id === taskId);
     if (task) {
       task.status = status;
@@ -680,16 +739,124 @@ export class ApiClient {
     throw new Error('Task not found');
   }
 
-  static async getInventory(): Promise<InventoryItem[]> {
+  // 9.1 Obtener inventario FEFO desde Supabase PostgreSQL
+  static async getInventory(branchId: number = 1): Promise<InventoryItem[]> {
+    try {
+      const { data, error } = await supabase
+        .from('prince_inventory')
+        .select(`
+          id,
+          warehouse_stock,
+          shelf_stock,
+          shelf_capacity,
+          prince_products (
+            id,
+            upc,
+            sku,
+            name,
+            category,
+            lot,
+            expiration_date,
+            unit_price,
+            unit_cost
+          )
+        `)
+        .eq('branch_id', branchId);
+
+      if (!error && data && data.length > 0) {
+        return data.map((inv: any) => ({
+          id: inv.prince_products.id,
+          upc: inv.prince_products.upc,
+          sku: inv.prince_products.sku,
+          name: inv.prince_products.name,
+          category: inv.prince_products.category,
+          lot: inv.prince_products.lot,
+          expiration_date: inv.prince_products.expiration_date,
+          warehouse_stock: Number(inv.warehouse_stock),
+          shelf_stock: Number(inv.shelf_stock),
+          shelf_capacity: Number(inv.shelf_capacity),
+          price: Number(inv.prince_products.unit_price),
+          cost: Number(inv.prince_products.unit_cost)
+        }));
+      }
+    } catch {
+      // Offline fallback
+    }
+
     return [...this.mockInventory];
   }
 
-  static async findProductByUpc(upc: string): Promise<InventoryItem | null> {
+  // 9.2 Buscar producto por UPC con validación en Supabase PostgreSQL
+  static async findProductByUpc(upc: string, branchId: number = 1): Promise<InventoryItem | null> {
     const clean = upc.trim();
+    if (!clean) return null;
+
+    try {
+      const { data: prod, error } = await supabase
+        .from('prince_products')
+        .select(`
+          id,
+          upc,
+          sku,
+          name,
+          category,
+          lot,
+          expiration_date,
+          unit_price,
+          unit_cost,
+          prince_inventory(warehouse_stock, shelf_stock, shelf_capacity, branch_id)
+        `)
+        .or(`upc.eq.${clean},sku.ilike.${clean}`)
+        .maybeSingle();
+
+      if (!error && prod) {
+        const inv = Array.isArray(prod.prince_inventory)
+          ? prod.prince_inventory.find((i: any) => i.branch_id === branchId) || prod.prince_inventory[0]
+          : prod.prince_inventory;
+
+        return {
+          id: prod.id,
+          upc: prod.upc,
+          sku: prod.sku,
+          name: prod.name,
+          category: prod.category,
+          lot: prod.lot,
+          expiration_date: prod.expiration_date,
+          warehouse_stock: Number(inv?.warehouse_stock || 0),
+          shelf_stock: Number(inv?.shelf_stock || 0),
+          shelf_capacity: Number(inv?.shelf_capacity || 50),
+          price: Number(prod.unit_price),
+          cost: Number(prod.unit_cost)
+        };
+      }
+    } catch {
+      // Offline fallback
+    }
+
     return this.mockInventory.find(p => p.upc === clean || p.sku.toLowerCase() === clean.toLowerCase()) || null;
   }
 
-  static async restockShelf(productId: number, quantity: number): Promise<{ success: boolean; product?: InventoryItem; error?: string }> {
+  // 9.3 Reposición a Góndola con Transacción Atómica ACID en Supabase RPC
+  static async restockShelf(productId: number, quantity: number, branchId: number = 1, employeeId: number = 2): Promise<{ success: boolean; product?: InventoryItem; error?: string }> {
+    try {
+      const { data, error } = await supabase.rpc('prince_fn_restock_shelf', {
+        p_branch_id: branchId,
+        p_product_id: productId,
+        p_quantity: quantity,
+        p_employee_id: employeeId,
+        p_notes: `Traslado de ${quantity} unidades por Reponedor en Hallandale Beach`
+      });
+
+      if (!error && data?.success) {
+        const updated = await this.findProductByUpc(data.upc || '', branchId);
+        return { success: true, product: updated || undefined };
+      } else if (error) {
+        return { success: false, error: error.message };
+      }
+    } catch {
+      // Local transaction fallback
+    }
+
     const prod = this.mockInventory.find(p => p.id === productId);
     if (!prod) return { success: false, error: 'Producto no encontrado' };
     if (prod.warehouse_stock < quantity) return { success: false, error: 'Stock insuficiente en bodega' };
@@ -702,14 +869,61 @@ export class ApiClient {
     return { success: true, product: prod };
   }
 
-  static async recordShrinkage(productId: number, quantity: number, reason?: string): Promise<{ success: boolean; product?: InventoryItem }> {
+  // 9.4 Registro de Merma con Bloqueo de Filas en Supabase
+  static async recordShrinkage(productId: number, quantity: number, reason?: string, branchId: number = 1, employeeId: number = 2): Promise<{ success: boolean; product?: InventoryItem; error?: string }> {
+    try {
+      const { data, error } = await supabase.rpc('prince_fn_record_shrinkage', {
+        p_branch_id: branchId,
+        p_product_id: productId,
+        p_quantity: quantity,
+        p_employee_id: employeeId,
+        p_reason: reason || 'Merma en góndola por rotura o empaque averiado'
+      });
+
+      if (!error && data?.success) {
+        const updated = await this.findProductByUpc(data.upc || '', branchId);
+        return { success: true, product: updated || undefined };
+      }
+    } catch {
+      // Fallback
+    }
+
     const prod = this.mockInventory.find(p => p.id === productId);
-    if (!prod) return { success: false };
+    if (!prod) return { success: false, error: 'Producto no encontrado' };
     prod.shelf_stock = Math.max(0, prod.shelf_stock - quantity);
     return { success: true, product: prod };
   }
 
+  // 10.1 Iniciar Turno (Clock In) con Idempotencia en Supabase PostgreSQL
   static async clockIn(employeeId: number, establishmentId: number): Promise<VisitSession> {
+    try {
+      const { data, error } = await supabase.rpc('prince_fn_clock_in', {
+        p_employee_id: employeeId,
+        p_branch_id: establishmentId,
+        p_source: 'expo_go',
+        p_notes: 'Marcación de entrada registrada en Hallandale Beach HQ'
+      });
+
+      if (!error && data?.success) {
+        this.activeSession = {
+          id: Number(data.attendance_id),
+          employee_id: employeeId,
+          employee_name: data.employee_name || 'Rosa María Huamán',
+          establishment_id: establishmentId,
+          establishment_name: 'Prince Distributors — Hallandale HQ',
+          clock_in: data.clock_in || new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+          clock_out: null,
+          status: 'in_progress',
+          tasks_completed: 0,
+          restocked_units: 0,
+          notes: 'Jornada activa en Supabase PostgreSQL'
+        };
+        return this.activeSession;
+      }
+    } catch {
+      // Fallback
+    }
+
     this.activeSession = {
       id: Date.now(),
       employee_id: employeeId,
@@ -725,7 +939,19 @@ export class ApiClient {
     return this.activeSession;
   }
 
+  // 10.2 Finalizar Turno (Clock Out) en Supabase PostgreSQL
   static async clockOut(employeeId: number, notes?: string): Promise<void> {
+    try {
+      const attId = this.activeSession ? this.activeSession.id : null;
+      await supabase.rpc('prince_fn_clock_out', {
+        p_employee_id: employeeId,
+        p_attendance_id: attId,
+        p_notes: notes || 'Fin de jornada regular registrada desde Expo Go'
+      });
+    } catch {
+      // Fallback
+    }
+
     if (this.activeSession) {
       this.activeSession.clock_out = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
       this.activeSession.status = 'completed';
@@ -733,7 +959,94 @@ export class ApiClient {
     }
   }
 
+  // 10.3 Consultar Sesión Activa desde Supabase PostgreSQL
   static async getActiveSession(employeeId: number): Promise<VisitSession | null> {
+    try {
+      const { data, error } = await supabase
+        .from('prince_attendance')
+        .select(`
+          id,
+          employee_id,
+          branch_id,
+          clock_in,
+          clock_out,
+          status,
+          notes,
+          prince_employees!prince_attendance_employee_id_fkey(name),
+          prince_branches(name)
+        `)
+        .eq('employee_id', employeeId)
+        .eq('work_date', new Date().toISOString().split('T')[0])
+        .is('clock_out', null)
+        .order('id', { ascending: false })
+        .maybeSingle();
+
+      if (!error && data) {
+        const empName = Array.isArray(data.prince_employees) ? data.prince_employees[0]?.name : (data.prince_employees as any)?.name;
+        const branchName = Array.isArray(data.prince_branches) ? data.prince_branches[0]?.name : (data.prince_branches as any)?.name;
+        this.activeSession = {
+          id: data.id,
+          employee_id: data.employee_id,
+          employee_name: empName || 'Rosa María Huamán',
+          establishment_id: data.branch_id,
+          establishment_name: branchName || 'Prince Distributors — Hallandale HQ',
+          clock_in: new Date(data.clock_in).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+          clock_out: null,
+          status: 'in_progress',
+          tasks_completed: 1,
+          restocked_units: 45,
+          notes: data.notes
+        };
+        return this.activeSession;
+      }
+    } catch {
+      // Fallback
+    }
+
     return this.activeSession;
+  }
+
+  // 10.4 Consultar Horario Semanal del Empleado desde Supabase
+  static async getEmployeeShifts(employeeId: number, weekStartDate?: string): Promise<any[]> {
+    try {
+      let query = supabase
+        .from('prince_shifts')
+        .select('*')
+        .eq('employee_id', employeeId)
+        .order('shift_date', { ascending: true });
+
+      if (weekStartDate) {
+        query = query.gte('shift_date', weekStartDate);
+      }
+
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) {
+        return data;
+      }
+    } catch {
+      // Fallback
+    }
+
+    return [];
+  }
+
+  // 11. Suscripciones en Tiempo Real (Supabase Realtime)
+  static subscribeToChanges(onTaskChange?: () => void, onInventoryChange?: () => void, onAttendanceChange?: () => void) {
+    const channel = supabase
+      .channel('prince-distributors-mobile-sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'prince_tasks' }, () => {
+        if (onTaskChange) onTaskChange();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'prince_inventory' }, () => {
+        if (onInventoryChange) onInventoryChange();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'prince_attendance' }, () => {
+        if (onAttendanceChange) onAttendanceChange();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }
 }

@@ -282,6 +282,52 @@
 				this.resetToDefaults();
 			}
 			console.log('>>> [PrinceDemoEngine] USA Florida WFM Engine inicializado. Empleados:', this.state.employees.length, '| Tareas:', (this.state.tasks || []).length);
+			this.pollSupabaseUpdates();
+			setInterval(() => this.pollSupabaseUpdates(), 7000);
+		}
+
+		pollSupabaseUpdates() {
+			const self = this;
+			fetch('/api/b2b/supabase/tasks')
+				.then(r => r.json())
+				.then(data => {
+					if (data && data.success && data.source === 'supabase' && Array.isArray(data.tasks)) {
+						let changed = false;
+						data.tasks.forEach(remoteTask => {
+							const local = self.state.tasks.find(t => t.id === remoteTask.id);
+							if (local && local.status !== remoteTask.status) {
+								local.status = remoteTask.status;
+								if (remoteTask.notes) local.notes = remoteTask.notes;
+								changed = true;
+							} else if (!local) {
+								self.state.tasks.unshift({
+									id: remoteTask.id,
+									title: remoteTask.title,
+									description: remoteTask.description || '',
+									employee_id: remoteTask.employee_id,
+									employee_name: remoteTask.prince_employees?.name || 'Rosa María Huamán',
+									supervisor_id: remoteTask.supervisor_id || 3,
+									supervisor_name: 'Carlos Mendoza',
+									establishment_id: remoteTask.branch_id || 1,
+									establishment_name: 'Prince Distributors — Hallandale HQ',
+									date: remoteTask.date || new Date().toISOString().slice(0, 10),
+									priority: remoteTask.priority || 'normal',
+									status: remoteTask.status || 'pending',
+									notes: remoteTask.notes || ''
+								});
+								changed = true;
+							}
+						});
+						if (changed) {
+							self.saveToStorage();
+							self.emit('task:updated', {});
+							if (typeof renderWfmTasksTable === 'function') {
+								renderWfmTasksTable();
+							}
+						}
+					}
+				})
+				.catch(() => {});
 		}
 
 		loadFromStorage() {
@@ -654,6 +700,16 @@
 			this.state.tasks.unshift(newTask);
 			this.saveToStorage();
 			this.emit('task:created', { task: newTask });
+
+			// Sincronización transparente con Supabase PostgreSQL
+			try {
+				fetch('/api/b2b/supabase/tasks', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(newTask)
+				}).catch(function () {});
+			} catch (e) {}
+
 			return { success: true, task: newTask };
 		}
 
@@ -669,6 +725,18 @@
 			this.recordAudit('TASK_STATUS_UPDATED', `Tarea #${taskId} (${task.title}) cambiada a ${status}`);
 			this.saveToStorage();
 			this.emit('task:updated', { task });
+
+			// Sincronización transparente con Supabase PostgreSQL
+			try {
+				if (status === 'completed') {
+					fetch(`/api/b2b/supabase/tasks/${taskId}/complete`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ notes, evidenceUrl })
+					}).catch(function () {});
+				}
+			} catch (e) {}
+
 			return { success: true, task };
 		}
 
@@ -716,6 +784,16 @@
 			this.recordAudit('SHELF_RESTOCKED', `Traslado interno: ${qty} unidades de ${prod.name} de bodega a góndola (FEFO: ${prod.lot})`);
 			this.saveToStorage();
 			this.emit('inventory:updated', { product: prod });
+
+			// Sincronización transparente con Supabase PostgreSQL
+			try {
+				fetch('/api/b2b/supabase/inventory/restock', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ product_id: productId, quantity: qty })
+				}).catch(function () {});
+			} catch (e) {}
+
 			return { success: true, product: prod };
 		}
 

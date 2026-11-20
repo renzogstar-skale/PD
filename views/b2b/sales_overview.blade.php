@@ -743,80 +743,267 @@
 
 			<!-- SECCIÓN 2: CLIENTES Y ALMACENES (MÓDULO FUNCIONAL PASO 4) -->
 			<div id="section-customers" class="hidden space-y-6">
-				<!-- Header de Clientes y Almacenes -->
-				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80 dark:border-slate-800">
-					<div>
-						<h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
-							<span>Clientes y Almacenes</span>
-							<span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">Directorio B2B</span>
-						</h1>
-						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Directorio institucional de cadenas comerciales, supermercados y establecimientos asociados.</p>
-					</div>
+				<!-- Header de Clientes y Almacenes (Enterprise Minimal) -->
+				<div class="flex flex-col gap-3 pb-2 border-b border-slate-200/80 dark:border-slate-800">
+					<div class="flex flex-wrap items-center justify-between gap-3">
+						<div class="flex flex-wrap items-center gap-2.5">
+							<h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+								Clientes y Almacenes
+							</h1>
+							<span id="cust-period-badge" class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 whitespace-nowrap">Noviembre 2026 a la fecha</span>
+							<span class="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 whitespace-nowrap">DIRECTORIO B2B</span>
+						</div>
 
-					<div class="flex items-center gap-3">
-						<button onclick="openCustomerModal()" class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-brand-800 hover:bg-brand-700 text-white shadow-xs active:scale-[0.98] transition-all">
+						<!-- Nuevo Cliente CTA -->
+						<button onclick="openCustomerModal()" class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-brand-800 hover:bg-brand-700 text-white shadow-xs active:scale-[0.98] transition-all shrink-0">
 							<i data-lucide="plus-circle" class="w-4 h-4"></i>
 							<span>Nuevo Cliente</span>
 						</button>
 					</div>
+
+					<!-- Controles de Filtros: Fecha, Territorio, Vendedor, Sucursal y Acción -->
+					<div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+						<!-- Time presets buttons -->
+						<div class="flex flex-wrap items-center gap-2">
+							<div class="inline-flex p-0.5 bg-slate-100 dark:bg-slate-800/90 rounded-lg border border-slate-200/80 dark:border-slate-700 text-xs">
+								<button id="cust-btn-7d" onclick="setCustomerKpiPeriod('7D')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">7D</button>
+								<button id="cust-btn-mtd" onclick="setCustomerKpiPeriod('MTD')" class="px-2.5 py-1 font-semibold rounded-md bg-white dark:bg-slate-700 text-brand-800 dark:text-white shadow-xs transition-all">MTD</button>
+								<button id="cust-btn-qtd" onclick="setCustomerKpiPeriod('QTD')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">QTD</button>
+								<button id="cust-btn-ytd" onclick="setCustomerKpiPeriod('YTD')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">YTD</button>
+								<button id="cust-btn-custom" onclick="toggleCustomerCustomDateFilter()" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">Rango</button>
+							</div>
+
+							<!-- Custom Date Inputs (Hidden by default, shown on Rango) -->
+							<div id="cust-custom-range-bar" class="hidden flex items-center gap-1.5 p-1 bg-slate-50 dark:bg-slate-800/90 rounded-lg border border-slate-200 dark:border-slate-700 text-xs">
+								<input type="date" id="cust-custom-from" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-[11px] text-slate-700 dark:text-slate-200 focus:outline-hidden" value="2026-11-01" />
+								<span class="text-slate-400">-</span>
+								<input type="date" id="cust-custom-to" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-[11px] text-slate-700 dark:text-slate-200 focus:outline-hidden" value="2026-11-16" />
+								<button onclick="applyCustomerCustomDateFilter()" class="px-2 py-1 bg-brand-800 text-white rounded text-[11px] font-semibold hover:bg-brand-700">OK</button>
+							</div>
+						</div>
+
+						<!-- Filtros de Segmentación: Territorio, Vendedor, Sucursal y Reset -->
+						<div class="flex flex-wrap items-center gap-2">
+							<!-- Filtro Territorio -->
+							<select id="cust-filter-territory" onchange="onCustomerKpiFilterChange()" class="text-xs bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-1 focus:ring-brand-500 max-w-[160px] truncate" title="Filtrar por territorio comercial">
+								<option value="">Todos los Territorios</option>
+							</select>
+
+							<!-- Filtro Vendedor -->
+							<select id="cust-filter-salesrep" onchange="onCustomerKpiFilterChange()" class="text-xs bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-1 focus:ring-brand-500 max-w-[160px] truncate" title="Filtrar por vendedor asignado">
+								<option value="">Todos los Vendedores</option>
+							</select>
+
+							<!-- Filtro Sucursal -->
+							<select id="cust-filter-branch" onchange="onCustomerKpiFilterChange()" class="text-xs bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-1 focus:ring-brand-500 max-w-[160px] truncate" title="Filtrar por sucursal">
+								<option value="">Todas las Sucursales</option>
+							</select>
+
+							<!-- Reset filters -->
+							<button id="btn-reset-cust-kpi-filters" onclick="resetCustomerKpiFilters()" class="p-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" title="Restablecer Filtros de Indicadores">
+								<i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+							</button>
+						</div>
+					</div>
 				</div>
 
-				<!-- 4 Tarjetas KPI: Clientes Activos, Cadenas, Establecimientos, Inactivos -->
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Clientes Activos</span>
-							<div class="w-7 h-7 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
-								<i data-lucide="building-2" class="w-4 h-4"></i>
-							</div>
+				<!-- 8 KPI CARDS SECTION (Enterprise Minimal - Clientes y Almacenes) -->
+				<div class="relative">
+					<!-- Error Banner si la API falla -->
+					<div id="cust-kpis-error" class="hidden mb-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-xs text-rose-700 dark:text-rose-300 flex items-center justify-between">
+						<div class="flex items-center gap-2">
+							<i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0"></i>
+							<span id="cust-kpis-error-text">No se pudieron cargar los indicadores de clientes. Compruebe la conexión con el servidor.</span>
 						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-cust-active" class="text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
-							<span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">En operación</span>
-						</div>
-						<div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Cuentas comerciales habilitadas</div>
+						<button onclick="fetchCustomersList()" class="px-2.5 py-1 bg-rose-600 text-white rounded-md font-semibold hover:bg-rose-700 transition-colors text-[11px]">
+							Reintentar
+						</button>
 					</div>
 
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Cadenas Comerciales</span>
-							<div class="w-7 h-7 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center">
-								<i data-lucide="network" class="w-4 h-4"></i>
+					<!-- 8 Tarjetas KPI: 8 en escritorio (xl:grid-cols-8), 4 en intermedias (md:grid-cols-4), 2 en móvil (grid-cols-2) -->
+					<div id="cust-kpis-grid" class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4 transition-opacity duration-200">
+						<!-- KPI 1: Clientes Activos -->
+						<div id="kpi-cust-card-active" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Clientes Activos&#10;Definición: Cantidad de clientes con compras en el período.&#10;Fórmula: COUNT(DISTINCT clientes con facturas válidas o pedidos confirmados en el período).">
+							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Clientes Activos">Clientes Activos</span>
+								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center shrink-0">
+									<i data-lucide="users" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 flex items-baseline gap-1.5">
+								<span id="kpi-cust-active-val" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
+								<!-- Alias oculto para compatibilidad retrospectiva -->
+								<span id="kpi-cust-active" class="hidden"></span>
+							</div>
+							<div class="mt-1 flex items-center justify-between gap-1">
+								<span id="kpi-cust-active-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+									N/D
+								</span>
+								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
+							</div>
+							<div id="kpi-cust-active-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+								Compradores activos
 							</div>
 						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-cust-chains" class="text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
-							<span class="text-[11px] font-semibold text-blue-600 dark:text-blue-400">Multitienda</span>
-						</div>
-						<div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Cuentas con múltiples sucursales</div>
-					</div>
 
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Establecimientos</span>
-							<div class="w-7 h-7 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center">
-								<i data-lucide="store" class="w-4 h-4"></i>
+						<!-- KPI 2: Clientes Nuevos -->
+						<div id="kpi-cust-card-new" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Clientes Nuevos&#10;Definición: Clientes con su primera compra en el período.&#10;Fórmula: COUNT(clientes cuya fecha de primera compra histórica está dentro del período).">
+							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Clientes Nuevos">Clientes Nuevos</span>
+								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0">
+									<i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 flex items-baseline gap-1.5">
+								<span id="kpi-cust-new-val" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
+							</div>
+							<div class="mt-1 flex items-center justify-between gap-1">
+								<span id="kpi-cust-new-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+									N/D
+								</span>
+								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
+							</div>
+							<div id="kpi-cust-new-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+								Primera compra
 							</div>
 						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-cust-est" class="text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
-							<span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">Puntos de entrega</span>
-						</div>
-						<div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Sucursales y almacenes activos</div>
-					</div>
 
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Clientes Inactivos</span>
-							<div class="w-7 h-7 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center">
-								<i data-lucide="user-x" class="w-4 h-4"></i>
+						<!-- KPI 3: Clientes Inactivos -->
+						<div id="kpi-cust-card-inactive" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Clientes Inactivos&#10;Definición: Clientes sin compras durante el umbral configurable.&#10;Fórmula: COUNT(clientes registrados activos sin compras en los últimos N días según umbral B2B).">
+							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Clientes Inactivos">Clientes Inactivos</span>
+								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0">
+									<i data-lucide="user-x" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 flex items-baseline gap-1.5">
+								<span id="kpi-cust-inactive-val" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
+								<!-- Alias oculto para compatibilidad retrospectiva -->
+								<span id="kpi-cust-inactive" class="hidden"></span>
+							</div>
+							<div class="mt-1 flex items-center justify-between gap-1">
+								<span id="kpi-cust-inactive-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+									N/D
+								</span>
+								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
+							</div>
+							<div id="kpi-cust-inactive-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+								Sin compras > 30d
 							</div>
 						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-cust-inactive" class="text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
-							<span class="text-[11px] font-semibold text-slate-500">Pausados</span>
+
+						<!-- KPI 4: Retención de Clientes -->
+						<div id="kpi-cust-card-retention" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Retención de Clientes&#10;Definición: Porcentaje de clientes del período anterior que volvieron a comprar.&#10;Fórmula: (Clientes que compraron en ambos períodos / Clientes compradores del período anterior) × 100.">
+							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Retención de Clientes">Retención Clientes</span>
+								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
+									<i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 flex items-baseline gap-1.5">
+								<span id="kpi-cust-retention-val" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
+							</div>
+							<div class="mt-1 flex items-center justify-between gap-1">
+								<span id="kpi-cust-retention-var" class="text-[10px] sm:text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 flex items-center truncate">
+									N/D
+								</span>
+								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
+							</div>
+							<div id="kpi-cust-retention-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+								Tasa recompra
+							</div>
 						</div>
-						<div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Sin despacho o suspendidos</div>
+
+						<!-- KPI 5: Almacenes Activos -->
+						<div id="kpi-cust-card-est" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Almacenes Activos&#10;Definición: Establecimientos con compras durante el período.&#10;Fórmula: COUNT(DISTINCT establecimientos de entrega con transacciones válidas).">
+							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Almacenes y Establecimientos Activos">Almacenes Activos</span>
+								<div class="w-6 h-6 rounded-md bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 flex items-center justify-center shrink-0">
+									<i data-lucide="store" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 flex items-baseline gap-1.5">
+								<span id="kpi-cust-est-val" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
+								<!-- Alias ocultos para compatibilidad retrospectiva -->
+								<span id="kpi-cust-est" class="hidden"></span>
+								<span id="kpi-cust-chains" class="hidden"></span>
+							</div>
+							<div class="mt-1 flex items-center justify-between gap-1">
+								<span id="kpi-cust-est-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+									N/D
+								</span>
+								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
+							</div>
+							<div id="kpi-cust-est-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+								Puntos de entrega
+							</div>
+						</div>
+
+						<!-- KPI 6: Frecuencia de Compra -->
+						<div id="kpi-cust-card-freq" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Frecuencia de Compra&#10;Definición: Pedidos confirmados por cliente comprador.&#10;Fórmula: Total pedidos confirmados en el período / Clientes compradores en el período.">
+							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Frecuencia de Compra">Frecuencia Compra</span>
+								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center shrink-0">
+									<i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 flex items-baseline gap-1.5">
+								<span id="kpi-cust-freq-val" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
+							</div>
+							<div class="mt-1 flex items-center justify-between gap-1">
+								<span id="kpi-cust-freq-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+									N/D
+								</span>
+								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
+							</div>
+							<div id="kpi-cust-freq-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+								Pedidos / cliente
+							</div>
+						</div>
+
+						<!-- KPI 7: Clientes con Deuda Vencida -->
+						<div id="kpi-cust-card-overdue" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Clientes con Deuda Vencida&#10;Definición: Cantidad de clientes con facturas vencidas y saldo pendiente.&#10;Fórmula: COUNT(DISTINCT clientes con facturas en estado Emitida/Parcial y saldo > 0 tras fecha de vencimiento).">
+							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Clientes con Deuda Vencida">Deuda Vencida</span>
+								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center justify-center shrink-0">
+									<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 flex items-baseline gap-1.5">
+								<span id="kpi-cust-overdue-val" class="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 font-mono tracking-tight">-</span>
+							</div>
+							<div class="mt-1 flex items-center justify-between gap-1">
+								<span id="kpi-cust-overdue-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+									N/D
+								</span>
+								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
+							</div>
+							<div id="kpi-cust-overdue-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+								Con saldo en mora
+							</div>
+						</div>
+
+						<!-- KPI 8: Venta Promedio por Cliente -->
+						<div id="kpi-cust-card-avg-sales" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Venta Promedio por Cliente&#10;Definición: Ventas netas facturadas divididas entre clientes compradores.&#10;Fórmula: (Facturación válida antes de impuestos − Notas de crédito válidas) / Clientes compradores en el período.">
+							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Venta Promedio por Cliente">Venta Promedio</span>
+								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 flex items-center justify-center shrink-0">
+									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 flex items-baseline gap-1.5">
+								<span id="kpi-cust-avg-sales-val" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
+							</div>
+							<div class="mt-1 flex items-center justify-between gap-1">
+								<span id="kpi-cust-avg-sales-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+									N/D
+								</span>
+								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
+							</div>
+							<div id="kpi-cust-avg-sales-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+								Venta / cliente
+							</div>
+						</div>
 					</div>
 				</div>
 
@@ -5009,14 +5196,172 @@
 		   MÓDULO FUNCIONAL DE CLIENTES Y ALMACENES (PASO 4)
 		   ======================================================== */
 
+		let customerKpiState = {
+			period: 'MTD',
+			from_date: null,
+			to_date: null,
+			territory: '',
+			sales_rep: '',
+			branch_id: ''
+		};
+		let customerFilterOptionsLoaded = false;
+
+		function setCustomerKpiPeriod(preset) {
+			customerKpiState.period = preset;
+			const btns = ['7d', 'mtd', 'qtd', 'ytd', 'custom'];
+			btns.forEach(b => {
+				const el = document.getElementById('cust-btn-' + b);
+				if (el) {
+					if (b === preset.toLowerCase()) {
+						el.className = 'px-2.5 py-1 font-semibold rounded-md bg-white dark:bg-slate-700 text-brand-800 dark:text-white shadow-xs transition-all';
+					} else {
+						el.className = 'px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all';
+					}
+				}
+			});
+
+			const rangeBar = document.getElementById('cust-custom-range-bar');
+			if (preset === 'CUSTOM') {
+				if (rangeBar) rangeBar.classList.toggle('hidden');
+			} else {
+				if (rangeBar) rangeBar.classList.add('hidden');
+				customerKpiState.from_date = null;
+				customerKpiState.to_date = null;
+				fetchCustomersList();
+			}
+		}
+
+		function toggleCustomerCustomDateFilter() {
+			setCustomerKpiPeriod('CUSTOM');
+		}
+
+		function applyCustomerCustomDateFilter() {
+			const from = document.getElementById('cust-custom-from')?.value;
+			const to = document.getElementById('cust-custom-to')?.value;
+			if (!from || !to) {
+				alert('Por favor seleccione fecha inicial y final.');
+				return;
+			}
+			customerKpiState.from_date = from;
+			customerKpiState.to_date = to;
+			fetchCustomersList();
+		}
+
+		function onCustomerKpiFilterChange() {
+			customerKpiState.territory = document.getElementById('cust-filter-territory')?.value || '';
+			customerKpiState.sales_rep = document.getElementById('cust-filter-salesrep')?.value || '';
+			customerKpiState.branch_id = document.getElementById('cust-filter-branch')?.value || '';
+			fetchCustomersList();
+		}
+
+		function resetCustomerKpiFilters() {
+			customerKpiState.period = 'MTD';
+			customerKpiState.from_date = null;
+			customerKpiState.to_date = null;
+			customerKpiState.territory = '';
+			customerKpiState.sales_rep = '';
+			customerKpiState.branch_id = '';
+
+			const rangeBar = document.getElementById('cust-custom-range-bar');
+			if (rangeBar) rangeBar.classList.add('hidden');
+
+			const selTerr = document.getElementById('cust-filter-territory');
+			if (selTerr) selTerr.value = '';
+			const selRep = document.getElementById('cust-filter-salesrep');
+			if (selRep) selRep.value = '';
+			const selBranch = document.getElementById('cust-filter-branch');
+			if (selBranch) selBranch.value = '';
+
+			const btns = ['7d', 'mtd', 'qtd', 'ytd', 'custom'];
+			btns.forEach(b => {
+				const el = document.getElementById('cust-btn-' + b);
+				if (el) {
+					if (b === 'mtd') {
+						el.className = 'px-2.5 py-1 font-semibold rounded-md bg-white dark:bg-slate-700 text-brand-800 dark:text-white shadow-xs transition-all';
+					} else {
+						el.className = 'px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all';
+					}
+				}
+			});
+
+			fetchCustomersList();
+		}
+
+		function populateCustomerFilterOptions(options) {
+			if (!options || customerFilterOptionsLoaded) return;
+			customerFilterOptionsLoaded = true;
+
+			const selTerr = document.getElementById('cust-filter-territory');
+			if (selTerr && options.territories) {
+				const currVal = selTerr.value;
+				selTerr.innerHTML = '<option value="">Todos los Territorios</option>' +
+					options.territories.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
+				selTerr.value = currVal;
+			}
+
+			const selRep = document.getElementById('cust-filter-salesrep');
+			if (selRep && options.sales_reps) {
+				const currVal = selRep.value;
+				selRep.innerHTML = '<option value="">Todos los Vendedores</option>' +
+					options.sales_reps.map(r => `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('');
+				selRep.value = currVal;
+			}
+
+			const selBranch = document.getElementById('cust-filter-branch');
+			if (selBranch && options.branches) {
+				const currVal = selBranch.value;
+				selBranch.innerHTML = '<option value="">Todas las Sucursales</option>' +
+					options.branches.map(b => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
+				selBranch.value = currVal;
+			}
+		}
+
+		function updateCustomerKpiCard(key, kpi) {
+			if (!kpi) return;
+			const card = document.getElementById('kpi-cust-card-' + key);
+			const valEl = document.getElementById('kpi-cust-' + key + '-val');
+			const varEl = document.getElementById('kpi-cust-' + key + '-var');
+			const subEl = document.getElementById('kpi-cust-' + key + '-sub');
+
+			if (card && kpi.tooltip) {
+				card.title = kpi.tooltip;
+			}
+			if (valEl) {
+				valEl.textContent = kpi.formatted ?? (kpi.value ?? '-');
+			}
+			if (subEl && kpi.subtext) {
+				subEl.textContent = kpi.subtext;
+			}
+			if (varEl && kpi.variation) {
+				const v = kpi.variation;
+				if (v.is_nd || v.text === 'N/D') {
+					varEl.className = 'text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center';
+					varEl.textContent = 'N/D';
+				} else {
+					let iconHtml = '';
+					if (v.trend === 'up') {
+						iconHtml = '<i data-lucide="trending-up" class="w-3 h-3 mr-0.5"></i>';
+					} else if (v.trend === 'down') {
+						iconHtml = '<i data-lucide="trending-down" class="w-3 h-3 mr-0.5"></i>';
+					}
+					varEl.className = 'text-[10px] sm:text-[11px] font-semibold flex items-center ' + (v.class || 'text-slate-500');
+					varEl.innerHTML = iconHtml + (v.text || '');
+				}
+			}
+		}
+
 		// Obtener lista y métricas vía API RESTful
 		async function fetchCustomersList() {
 			const loading = document.getElementById('cust-table-loading');
 			const empty = document.getElementById('cust-table-empty');
 			const tbody = document.getElementById('cust-table-body');
+			const kpisGrid = document.getElementById('cust-kpis-grid');
+			const kpisError = document.getElementById('cust-kpis-error');
 
 			if (loading) loading.classList.remove('hidden');
 			if (empty) empty.classList.add('hidden');
+			if (kpisError) kpisError.classList.add('hidden');
+			if (kpisGrid) kpisGrid.classList.add('opacity-60');
 
 			const search = (document.getElementById('cust-search')?.value || '').trim();
 			const type = document.getElementById('cust-filter-type')?.value || '';
@@ -5027,26 +5372,75 @@
 			if (type) params.append('type', type);
 			if (active !== '') params.append('active', active);
 
+			// Agregar filtros deterministas de KPIs
+			if (customerKpiState.period) params.append('period', customerKpiState.period);
+			if (customerKpiState.from_date) params.append('from_date', customerKpiState.from_date);
+			if (customerKpiState.to_date) params.append('to_date', customerKpiState.to_date);
+			if (customerKpiState.territory) params.append('territory', customerKpiState.territory);
+			if (customerKpiState.sales_rep) params.append('sales_rep', customerKpiState.sales_rep);
+			if (customerKpiState.branch_id) params.append('branch_id', customerKpiState.branch_id);
+
 			try {
 				const res = await fetch('/api/b2b/customers?' + params.toString());
+				if (!res.ok) {
+					throw new Error('HTTP ' + res.status);
+				}
 				const data = await res.json();
 
 				if (data.success) {
-					// Actualizar KPIs
-					if (data.metrics) {
-						document.getElementById('kpi-cust-active').textContent = data.metrics.active_customers ?? 0;
-						document.getElementById('kpi-cust-chains').textContent = data.metrics.chains ?? 0;
-						document.getElementById('kpi-cust-est').textContent = data.metrics.total_establishments ?? 0;
-						document.getElementById('kpi-cust-inactive').textContent = data.metrics.inactive_customers ?? 0;
+					// Actualizar opciones de filtros
+					if (data.filter_options) {
+						populateCustomerFilterOptions(data.filter_options);
+					}
+
+					// Actualizar badge de período
+					const badge = document.getElementById('cust-period-badge');
+					if (badge && data.metrics?.period_info?.label) {
+						badge.textContent = data.metrics.period_info.label;
+					}
+
+					// Actualizar 8 KPIs cuantitativos y dinámicos
+					if (data.metrics?.kpis) {
+						const k = data.metrics.kpis;
+						updateCustomerKpiCard('active', k.active_customers);
+						updateCustomerKpiCard('new', k.new_customers);
+						updateCustomerKpiCard('inactive', k.inactive_customers);
+						updateCustomerKpiCard('retention', k.retention_rate);
+						updateCustomerKpiCard('est', k.active_establishments);
+						updateCustomerKpiCard('freq', k.purchase_frequency);
+						updateCustomerKpiCard('overdue', k.overdue_customers);
+						updateCustomerKpiCard('avg-sales', k.avg_sales_per_customer);
+
+						// Compatibilidad retrospectiva para elementos con ID legacy
+						const legAct = document.getElementById('kpi-cust-active');
+						if (legAct) legAct.textContent = k.active_customers?.value ?? 0;
+						const legChains = document.getElementById('kpi-cust-chains');
+						if (legChains) legChains.textContent = data.metrics.chains ?? 0;
+						const legEst = document.getElementById('kpi-cust-est');
+						if (legEst) legEst.textContent = k.active_establishments?.value ?? 0;
+						const legInact = document.getElementById('kpi-cust-inactive');
+						if (legInact) legInact.textContent = k.inactive_customers?.value ?? 0;
+
+						if (typeof lucide !== 'undefined') {
+							lucide.createIcons();
+						}
 					}
 
 					customersDataCache = data.customers || [];
 					renderCustomersTable(customersDataCache);
+				} else {
+					throw new Error(data.error || 'Error al procesar datos');
 				}
 			} catch (err) {
 				console.error('Error al cargar clientes B2B:', err);
+				if (kpisError) {
+					kpisError.classList.remove('hidden');
+					const errText = document.getElementById('cust-kpis-error-text');
+					if (errText) errText.textContent = 'Error al cargar los indicadores de clientes: ' + (err.message || 'Error de conexión');
+				}
 			} finally {
 				if (loading) loading.classList.add('hidden');
+				if (kpisGrid) kpisGrid.classList.remove('opacity-60');
 			}
 		}
 

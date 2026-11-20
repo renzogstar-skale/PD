@@ -410,24 +410,517 @@ class B2bCustomerService extends BaseService
 	}
 
 	/**
-	 * Obtiene métricas ejecutivas de clientes y establecimientos
+	 * Obtiene los 8 KPI dinámicos de Clientes y Almacenes B2B con filtros deterministas
 	 */
-	public function GetMetrics(): array
+	public function GetMetrics(array $filters = []): array
 	{
 		$this->EnsureSchema();
 		$this->SeedDemoDataIfEmpty();
 		$db = $this->Db();
 
-		$activeCust = (int)$db->query("SELECT COUNT(*) FROM customers WHERE active = 1")->fetchColumn();
+		$dashService = B2bDashboardService::GetInstance();
+		$periodPreset = $filters['period'] ?? 'MTD';
+		$customFrom = $filters['from_date'] ?? null;
+		$customTo = $filters['to_date'] ?? null;
+		$territory = !empty($filters['territory']) ? trim($filters['territory']) : null;
+		$salesRep = !empty($filters['sales_rep']) ? trim($filters['sales_rep']) : null;
+		$branchId = !empty($filters['branch_id']) ? (int)$filters['branch_id'] : null;
+
+		$ranges = $dashService->ResolveDateRanges($periodPreset, $customFrom, $customTo, '2026-11-16');
+		$currStart = $ranges['current']['start'];
+		$currEnd = $ranges['current']['end'];
+		$prevStart = $ranges['previous']['start'];
+		$prevEnd = $ranges['previous']['end'];
+
+		// Helper para filtrar transacciones según territorio, vendedor y sucursal
+		$buildTxFilters = function(string $tableAlias, array &$params, string $prefix = 'tx') use ($territory, $salesRep, $branchId): string {
+			$clauses = [];
+			if ($salesRep)
+			{
+				$clauses[] = "{$tableAlias}.sales_rep = :{$prefix}_rep";
+				$params[":{$prefix}_rep"] = $salesRep;
+			}
+			if ($branchId)
+			{
+				$clauses[] = "{$tableAlias}.customer_id IN (SELECT id FROM customers WHERE branch_id = :{$prefix}_branch)";
+				$params[":{$prefix}_branch"] = $branchId;
+			}
+			if ($territory)
+			{
+				$clauses[] = "(
+					{$tableAlias}.establishment_id IN (SELECT id FROM customer_establishments WHERE territory = :{$prefix}_terr1)
+					OR {$tableAlias}.sales_rep IN (
+						SELECT sr.name FROM b2b_sales_reps sr 
+						LEFT JOIN b2b_territories t ON sr.territory_id = t.id 
+						WHERE t.name = :{$prefix}_terr2 OR t.code = :{$prefix}_terr3 OR CAST(t.id AS TEXT) = :{$prefix}_terr4
+					)
+				)";
+				$params[":{$prefix}_terr1"] = $territory;
+				$params[":{$prefix}_terr2"] = $territory;
+				$params[":{$prefix}_terr3"] = $territory;
+				$params[":{$prefix}_terr4"] = $territory;
+			}
+			return $clauses ? ' AND ' . implode(' AND ', $clauses) : '';
+		};
+
+		// Helper para obtener compradores en un intervalo
+		$getBuyers = function(string $start, string $end, string $prefix) use ($db, $buildTxFilters): array {
+			$params = [':start' => $start, ':end' => $end];
+			$invExtra = $buildTxFilters('i', $params, $prefix . '_inv');
+			$ordExtra = $buildTxFilters('o', $params, $prefix . '_ord');
+
+			$sql = "
+				SELECT DISTINCT i.customer_id FROM b2b_invoices i
+				WHERE i.status IN ('Emitida', 'Parcialmente pagada', 'Pagada')
+				  AND i.issue_date >= :start AND i.issue_date <= :end
+				  {$invExtra}
+				UNION
+				SELECT DISTINCT o.customer_id FROM b2b_orders o
+				WHERE o.status = 'Confirmado'
+				  AND date(o.created_timestamp) >= :start AND date(o.created_timestamp) <= :end
+				  {$ordExtra}
+			";
+			$stmt = $db->prepare($sql);
+			$stmt->execute($params);
+			return $stmt->fetchAll(PDO::FETCH_COLUMN);
+		};
+
+		$currBuyers = $getBuyers($currStart, $currEnd, 'c');
+		$prevBuyers = $getBuyers($prevStart, $prevEnd, 'p');
+
+		$activeCustomers = count($currBuyers);
+		$prevActiveCustomers = count($prevBuyers);
+
+		// Helper para variación determinista
+		$calcVar = function($curr, $prev): array {
+			if ($prev === null || (float)$prev == 0.0)
+			{
+				return [
+					'percent' => null,
+					'text' => 'N/D',
+					'class' => 'text-slate-500 dark:text-slate-400',
+					'is_nd' => true,
+					'trend' => 'neutral'
+				];
+			}
+			$diff = round((( (float)$curr - (float)$prev ) / abs((float)$prev)) * 100, 1);
+			if ($diff > 0)
+			{
+				return [
+					'percent' => $diff,
+					'text' => '+' . $diff . '%',
+					'class' => 'text-emerald-600 dark:text-emerald-400',
+					'is_nd' => false,
+					'trend' => 'up'
+				];
+			}
+			elseif ($diff < 0)
+			{
+				return [
+					'percent' => $diff,
+					'text' => $diff . '%',
+					'class' => 'text-rose-600 dark:text-rose-400',
+					'is_nd' => false,
+					'trend' => 'down'
+				];
+			}
+			return [
+				'percent' => 0.0,
+				'text' => '0.0%',
+				'class' => 'text-slate-500 dark:text-slate-400',
+				'is_nd' => false,
+				'trend' => 'neutral'
+			];
+		};
+
+		// 1. Clientes Activos
+		$varActive = $calcVar($activeCustomers, $prevActiveCustomers);
+
+		// 2. Clientes Nuevos (primera compra histórica en el período)
+		$paramsFirst = [];
+		$invFirstExtra = $buildTxFilters('i', $paramsFirst, 'f_inv');
+		$ordFirstExtra = $buildTxFilters('o', $paramsFirst, 'f_ord');
+		$sqlFirst = "
+			SELECT customer_id, MIN(purchase_date) as first_date FROM (
+				SELECT i.customer_id, i.issue_date as purchase_date FROM b2b_invoices i 
+				WHERE i.status IN ('Emitida', 'Parcialmente pagada', 'Pagada') {$invFirstExtra}
+				UNION ALL
+				SELECT o.customer_id, date(o.created_timestamp) as purchase_date FROM b2b_orders o 
+				WHERE o.status = 'Confirmado' {$ordFirstExtra}
+			) GROUP BY customer_id
+		";
+		$stmtFirst = $db->prepare($sqlFirst);
+		$stmtFirst->execute($paramsFirst);
+		$allFirst = $stmtFirst->fetchAll(PDO::FETCH_ASSOC);
+
+		$newCustomers = 0;
+		$prevNewCustomers = 0;
+		foreach ($allFirst as $r)
+		{
+			if ($r['first_date'] >= $currStart && $r['first_date'] <= $currEnd)
+			{
+				$newCustomers++;
+			}
+			if ($r['first_date'] >= $prevStart && $r['first_date'] <= $prevEnd)
+			{
+				$prevNewCustomers++;
+			}
+		}
+		$varNew = $calcVar($newCustomers, $prevNewCustomers);
+
+		// 3. Clientes Inactivos (sin compras durante el umbral configurable)
+		$threshVal = (float)$db->query("SELECT threshold_value FROM b2b_intelligence_thresholds WHERE threshold_key = 'inactive_days_threshold'")->fetchColumn() ?: 30.0;
+
+		$custWhere = ["c.active = 1"];
+		$custParams = [];
+		if ($branchId)
+		{
+			$custWhere[] = "c.branch_id = :c_branch";
+			$custParams[':c_branch'] = $branchId;
+		}
+		if ($territory)
+		{
+			$custWhere[] = "EXISTS (SELECT 1 FROM customer_establishments ce WHERE ce.customer_id = c.id AND (ce.territory = :c_terr1 OR ce.territory IN (SELECT name FROM b2b_territories WHERE code = :c_terr2 OR CAST(id AS TEXT) = :c_terr3)))";
+			$custParams[':c_terr1'] = $territory;
+			$custParams[':c_terr2'] = $territory;
+			$custParams[':c_terr3'] = $territory;
+		}
+		if ($salesRep)
+		{
+			$custWhere[] = "EXISTS (SELECT 1 FROM customer_establishments ce WHERE ce.customer_id = c.id AND ce.sales_rep_name = :c_rep)";
+			$custParams[':c_rep'] = $salesRep;
+		}
+		$custWhereSql = implode(' AND ', $custWhere);
+
+		$sqlLast = "
+			SELECT c.id, MAX(p.purchase_date) as last_date
+			FROM customers c
+			LEFT JOIN (
+				SELECT customer_id, issue_date as purchase_date FROM b2b_invoices WHERE status IN ('Emitida', 'Parcialmente pagada', 'Pagada')
+				UNION ALL
+				SELECT customer_id, date(created_timestamp) as purchase_date FROM b2b_orders WHERE status = 'Confirmado'
+			) p ON c.id = p.customer_id
+			WHERE {$custWhereSql}
+			GROUP BY c.id
+		";
+		$stmtLast = $db->prepare($sqlLast);
+		$stmtLast->execute($custParams);
+		$allLast = $stmtLast->fetchAll(PDO::FETCH_ASSOC);
+
+		$currRefTs = strtotime($currEnd);
+		$prevRefTs = strtotime($prevEnd);
+		$inactiveCount = 0;
+		$prevInactiveCount = 0;
+		foreach ($allLast as $row)
+		{
+			if (!$row['last_date'])
+			{
+				$inactiveCount++;
+				$prevInactiveCount++;
+			}
+			else
+			{
+				$daysSince = (int)floor(($currRefTs - strtotime($row['last_date'])) / 86400);
+				if ($daysSince >= (int)$threshVal)
+				{
+					$inactiveCount++;
+				}
+				$daysSincePrev = (int)floor(($prevRefTs - strtotime($row['last_date'])) / 86400);
+				if ($daysSincePrev >= (int)$threshVal)
+				{
+					$prevInactiveCount++;
+				}
+			}
+		}
+		$varInactive = $calcVar($inactiveCount, $prevInactiveCount);
+
+		// 4. Retención de Clientes (% de clientes del período anterior que volvieron a comprar)
+		$retainedCount = 0;
+		if ($prevActiveCustomers > 0)
+		{
+			$currMap = array_flip($currBuyers);
+			foreach ($prevBuyers as $pId)
+			{
+				if (isset($currMap[$pId]))
+				{
+					$retainedCount++;
+				}
+			}
+			$retentionRate = round(($retainedCount / $prevActiveCustomers) * 100, 1);
+			$retentionText = $retentionRate . '%';
+			$varRetention = [
+				'percent' => null,
+				'text' => $retainedCount . ' / ' . $prevActiveCustomers . ' retenidos',
+				'class' => 'text-indigo-600 dark:text-indigo-400',
+				'is_nd' => false,
+				'trend' => 'neutral'
+			];
+		}
+		else
+		{
+			$retentionRate = null;
+			$retentionText = 'N/D';
+			$varRetention = [
+				'percent' => null,
+				'text' => 'N/D',
+				'class' => 'text-slate-500 dark:text-slate-400',
+				'is_nd' => true,
+				'trend' => 'neutral'
+			];
+		}
+
+		// 5. Almacenes Activos (establecimientos con compras en el período)
+		$getEsts = function(string $start, string $end, string $prefix) use ($db, $buildTxFilters): array {
+			$params = [':start' => $start, ':end' => $end];
+			$invExtra = $buildTxFilters('i', $params, $prefix . '_einv');
+			$ordExtra = $buildTxFilters('o', $params, $prefix . '_eord');
+
+			$sql = "
+				SELECT DISTINCT i.establishment_id FROM b2b_invoices i
+				WHERE i.status IN ('Emitida', 'Parcialmente pagada', 'Pagada')
+				  AND i.establishment_id IS NOT NULL
+				  AND i.issue_date >= :start AND i.issue_date <= :end
+				  {$invExtra}
+				UNION
+				SELECT DISTINCT o.establishment_id FROM b2b_orders o
+				WHERE o.status = 'Confirmado'
+				  AND o.establishment_id IS NOT NULL
+				  AND date(o.created_timestamp) >= :start AND date(o.created_timestamp) <= :end
+				  {$ordExtra}
+			";
+			$stmt = $db->prepare($sql);
+			$stmt->execute($params);
+			return $stmt->fetchAll(PDO::FETCH_COLUMN);
+		};
+
+		$currEsts = $getEsts($currStart, $currEnd, 'c_est');
+		$prevEsts = $getEsts($prevStart, $prevEnd, 'p_est');
+		$activeEstablishments = count($currEsts);
+		$prevActiveEstablishments = count($prevEsts);
+		$varEst = $calcVar($activeEstablishments, $prevActiveEstablishments);
+
+		// 6. Frecuencia de Compra (pedidos confirmados por cliente comprador)
+		$paramsOrd = [':start' => $currStart, ':end' => $currEnd];
+		$ordExtra = $buildTxFilters('o', $paramsOrd, 'fo_ord');
+		$stmtOrd = $db->prepare("SELECT COUNT(*) FROM b2b_orders o WHERE o.status = 'Confirmado' AND date(o.created_timestamp) >= :start AND date(o.created_timestamp) <= :end {$ordExtra}");
+		$stmtOrd->execute($paramsOrd);
+		$currOrders = (int)$stmtOrd->fetchColumn();
+		$frequency = $activeCustomers > 0 ? round($currOrders / $activeCustomers, 2) : 0.0;
+
+		$paramsOrdPrev = [':start' => $prevStart, ':end' => $prevEnd];
+		$ordPrevExtra = $buildTxFilters('o', $paramsOrdPrev, 'fop_ord');
+		$stmtOrdPrev = $db->prepare("SELECT COUNT(*) FROM b2b_orders o WHERE o.status = 'Confirmado' AND date(o.created_timestamp) >= :start AND date(o.created_timestamp) <= :end {$ordPrevExtra}");
+		$stmtOrdPrev->execute($paramsOrdPrev);
+		$prevOrders = (int)$stmtOrdPrev->fetchColumn();
+		$prevFrequency = $prevActiveCustomers > 0 ? round($prevOrders / $prevActiveCustomers, 2) : 0.0;
+
+		$varFreq = $calcVar($frequency, $prevFrequency);
+
+		// 7. Clientes con Deuda Vencida (facturas vencidas con saldo pendiente a la fecha de corte)
+		$paramsOverdue = [':ref_date' => $currEnd];
+		$invOverdueExtra = $buildTxFilters('i', $paramsOverdue, 'od_inv');
+		$stmtOverdue = $db->prepare("
+			SELECT COUNT(DISTINCT i.customer_id) FROM b2b_invoices i
+			WHERE i.status IN ('Emitida', 'Parcialmente pagada')
+			  AND i.balance > 0.009
+			  AND i.due_date < :ref_date
+			  {$invOverdueExtra}
+		");
+		$stmtOverdue->execute($paramsOverdue);
+		$overdueCustomers = (int)$stmtOverdue->fetchColumn();
+
+		$paramsOverduePrev = [':ref_date' => $prevEnd];
+		$invOverduePrevExtra = $buildTxFilters('i', $paramsOverduePrev, 'odp_inv');
+		$stmtOverduePrev = $db->prepare("
+			SELECT COUNT(DISTINCT i.customer_id) FROM b2b_invoices i
+			WHERE i.status IN ('Emitida', 'Parcialmente pagada')
+			  AND i.balance > 0.009
+			  AND i.due_date < :ref_date
+			  {$invOverduePrevExtra}
+		");
+		$stmtOverduePrev->execute($paramsOverduePrev);
+		$prevOverdueCustomers = (int)$stmtOverduePrev->fetchColumn();
+
+		$varOverdue = $calcVar($overdueCustomers, $prevOverdueCustomers);
+
+		// 8. Venta Promedio por Cliente (ventas netas facturadas / clientes compradores)
+		$calcNetSales = function(string $start, string $end, string $prefix) use ($db, $buildTxFilters): float {
+			$invParams = [':start' => $start, ':end' => $end];
+			$invExtra = $buildTxFilters('i', $invParams, $prefix . '_nsinv');
+			$stmtInv = $db->prepare("
+				SELECT COALESCE(SUM(i.subtotal), 0) FROM b2b_invoices i
+				WHERE i.status IN ('Emitida', 'Parcialmente pagada', 'Pagada')
+				  AND i.issue_date >= :start AND i.issue_date <= :end
+				  {$invExtra}
+			");
+			$stmtInv->execute($invParams);
+			$grossSubtotal = (float)$stmtInv->fetchColumn();
+
+			$cnParams = [':start' => $start, ':end' => $end];
+			$cnExtra = $buildTxFilters('i', $cnParams, $prefix . '_nscni');
+			$stmtCn = $db->prepare("
+				SELECT COALESCE(SUM(cn.subtotal), 0)
+				FROM b2b_credit_notes cn
+				JOIN b2b_invoices i ON cn.invoice_id = i.id
+				WHERE cn.status = 'Emitida'
+				  AND date(cn.created_timestamp) >= :start AND date(cn.created_timestamp) <= :end
+				  {$cnExtra}
+			");
+			$stmtCn->execute($cnParams);
+			$cnSubtotal = (float)$stmtCn->fetchColumn();
+
+			return max(0.0, round($grossSubtotal - $cnSubtotal, 2));
+		};
+
+		$currNetSales = $calcNetSales($currStart, $currEnd, 'c_ns');
+		$prevNetSales = $calcNetSales($prevStart, $prevEnd, 'p_ns');
+
+		$avgSalesPerCustomer = $activeCustomers > 0 ? round($currNetSales / $activeCustomers, 2) : 0.0;
+		$prevAvgSalesPerCustomer = $prevActiveCustomers > 0 ? round($prevNetSales / $prevActiveCustomers, 2) : 0.0;
+		$varAvgSales = $calcVar($avgSalesPerCustomer, $prevAvgSalesPerCustomer);
+
+		// Legacy metrics compatibility
 		$chains = (int)$db->query("SELECT COUNT(*) FROM customers WHERE active = 1 AND LOWER(customer_type) = 'cadena'")->fetchColumn();
-		$establishments = (int)$db->query("SELECT COUNT(*) FROM customer_establishments WHERE active = 1")->fetchColumn();
-		$inactiveCust = (int)$db->query("SELECT COUNT(*) FROM customers WHERE active = 0")->fetchColumn();
+		$totalEsts = (int)$db->query("SELECT COUNT(*) FROM customer_establishments WHERE active = 1")->fetchColumn();
 
 		return [
-			'active_customers' => $activeCust,
+			'period_info' => [
+				'preset' => $periodPreset,
+				'label' => $ranges['period_label'],
+				'current_start' => $currStart,
+				'current_end' => $currEnd,
+				'previous_start' => $prevStart,
+				'previous_end' => $prevEnd,
+				'threshold_days' => (int)$threshVal
+			],
+			'kpis' => [
+				'active_customers' => [
+					'id' => 'active_customers',
+					'name' => 'Clientes Activos',
+					'value' => $activeCustomers,
+					'formatted' => number_format($activeCustomers),
+					'prev_value' => $prevActiveCustomers,
+					'variation' => $varActive,
+					'subtext' => 'Compradores en período',
+					'tooltip' => "Definición: Cantidad de clientes comerciales con compras en el período.\nFórmula: COUNT(DISTINCT clientes con facturas válidas o pedidos confirmados en el período)."
+				],
+				'new_customers' => [
+					'id' => 'new_customers',
+					'name' => 'Clientes Nuevos',
+					'value' => $newCustomers,
+					'formatted' => number_format($newCustomers),
+					'prev_value' => $prevNewCustomers,
+					'variation' => $varNew,
+					'subtext' => 'Primera compra histórica',
+					'tooltip' => "Definición: Clientes con su primera compra en el período.\nFórmula: COUNT(clientes cuya fecha de primera compra histórica está dentro del período)."
+				],
+				'inactive_customers' => [
+					'id' => 'inactive_customers',
+					'name' => 'Clientes Inactivos',
+					'value' => $inactiveCount,
+					'formatted' => number_format($inactiveCount),
+					'prev_value' => $prevInactiveCount,
+					'variation' => $varInactive,
+					'subtext' => "Sin compras > {$threshVal}d",
+					'tooltip' => "Definición: Clientes sin compras durante el umbral configurable ({$threshVal} días).\nFórmula: COUNT(clientes registrados activos sin facturas válidas ni pedidos en los últimos {$threshVal} días)."
+				],
+				'retention_rate' => [
+					'id' => 'retention_rate',
+					'name' => 'Retención Clientes',
+					'value' => $retentionRate,
+					'formatted' => $retentionText,
+					'prev_value' => null,
+					'variation' => $varRetention,
+					'subtext' => $prevActiveCustomers > 0 ? "{$retainedCount} de {$prevActiveCustomers} prev." : 'Sin base previa',
+					'tooltip' => "Definición: Porcentaje de clientes del período anterior que volvieron a comprar.\nFórmula: (Clientes que compraron en ambos períodos / Clientes compradores del período anterior) × 100."
+				],
+				'active_establishments' => [
+					'id' => 'active_establishments',
+					'name' => 'Almacenes Activos',
+					'value' => $activeEstablishments,
+					'formatted' => number_format($activeEstablishments),
+					'prev_value' => $prevActiveEstablishments,
+					'variation' => $varEst,
+					'subtext' => 'Puntos entrega con compra',
+					'tooltip' => "Definición: Establecimientos y almacenes de entrega con compras durante el período.\nFórmula: COUNT(DISTINCT establecimientos de entrega con transacciones válidas)."
+				],
+				'purchase_frequency' => [
+					'id' => 'purchase_frequency',
+					'name' => 'Frecuencia Compra',
+					'value' => $frequency,
+					'formatted' => number_format($frequency, 2),
+					'prev_value' => $prevFrequency,
+					'variation' => $varFreq,
+					'subtext' => "{$currOrders} pedidos confirmados",
+					'tooltip' => "Definición: Pedidos confirmados por cliente comprador.\nFórmula: Total pedidos confirmados en el período / Clientes compradores en el período."
+				],
+				'overdue_customers' => [
+					'id' => 'overdue_customers',
+					'name' => 'Deuda Vencida',
+					'value' => $overdueCustomers,
+					'formatted' => number_format($overdueCustomers),
+					'prev_value' => $prevOverdueCustomers,
+					'variation' => $varOverdue,
+					'subtext' => 'Con saldo en mora',
+					'tooltip' => "Definición: Cantidad de clientes con facturas vencidas y saldo pendiente.\nFórmula: COUNT(DISTINCT clientes con facturas en estado Emitida/Parcial y saldo > 0 tras fecha de vencimiento)."
+				],
+				'avg_sales_per_customer' => [
+					'id' => 'avg_sales_per_customer',
+					'name' => 'Venta Prom./Cliente',
+					'value' => $avgSalesPerCustomer,
+					'formatted' => '$' . number_format($avgSalesPerCustomer, 2),
+					'prev_value' => $prevAvgSalesPerCustomer,
+					'variation' => $varAvgSales,
+					'subtext' => 'Venta neta / comprador',
+					'tooltip' => "Definición: Ventas netas facturadas divididas entre clientes compradores.\nFórmula: (Facturación válida antes de impuestos − Notas de crédito válidas) / Clientes compradores en el período."
+				]
+			],
+			// Legacy keys for safety
+			'active_customers' => $activeCustomers,
 			'chains' => $chains,
-			'total_establishments' => $establishments,
-			'inactive_customers' => $inactiveCust
+			'total_establishments' => $totalEsts,
+			'inactive_customers' => $inactiveCount
+		];
+	}
+
+	/**
+	 * Obtiene las opciones disponibles para los filtros de Clientes y Almacenes
+	 */
+	public function GetFilterOptions(): array
+	{
+		$this->EnsureSchema();
+		$db = $this->Db();
+
+		$territories = $db->query("
+			SELECT DISTINCT name FROM b2b_territories WHERE active = 1 ORDER BY name ASC
+		")->fetchAll(PDO::FETCH_COLUMN);
+
+		if (empty($territories))
+		{
+			$territories = $db->query("
+				SELECT DISTINCT territory FROM customer_establishments WHERE territory IS NOT NULL AND territory != '' ORDER BY territory ASC
+			")->fetchAll(PDO::FETCH_COLUMN);
+		}
+
+		$salesReps = $db->query("
+			SELECT DISTINCT name FROM b2b_sales_reps WHERE active = 1 ORDER BY name ASC
+		")->fetchAll(PDO::FETCH_COLUMN);
+
+		if (empty($salesReps))
+		{
+			$salesReps = $db->query("
+				SELECT DISTINCT sales_rep_name FROM customer_establishments WHERE sales_rep_name IS NOT NULL AND sales_rep_name != '' ORDER BY sales_rep_name ASC
+			")->fetchAll(PDO::FETCH_COLUMN);
+		}
+
+		$branches = $db->query("
+			SELECT id, name FROM branches WHERE active = 1 ORDER BY name ASC
+		")->fetchAll(PDO::FETCH_ASSOC);
+
+		return [
+			'territories' => $territories,
+			'sales_reps' => $salesReps,
+			'branches' => $branches
 		];
 	}
 
@@ -462,6 +955,26 @@ class B2bCustomerService extends BaseService
 		{
 			$where[] = "c.active = :active";
 			$params[':active'] = (int)$filters['active'];
+		}
+
+		if (!empty($filters['branch_id']))
+		{
+			$where[] = "c.branch_id = :branch_id";
+			$params[':branch_id'] = (int)$filters['branch_id'];
+		}
+
+		if (!empty($filters['territory']))
+		{
+			$where[] = "EXISTS (SELECT 1 FROM customer_establishments ce WHERE ce.customer_id = c.id AND (ce.territory = :f_terr1 OR ce.territory IN (SELECT name FROM b2b_territories WHERE code = :f_terr2 OR CAST(id AS TEXT) = :f_terr3)))";
+			$params[':f_terr1'] = trim($filters['territory']);
+			$params[':f_terr2'] = trim($filters['territory']);
+			$params[':f_terr3'] = trim($filters['territory']);
+		}
+
+		if (!empty($filters['sales_rep']))
+		{
+			$where[] = "EXISTS (SELECT 1 FROM customer_establishments ce WHERE ce.customer_id = c.id AND ce.sales_rep_name = :f_rep)";
+			$params[':f_rep'] = trim($filters['sales_rep']);
 		}
 
 		$whereSql = implode(' AND ', $where);

@@ -48,6 +48,8 @@ export default function HomeScreen() {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [activeSession, setActiveSession] = useState<VisitSession | null>(null);
   const [visitActive, setVisitActive] = useState(true);
+  const [scheduleModalVisible, setScheduleModalVisible] = useState(false);
+  const [employeeShifts, setEmployeeShifts] = useState<any[]>([]);
 
   // UPC Scanner modal state
   const [scannerVisible, setScannerVisible] = useState(false);
@@ -62,18 +64,20 @@ export default function HomeScreen() {
 
   const loadData = useCallback(async () => {
     try {
-      const [overviewData, alertsData, tasksData, invData, sessionData] = await Promise.all([
+      const [overviewData, alertsData, tasksData, invData, sessionData, shiftsData] = await Promise.all([
         ApiClient.getSalesOverview(),
         ApiClient.getCommercialAlerts(),
         ApiClient.getTasks(),
         ApiClient.getInventory(),
         ApiClient.getActiveSession(2),
+        ApiClient.getEmployeeShifts(2),
       ]);
       setKpis(overviewData);
       setAlerts(alertsData);
       setTasks(tasksData);
       setInventory(invData);
       setActiveSession(sessionData);
+      setEmployeeShifts(shiftsData);
     } catch {
       // Handled inside ApiClient
     } finally {
@@ -84,6 +88,14 @@ export default function HomeScreen() {
 
   useEffect(() => {
     loadData();
+    const unsubscribe = ApiClient.subscribeToChanges(
+      () => loadData(),
+      () => loadData(),
+      () => loadData()
+    );
+    return () => {
+      unsubscribe();
+    };
   }, [loadData]);
 
   const onRefresh = () => {
@@ -304,13 +316,16 @@ export default function HomeScreen() {
                 <Text style={{ fontSize: 11, color: colors.textMuted }}>Tareas</Text>
               </View>
 
-              <View style={{ flex: 1, backgroundColor: colors.card, padding: 12, borderRadius: 12, borderWidth: 1, borderColor: colors.border, alignItems: 'center' }}>
+              <TouchableOpacity
+                onPress={() => setScheduleModalVisible(true)}
+                style={{ flex: 1, backgroundColor: colors.card, padding: 12, borderRadius: 12, borderWidth: 1, borderColor: colors.primary, alignItems: 'center' }}
+              >
                 <Text style={{ fontSize: 20 }}>🕒</Text>
-                <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text, marginTop: 2 }}>
+                <Text style={{ fontSize: 16, fontWeight: '800', color: colors.primary, marginTop: 2 }}>
                   8.0 hrs
                 </Text>
-                <Text style={{ fontSize: 11, color: colors.textMuted }}>Programadas</Text>
-              </View>
+                <Text style={{ fontSize: 11, color: colors.primary, fontWeight: '600' }}>Ver Horario ↗</Text>
+              </TouchableOpacity>
             </View>
 
             {/* Main Action: Escáner de Códigos UPC */}
@@ -808,6 +823,81 @@ export default function HomeScreen() {
             ) : null}
           </ScrollView>
         </SafeAreaView>
+      </Modal>
+
+      {/* Weekly Schedule Modal */}
+      <Modal visible={scheduleModalVisible} transparent animationType="slide" onRequestClose={() => setScheduleModalVisible(false)}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' }}>
+          <View style={{ backgroundColor: colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, maxHeight: '85%' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+              <View>
+                <Text style={{ fontSize: 11, fontWeight: '800', color: colors.primary, letterSpacing: 1 }}>
+                  PROGRAMACIÓN SEMANAL WFM
+                </Text>
+                <Text style={Typography.h3(colors.text)}>
+                  Horario — Rosa María Huamán
+                </Text>
+                <Text style={{ fontSize: 11, color: colors.textMuted }}>
+                  Sede: Prince Distributors — Hallandale HQ (Semana 47)
+                </Text>
+              </View>
+              <TouchableOpacity onPress={() => setScheduleModalVisible(false)} style={{ padding: 8 }}>
+                <Text style={{ fontSize: 18, color: colors.textMuted }}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={{ marginBottom: 14 }}>
+              {[
+                { day: 'Lunes 16 Nov', hours: '09:00 AM – 05:30 PM', label: 'Intermedio', net: '8.0h', color: '#3B82F6' },
+                { day: 'Martes 17 Nov (Hoy)', hours: '09:00 AM – 05:30 PM', label: 'Intermedio • Activo', net: '8.0h', color: '#00A859' },
+                { day: 'Miércoles 18 Nov', hours: '09:00 AM – 05:30 PM', label: 'Intermedio', net: '8.0h', color: '#3B82F6' },
+                { day: 'Jueves 19 Nov', hours: '09:00 AM – 05:30 PM', label: 'Intermedio', net: '8.0h', color: '#3B82F6' },
+                { day: 'Viernes 20 Nov', hours: '09:00 AM – 05:30 PM', label: 'Intermedio', net: '8.0h', color: '#3B82F6' },
+                { day: 'Sábado 21 Nov', hours: '09:00 AM – 05:30 PM', label: 'Intermedio', net: '8.0h', color: '#3B82F6' },
+                { day: 'Domingo 22 Nov', hours: 'Descanso Semanal', label: 'Libre', net: '0.0h', color: '#94A3B8' },
+              ].map((s, idx) => (
+                <View
+                  key={idx}
+                  style={{
+                    padding: 12,
+                    borderRadius: 10,
+                    backgroundColor: colors.background,
+                    borderWidth: 1,
+                    borderColor: s.day.includes('Hoy') ? '#00A859' : colors.border,
+                    marginBottom: 8,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <View>
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: s.day.includes('Hoy') ? '#00A859' : colors.text }}>
+                      {s.day}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: colors.textMuted, marginTop: 2 }}>
+                      {s.hours}
+                    </Text>
+                  </View>
+                  <View style={{ alignItems: 'flex-end' }}>
+                    <Text style={{ fontSize: 12, fontWeight: '800', color: colors.text }}>
+                      {s.net}
+                    </Text>
+                    <Text style={{ fontSize: 10, color: s.color, fontWeight: '700' }}>
+                      {s.label}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+
+            <Button
+              title="Cerrar Horario"
+              variant="outline"
+              size="md"
+              onPress={() => setScheduleModalVisible(false)}
+            />
+          </View>
+        </View>
       </Modal>
 
       {/* =========================================================================
