@@ -58,6 +58,14 @@ export default function MoreScreen() {
       badge: 'Alertas',
     },
     {
+      id: 'lifecycle',
+      title: 'Ciclo de Vida del Producto',
+      subtitle: '12 KPIs, clasificación de portafolio, pronósticos y reposición',
+      icon: '🔄',
+      route: '/lifecycle',
+      badge: 'PLM',
+    },
+    {
       id: 'settings',
       title: t('mod_settings'),
       subtitle: 'Roles, tema claro/oscuro, idioma, API y sincronización',

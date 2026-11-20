@@ -74,13 +74,21 @@ class B2bSalesOverviewController extends BaseController
 			{
 				$section = 'shift-requests';
 			}
+			elseif (str_contains($path, 'lifecycle') || str_contains($path, 'ciclo-de-vida'))
+			{
+				$section = 'product-lifecycle';
+			}
 			else
 			{
 				$section = 'sales';
 			}
 		}
 
-		$validSections = ['sales', 'customers', 'products', 'orders', 'invoices', 'sales-reps', 'profitability', 'reports', 'settings', 'schedules', 'operations', 'employees', 'attendance', 'shift-requests'];
+		$validSections = ['sales', 'customers', 'products', 'orders', 'invoices', 'sales-reps', 'profitability', 'reports', 'settings', 'schedules', 'operations', 'employees', 'attendance', 'shift-requests', 'product-lifecycle'];
+		if ($section === 'lifecycle')
+		{
+			$section = 'product-lifecycle';
+		}
 		if (!in_array($section, $validSections, true))
 		{
 			$section = 'sales';

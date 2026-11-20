@@ -98,6 +98,7 @@ $app->group('', function (RouteCollectorProxy $group)
 	$group->get('/reports', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.reports');
 	$group->get('/settings', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.settings');
 	$group->get('/operations', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.operations');
+	$group->get('/product-lifecycle', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.lifecycle');
 
 	// Sitio comercial público (rutas con nombre site.* = sin autenticación)
 	$group->get('/features', [SiteController::class, 'Features'])->setName('site.features');
@@ -1274,6 +1275,21 @@ $app->group('/api', function (RouteCollectorProxy $group)
 	$group->post('/b2b/supabase/inventory/restock', [\Grocy\Controllers\Api\B2bSupabaseApiController::class, 'RestockShelf']);
 	$group->get('/b2b/supabase/attendance', [\Grocy\Controllers\Api\B2bSupabaseApiController::class, 'GetAttendance']);
 	$group->get('/b2b/supabase/audit', [\Grocy\Controllers\Api\B2bSupabaseApiController::class, 'GetAuditLogs']);
+
+	// Módulo 11: Ciclo de Vida del Producto e Inteligencia Comercial
+	$group->get('/b2b/lifecycle/kpis', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'GetKpis']);
+	$group->get('/b2b/lifecycle/products', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'GetProducts']);
+	$group->get('/b2b/lifecycle/distribution', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'GetDistribution']);
+	$group->get('/b2b/lifecycle/curves', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'GetCurves']);
+	$group->get('/b2b/lifecycle/matrix', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'GetMatrix']);
+	$group->get('/b2b/lifecycle/immobilized', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'GetImmobilized']);
+	$group->get('/b2b/lifecycle/demand-trend', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'GetDemandTrend']);
+	$group->get('/b2b/lifecycle/recommendations', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'GetRecommendations']);
+	$group->post('/b2b/lifecycle/recommendations/{id:[0-9]+}/review', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'ReviewRecommendation']);
+	$group->post('/b2b/lifecycle/simulate-markdown', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'SimulateMarkdown']);
+	$group->post('/b2b/lifecycle/save-markdown', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'SaveMarkdownScenario']);
+	$group->post('/b2b/lifecycle/import', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'ImportData']);
+	$group->get('/b2b/lifecycle/import-history', [\Grocy\Controllers\Api\B2bProductLifecycleApiController::class, 'GetImportHistory']);
 })->add(new \Grocy\Middleware\B2bSecurityMiddleware($container, $app->getResponseFactory()))->add(new CorsMiddleware($container, $app->getResponseFactory()))->add(new JsonMiddleware($container, $app->getResponseFactory()));
 
 

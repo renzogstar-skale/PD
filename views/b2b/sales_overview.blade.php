@@ -228,6 +228,16 @@
 						<span class="nav-tooltip" data-i18n="nav_reports">Reportes y Analítica</span>
 					</a>
 
+					<!-- 7.1 Ciclo de Vida del Producto -->
+					<a href="{{ $U('/b2b/product-lifecycle') }}" data-section="product-lifecycle" class="nav-item flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group relative" onclick="handleNavClick(event, 'product-lifecycle')">
+						<div class="flex items-center gap-3">
+							<i data-lucide="refresh-cw" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 shrink-0"></i>
+							<span class="nav-text" data-i18n="nav_lifecycle">Ciclo de Vida</span>
+						</div>
+						<span class="nav-badge px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300">PLM</span>
+						<span class="nav-tooltip" data-i18n="nav_lifecycle">Ciclo de Vida del Producto</span>
+					</a>
+
 					<!-- 8. Configuración -->
 					<a href="{{ $U('/b2b/settings') }}" data-section="settings" class="nav-item flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group relative" onclick="handleNavClick(event, 'settings')">
 						<i data-lucide="settings" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 shrink-0"></i>
@@ -4314,6 +4324,9 @@
 			{{-- MÓDULO OPERACIONES Y PERSONAL: GESTIÓN INTELIGENTE DE HORARIOS Y COBERTURA --}}
 			@include('b2b.workforce_sections')
 
+			{{-- MÓDULO INTELIGENCIA COMERCIAL: GESTIÓN DEL CICLO DE VIDA DEL PRODUCTO --}}
+			@include('b2b.product_lifecycle_sections')
+
 			<div id="section-placeholder" class="hidden space-y-6">
 				<div class="pb-4 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 					<div class="flex items-center gap-3">
@@ -6230,7 +6243,8 @@
 			operations: { icon: 'clipboard-list', title_es: 'Operaciones y Tareas', title_en: 'Operations & Tasks', desc_es: 'Supervisión de tareas operativas de almacén, reposición y control de incidencias.', desc_en: 'Supervision of warehouse operational tasks, restocking, and incident control.' },
 			employees: { icon: 'user-check', title_es: 'Directorio de Personal', title_en: 'Staff Directory', desc_es: 'Colaboradores operacionales, reponedores, fuerza de ventas y personal logístico.', desc_en: 'Commercial staffing, merchandisers, and operations personnel.' },
 			attendance: { icon: 'clock', title_es: 'Asistencia y Puntualidad', title_en: 'Attendance & Punctuality', desc_es: 'Comparativa de horas programadas vs trabajadas, horas productivas y control de tardanzas.', desc_en: 'Tracking worked vs scheduled hours.' },
-			'shift-requests': { icon: 'clipboard-check', title_es: 'Solicitudes de Personal', title_en: 'Shift Requests', desc_es: 'Aprobación de cambios de turno, solicitudes de vacaciones y permisos por horas.', desc_en: 'Shift swaps, permissions, and vacations.' }
+			'shift-requests': { icon: 'clipboard-check', title_es: 'Solicitudes de Personal', title_en: 'Shift Requests', desc_es: 'Aprobación de cambios de turno, solicitudes de vacaciones y permisos por horas.', desc_en: 'Shift swaps, permissions, and vacations.' },
+			'product-lifecycle': { icon: 'refresh-cw', title_es: 'Ciclo de Vida del Producto', title_en: 'Product Lifecycle', desc_es: 'Analiza el rendimiento, anticipa riesgos y optimiza la rentabilidad de tu portafolio.', desc_en: 'Analyze performance, anticipate risks, and optimize portfolio profitability.' }
 		};
 
 		let currentSection = getSectionFromPath() || document.body.dataset.initialSection || 'sales';
@@ -6260,7 +6274,7 @@
 			const path = window.location.pathname;
 			const parts = path.split('/').filter(Boolean);
 			if (parts.length >= 2 && parts[0] === 'b2b') return parts[1];
-			if (parts.length === 1 && (parts[0] === 'customers' || parts[0] === 'products' || parts[0] === 'orders' || parts[0] === 'invoices' || parts[0] === 'sales-reps' || parts[0] === 'profitability' || parts[0] === 'reports' || parts[0] === 'settings' || parts[0] === 'schedules' || parts[0] === 'operations' || parts[0] === 'employees' || parts[0] === 'attendance' || parts[0] === 'shift-requests')) return parts[0];
+			if (parts.length === 1 && (parts[0] === 'customers' || parts[0] === 'products' || parts[0] === 'orders' || parts[0] === 'invoices' || parts[0] === 'sales-reps' || parts[0] === 'profitability' || parts[0] === 'reports' || parts[0] === 'settings' || parts[0] === 'schedules' || parts[0] === 'operations' || parts[0] === 'employees' || parts[0] === 'attendance' || parts[0] === 'shift-requests' || parts[0] === 'product-lifecycle' || parts[0] === 'lifecycle')) return (parts[0] === 'lifecycle' ? 'product-lifecycle' : parts[0]);
 			return 'sales';
 		}
 
@@ -6342,6 +6356,7 @@
 			const empContainer = document.getElementById('section-employees');
 			const attContainer = document.getElementById('section-attendance');
 			const reqContainer = document.getElementById('section-shift-requests');
+			const plcContainer = document.getElementById('section-product-lifecycle');
 			const placeholderContainer = document.getElementById('section-placeholder');
 
 			salesContainer.classList.add('hidden');
@@ -6358,6 +6373,7 @@
 			if (empContainer) empContainer.classList.add('hidden');
 			if (attContainer) attContainer.classList.add('hidden');
 			if (reqContainer) reqContainer.classList.add('hidden');
+			if (plcContainer) plcContainer.classList.add('hidden');
 			placeholderContainer.classList.add('hidden');
 
 			if (sectionId === 'sales') {
@@ -6399,6 +6415,11 @@
 			} else if (sectionId === 'shift-requests') {
 				if (reqContainer) reqContainer.classList.remove('hidden');
 				if (typeof loadWfmRequests === 'function') loadWfmRequests();
+			} else if (sectionId === 'product-lifecycle') {
+				if (plcContainer) plcContainer.classList.remove('hidden');
+				if (window.onSectionActivated && typeof window.onSectionActivated['product-lifecycle'] === 'function') {
+					window.onSectionActivated['product-lifecycle']();
+				}
 			} else {
 				placeholderContainer.classList.remove('hidden');
 				const iconEl = document.getElementById('placeholder-icon');
@@ -8018,33 +8039,6 @@
 							${o.items_count} ítems
 						</span>
 					</td>
-					<td class="py-3 px-4 text-right font-mono text-slate-600 dark:text-slate-300">
-						$${parseFloat(o.subtotal || 0).toFixed(2)}
-					</td>
-					<td class="py-3 px-4 text-right font-mono font-bold text-slate-900 dark:text-white text-sm">
-						$${parseFloat(o.total || 0).toFixed(2)}
-					</td>
-					<td class="py-3 px-4 text-center">
-						${statusBadge}
-					</td>
-					<td class="py-3 px-4 text-right">
-						<div class="flex items-center justify-end gap-1.5">
-							<button onclick="openCommercialDetailModal('order', ${o.id})" class="p-1.5 text-brand-700 dark:text-brand-300 hover:bg-brand-50 dark:hover:bg-brand-950/60 rounded-lg transition-colors" title="Ver Detalle y Auditoría">
-								<i data-lucide="eye" class="w-4 h-4"></i>
-							</button>
-							<button onclick="duplicateOrderAction(${o.id})" class="p-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Duplicar Pedido">
-								<i data-lucide="copy" class="w-4 h-4"></i>
-							</button>
-							${o.status === 'Borrador' ? `
-								<button onclick="confirmUpdateOrderStatus(${o.id}, 'Confirmado')" class="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-lg transition-colors" title="Confirmar Pedido">
-									<i data-lucide="check" class="w-4 h-4"></i>
-								</button>
-							` : ''}
-							${o.status === 'Confirmado' ? `
-								<button onclick="openGenerateInvoiceModal(${o.id})" class="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-lg transition-colors" title="Facturar Pedido">
-									<i data-lucide="receipt" class="w-4 h-4"></i>
-								</button>
-								<button onclick="confirmUpdateOrderStatus(${o.id}, 'Cancelado')" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors" title="Cancelar Pedido">
 									<i data-lucide="x-circle" class="w-4 h-4"></i>
 								</button>
 							` : ''}
@@ -13211,5 +13205,6 @@
 	@include('b2b.workforce_modals')
 	@include('b2b.demo_engine_scripts')
 	@include('b2b.workforce_scripts')
+	@include('b2b.product_lifecycle_scripts')
 </body>
 </html>
