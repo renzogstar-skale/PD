@@ -251,6 +251,16 @@
 						<span class="nav-tooltip">Horarios y Cobertura</span>
 					</a>
 
+					<!-- 9.1 Operaciones y Tareas -->
+					<a href="{{ $U('/b2b/operations') }}" data-section="operations" class="nav-item flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group relative" onclick="handleNavClick(event, 'operations')">
+						<div class="flex items-center gap-3">
+							<i data-lucide="check-square" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 shrink-0"></i>
+							<span class="nav-text">Operaciones y Tareas</span>
+						</div>
+						<span class="nav-badge px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300">FEFO</span>
+						<span class="nav-tooltip">Operaciones y Tareas</span>
+					</a>
+
 					<!-- 10. Empleados -->
 					<a href="{{ $U('/b2b/employees') }}" data-section="employees" class="nav-item flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group relative" onclick="handleNavClick(event, 'employees')">
 						<i data-lucide="user-check" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 shrink-0"></i>
@@ -807,6 +817,26 @@
 					</div>
 				</div>
 
+				<!-- Selector de Sub-Pestañas: Tablero Ejecutivo vs Directorio Operativo -->
+				<div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+					<div class="flex space-x-6 text-xs sm:text-sm font-semibold">
+						<button id="cust-tab-btn-exec" onclick="switchCustomerSubTab('exec')" class="pb-3 border-b-2 border-brand-800 text-brand-800 dark:text-white dark:border-white transition-all flex items-center gap-2">
+							<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+							<span>Tablero Ejecutivo</span>
+						</button>
+						<button id="cust-tab-btn-manage" onclick="switchCustomerSubTab('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
+							<i data-lucide="users" class="w-4 h-4"></i>
+							<span>Directorio &amp; Gestión Operativa</span>
+						</button>
+					</div>
+					<button onclick="switchCustomerSubTab('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
+						<span>Gestionar clientes y sucursales</span>
+						<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+					</button>
+				</div>
+
+				<!-- VISTA 1: TABLERO EJECUTIVO (8 KPIS + 4 GRÁFICOS + INDICADORES) -->
+				<div id="cust-view-exec" class="space-y-6">
 				<!-- 8 KPI CARDS SECTION (Enterprise Minimal - Clientes y Almacenes) -->
 				<div class="relative">
 					<!-- Error Banner si la API falla -->
@@ -1007,6 +1037,121 @@
 					</div>
 				</div>
 
+				<!-- 4 GRÁFICOS ANALÍTICOS EJECUTIVOS -->
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+					<!-- Gráfico 1: Evolución de Clientes (Compradores, Nuevos, Inactivos) -->
+					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+						<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+							<div>
+								<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Evolución Histórica de Compradores</h3>
+								<p class="text-[11px] text-slate-400 mt-0.5">Tendencia de clientes con compras efectivas por período</p>
+							</div>
+							<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">Tendencia</span>
+						</div>
+						<div class="relative h-64 mt-3">
+							<canvas id="chart-cust-evolution"></canvas>
+						</div>
+					</div>
+
+					<!-- Gráfico 2: Segmentación por Tipo de Negocio -->
+					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+						<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+							<div>
+								<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Segmentación por Canal y Tipo</h3>
+								<p class="text-[11px] text-slate-400 mt-0.5">Distribución porcentual de cartera según tipo de comercio</p>
+							</div>
+							<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">Canal B2B</span>
+						</div>
+						<div class="relative h-64 mt-3">
+							<canvas id="chart-cust-segmentation"></canvas>
+						</div>
+					</div>
+
+					<!-- Gráfico 3: Cobertura Territorial y Concentración -->
+					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+						<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+							<div>
+								<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Facturación por Tipo / Territorio</h3>
+								<p class="text-[11px] text-slate-400 mt-0.5">Volumen de ventas concentrado por segmento comercial</p>
+							</div>
+							<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Ingresos</span>
+						</div>
+						<div class="relative h-64 mt-3">
+							<canvas id="chart-cust-territory"></canvas>
+						</div>
+					</div>
+
+					<!-- Gráfico 4: Tasa de Retención & Recompra -->
+					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+						<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+							<div>
+								<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Tasa de Retención vs Churn</h3>
+								<p class="text-[11px] text-slate-400 mt-0.5">Comportamiento de fidelización y tasa de abandono mensual</p>
+							</div>
+							<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">Fidelidad</span>
+						</div>
+						<div class="relative h-64 mt-3">
+							<canvas id="chart-cust-retention"></canvas>
+						</div>
+					</div>
+				</div>
+
+				<!-- INDICADORES SECUNDARIOS DE RENDIMIENTO COMERCIAL -->
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+					<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+						<div>
+							<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Crecimiento Neto</span>
+							<p id="sec-cust-net-growth" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">+4 clientes netos</p>
+							<span class="text-[10px] text-slate-400">Nuevos menos bajas</span>
+						</div>
+						<i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
+					</div>
+					<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+						<div>
+							<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tasa de Pérdida (Churn)</span>
+							<p id="sec-cust-churn-rate" class="text-sm font-bold text-amber-600 dark:text-amber-400 mt-0.5">8.3%</p>
+							<span class="text-[10px] text-slate-400">Meta comercial &lt; 10%</span>
+						</div>
+						<i data-lucide="user-minus" class="w-4 h-4 text-amber-600"></i>
+					</div>
+					<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+						<div>
+							<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Frecuencia Mensual</span>
+							<p id="sec-cust-freq-rate" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">1.9 pedidos/mes</p>
+							<span class="text-[10px] text-slate-400">Por cliente activo</span>
+						</div>
+						<i data-lucide="repeat" class="w-4 h-4 text-blue-600"></i>
+					</div>
+					<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+						<div>
+							<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cartera en Riesgo Mora</span>
+							<p id="sec-cust-risk-ratio" class="text-sm font-bold text-rose-600 dark:text-rose-400 mt-0.5">14.3% del total</p>
+							<span class="text-[10px] text-slate-400">Facturas vencidas &gt; 30d</span>
+						</div>
+						<i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>
+					</div>
+				</div>
+
+				<!-- BANNER ACCESO A GESTIÓN OPERATIVA -->
+				<div class="bg-gradient-to-r from-slate-100 via-white to-slate-100 dark:from-slate-800/80 dark:via-slate-800/40 dark:to-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+					<div class="flex items-center gap-3">
+						<div class="w-9 h-9 rounded-lg bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 flex items-center justify-center shrink-0">
+							<i data-lucide="table" class="w-4 h-4"></i>
+						</div>
+						<div>
+							<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Directorio Operativo y Administración de Sucursales</h4>
+							<p class="text-[11px] text-slate-500 dark:text-slate-400">Crear clientes, editar datos fiscales, gestionar contactos y asociar almacenes de entrega.</p>
+						</div>
+					</div>
+					<button onclick="switchCustomerSubTab('manage')" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-800 text-white hover:bg-brand-700 transition-colors shadow-2xs whitespace-nowrap">
+						<span>Ir al Directorio</span>
+						<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+					</button>
+				</div>
+				</div><!-- Fin #cust-view-exec -->
+
+				<!-- VISTA 2: GESTIÓN OPERATIVA & DIRECTORIO COMPLETO -->
+				<div id="cust-view-manage" class="hidden space-y-6">
 				<!-- Barra de Búsqueda y Filtros de Clientes -->
 				<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
 					<div class="relative w-full md:w-96">
@@ -1077,6 +1222,7 @@
 						<span class="font-mono text-slate-600 dark:text-slate-300">Base de datos sincronizada</span>
 					</div>
 				</div>
+				</div><!-- Fin #cust-view-manage -->
 			</div>
 
 			<!-- SECCIÓN 3: PRODUCTOS Y PRECIOS B2B (MÓDULO FUNCIONAL PASO 5) -->
@@ -1103,64 +1249,264 @@
 					</div>
 				</div>
 
-				<!-- 4 Tarjetas KPI de Productos -->
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-					<!-- Total Productos -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Productos</span>
-							<div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+				<!-- Selector de Sub-Pestañas: Tablero Ejecutivo vs Tarifario Operativo -->
+				<div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+					<div class="flex space-x-6 text-xs sm:text-sm font-semibold">
+						<button id="prod-tab-btn-exec" onclick="switchProductsSubTab('exec')" class="pb-3 border-b-2 border-brand-800 text-brand-800 dark:text-white dark:border-white transition-all flex items-center gap-2">
+							<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+							<span>Tablero Ejecutivo</span>
+						</button>
+						<button id="prod-tab-btn-manage" onclick="switchProductsSubTab('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
+							<i data-lucide="tags" class="w-4 h-4"></i>
+							<span>Catálogo &amp; Tarifario Mayorista</span>
+						</button>
+					</div>
+					<button onclick="switchProductsSubTab('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
+						<span>Ver catálogo operativo</span>
+						<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+					</button>
+				</div>
+
+				<!-- VISTA 1: TABLERO EJECUTIVO (8 KPIS + 4 GRÁFICOS + INDICADORES) -->
+				<div id="prod-view-exec" class="space-y-6">
+					<!-- 8 Tarjetas KPI Principales de Catálogo y Precios -->
+					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+						<!-- KPI 1: SKU Activos -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="SKU Activos&#10;Fórmula: COUNT(b2b_products WHERE active = 1)">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">SKU Activos</span>
+								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
+									<i data-lucide="package" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-prod-active">--</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span id="kpi-prod-active-var">100% activo</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Catálogo B2B</div>
+						</div>
+
+						<!-- KPI 2: Penetración de Ventas -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Penetración de Ventas&#10;Fórmula: (SKUs con ventas en el período / Total SKUs activos) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">SKU con Venta</span>
+								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+									<i data-lucide="activity" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-prod-penetration">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span id="kpi-prod-penetration-var">vs. período ant.</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Movimiento comercial</div>
+						</div>
+
+						<!-- KPI 3: Margen Promedio Ponderado -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Margen Bruto Promedio&#10;Fórmula: ((Ventas Totales − Costo Total) / Ventas Totales) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Margen Bruto</span>
+								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
+									<i data-lucide="percent" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400" id="kpi-prod-avg-margin">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-indigo-600 font-semibold">
+								<span id="kpi-prod-avg-margin-var">Promedio catálogo</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Rentabilidad bruta</div>
+						</div>
+
+						<!-- KPI 4: Facturación Catálogo -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Facturación Neta Catálogo&#10;Fórmula: SUM(quantity × unit_price) de facturas válidas">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas Catálogo</span>
+								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
+									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-prod-revenue">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span id="kpi-prod-revenue-var">Ingresos netos</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Facturado en período</div>
+						</div>
+
+						<!-- KPI 5: Utilidad Bruta -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Utilidad Bruta Catálogo&#10;Fórmula: Ventas Netas − Costo de Mercancía Vendida (COGS)">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Utilidad Bruta</span>
+								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-prod-profit">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span id="kpi-prod-profit-var">Ganancia bruta</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Ventas − COGS</div>
+						</div>
+
+						<!-- KPI 6: Variación de Precios -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Variación Promedio de Precios&#10;Fórmula: Promedio de variación de precios base frente al catálogo del período anterior">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Var. Precios</span>
+								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
+									<i data-lucide="tag" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-purple-600 dark:text-purple-400" id="kpi-prod-price-var">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span id="kpi-prod-price-var-sub">Ajuste tarifario</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Tarifa mayorista</div>
+						</div>
+
+						<!-- KPI 7: SKU Sin Movimiento -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="SKU Sin Movimiento&#10;Fórmula: Porcentaje de SKUs activos sin ninguna venta en los últimos 60 días">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Sin Movimiento</span>
+								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+									<i data-lucide="archive" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-amber-600 dark:text-amber-400" id="kpi-prod-deadstock">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-amber-600 font-semibold">
+								<span id="kpi-prod-deadstock-sub">&gt;60d sin compras</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Riesgo inmovilizado</div>
+						</div>
+
+						<!-- KPI 8: Cumplimiento Margen Meta -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cumplimiento Margen Meta&#10;Fórmula: (SKUs con margen &gt;= 25% / Total SKUs activos) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cumpl. Meta</span>
+								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
+									<i data-lucide="target" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-prod-compliance">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span id="kpi-prod-compliance-sub">Meta &ge; 25%</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Alineación comercial</div>
+						</div>
+					</div>
+
+					<!-- 4 GRÁFICOS ANALÍTICOS DE PRODUCTOS Y PRECIOS -->
+					<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+						<!-- Gráfico 1: Rentabilidad por Categoría -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Rentabilidad por Categoría de Producto</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Ventas netas y margen porcentual generado por línea comercial</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Margen vs Ventas</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-prod-category-margin"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 2: Distribución por Rangos de Margen -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Distribución de SKUs por Tramo de Margen</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Concentración de catálogo en tramos &lt;15%, 15-25%, 25-35%, &gt;35%</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">Tramos</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-prod-margin-dist"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 3: Comportamiento de Precios Mayoristas -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Comportamiento y Evolución de Precios</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Variación del precio promedio facturado frente al precio base de lista</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">Tarifas</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-prod-price-behavior"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 4: Actividad Comercial de SKUs -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Actividad y Rotación de Catálogo</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">SKUs de alta rotación vs media vs baja en los últimos 6 meses</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">Rotación</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-prod-commercial-activity"></canvas>
+							</div>
+						</div>
+					</div>
+
+					<!-- INDICADORES SECUNDARIOS DE CATÁLOGO -->
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Líneas Activas</span>
+								<p id="sec-prod-categories-count" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">8 categorías</p>
+								<span class="text-[10px] text-slate-400">100% abastecidas</span>
+							</div>
+							<i data-lucide="layers" class="w-4 h-4 text-brand-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Descuento Promedio</span>
+								<p id="sec-prod-avg-discount" class="text-sm font-bold text-amber-600 dark:text-amber-400 mt-0.5">4.2% sobre lista</p>
+								<span class="text-[10px] text-slate-400">Escalas por volumen</span>
+							</div>
+							<i data-lucide="tag" class="w-4 h-4 text-amber-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tarifas Especiales</span>
+								<p id="sec-prod-special-agreements" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">14 acuerdos B2B</p>
+								<span class="text-[10px] text-slate-400">Cadenas preferenciales</span>
+							</div>
+							<i data-lucide="file-check" class="w-4 h-4 text-emerald-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Alerta de Margen</span>
+								<p id="sec-prod-negative-margin" class="text-sm font-bold text-rose-600 dark:text-rose-400 mt-0.5">0 SKUs bajo costo</p>
+								<span class="text-[10px] text-slate-400">Catálogo protegido</span>
+							</div>
+							<i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+						</div>
+					</div>
+
+					<!-- BANNER ACCESO A GESTIÓN DE PRODUCTOS -->
+					<div class="bg-gradient-to-r from-slate-100 via-white to-slate-100 dark:from-slate-800/80 dark:via-slate-800/40 dark:to-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+						<div class="flex items-center gap-3">
+							<div class="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0">
 								<i data-lucide="package" class="w-4 h-4"></i>
 							</div>
-						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-prod-total" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">--</span>
-							<span class="text-[11px] text-emerald-600 font-medium">100% en catálogo</span>
-						</div>
-					</div>
-
-					<!-- Categorías Comerciales -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Categorías Comerciales</span>
-							<div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-								<i data-lucide="tags" class="w-4 h-4"></i>
+							<div>
+								<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Catálogo Operativo &amp; Tarifario Mayorista</h4>
+								<p class="text-[11px] text-slate-500 dark:text-slate-400">Crear productos, configurar escalas por volumen, factores de conversión y precios pactados.</p>
 							</div>
 						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-prod-categories" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">--</span>
-							<span class="text-[11px] text-slate-400">Líneas activas</span>
-						</div>
+						<button onclick="switchProductsSubTab('manage')" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-800 text-white hover:bg-brand-700 transition-colors shadow-2xs whitespace-nowrap">
+							<span>Ir al Catálogo Operativo</span>
+							<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+						</button>
 					</div>
+				</div><!-- Fin #prod-view-exec -->
 
-					<!-- Marcas Registradas -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Marcas Registradas</span>
-							<div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-								<i data-lucide="award" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-prod-brands" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">--</span>
-							<span class="text-[11px] text-purple-600 font-medium">Fabricantes oficiales</span>
-						</div>
-					</div>
-
-					<!-- Acuerdos Especiales -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Acuerdos de Precios</span>
-							<div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-								<i data-lucide="file-check" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-prod-agreements" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">--</span>
-							<span class="text-[11px] text-amber-600 font-medium">Tarifas preferenciales</span>
-						</div>
-					</div>
-				</div>
+				<!-- VISTA 2: GESTIÓN OPERATIVA & TARIFARIO MAYORISTA -->
+				<div id="prod-view-manage" class="hidden space-y-6">
 
 				<!-- Barra de Filtros y Búsqueda -->
 				<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
@@ -1236,6 +1582,7 @@
 						<span class="font-mono text-slate-600 dark:text-slate-300">Motor determinista de precios activo</span>
 					</div>
 				</div>
+				</div><!-- Fin #prod-view-manage -->
 			</div>
 
 			<!-- SECCIÓN 4: COTIZACIONES Y PEDIDOS B2B (MÓDULO FUNCIONAL PASO 6) -->
@@ -1262,64 +1609,264 @@
 					</div>
 				</div>
 
-				<!-- 4 Tarjetas KPI Comerciales -->
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-					<!-- Pedidos Confirmados -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Pedidos Confirmados</span>
-							<div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-								<i data-lucide="check-circle-2" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-ord-confirmed" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">--</span>
-							<span class="text-[11px] text-emerald-600 font-medium">Órdenes firmes</span>
-						</div>
+				<!-- Selector de Sub-Pestañas: Tablero Ejecutivo vs Gestión Operativa -->
+				<div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+					<div class="flex space-x-6 text-xs sm:text-sm font-semibold">
+						<button id="orders-tab-btn-exec" onclick="switchOrdersSubTab('exec')" class="pb-3 border-b-2 border-brand-800 text-brand-800 dark:text-white dark:border-white transition-all flex items-center gap-2">
+							<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+							<span>Tablero Ejecutivo</span>
+						</button>
+						<button id="orders-tab-btn-manage" onclick="switchOrdersSubTab('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
+							<i data-lucide="shopping-cart" class="w-4 h-4"></i>
+							<span>Gestión de Pedidos &amp; Cotizaciones</span>
+						</button>
 					</div>
-
-					<!-- Facturación Pedidos -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Facturación Confirmada</span>
-							<div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-								<i data-lucide="dollar-sign" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-ord-revenue" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-mono">$0.00</span>
-							<span class="text-[11px] text-blue-600 font-medium">USD Mayorista</span>
-						</div>
-					</div>
-
-					<!-- Cotizaciones Activas -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Cotizaciones Activas</span>
-							<div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-								<i data-lucide="file-clock" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-ord-quotes" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">--</span>
-							<span class="text-[11px] text-amber-600 font-medium">En negociación</span>
-						</div>
-					</div>
-
-					<!-- Conversión a Pedido -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Conversión Cotizaciones</span>
-							<div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-								<i data-lucide="trending-up" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-ord-conversion" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">--%</span>
-							<span class="text-[11px] text-purple-600 font-medium">Tasa de cierre</span>
-						</div>
-					</div>
+					<button onclick="switchOrdersSubTab('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
+						<span>Ver lista de pedidos</span>
+						<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+					</button>
 				</div>
+
+				<!-- VISTA 1: TABLERO EJECUTIVO (8 KPIS + 4 GRÁFICOS + INDICADORES) -->
+				<div id="orders-view-exec" class="space-y-6">
+					<!-- 8 Tarjetas KPI Principales de Pedidos y Cotizaciones -->
+					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+						<!-- KPI 1: Cotizaciones Emitidas -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cotizaciones Emitidas&#10;Fórmula: COUNT(b2b_quotes creadas en el período)">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cotizaciones</span>
+								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+									<i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-ord-quotes-issued">--</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-amber-600 font-semibold">
+								<span id="kpi-ord-quotes-issued-sub">En negociación</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Cotizaciones emitidas</div>
+						</div>
+
+						<!-- KPI 2: Valor Cotizado -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Valor Cotizado Total&#10;Fórmula: SUM(total_amount) de b2b_quotes en el período">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Valor Cotizado</span>
+								<div class="w-6 h-6 rounded-md bg-yellow-50 dark:bg-yellow-950/60 text-yellow-600 flex items-center justify-center shrink-0">
+									<i data-lucide="coins" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-ord-quotes-val">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span>Pipeline comercial</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Monto en propuesta</div>
+						</div>
+
+						<!-- KPI 3: Tasa de Conversión -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Tasa de Conversión&#10;Fórmula: (Pedidos Confirmados / Total Cotizaciones) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Conversión</span>
+								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
+									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-purple-600 dark:text-purple-400" id="kpi-ord-conversion-rate">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-purple-600 font-semibold">
+								<span>Cierre comercial</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Cotiz. a pedido</div>
+						</div>
+
+						<!-- KPI 4: Pedidos Confirmados -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Pedidos Confirmados&#10;Fórmula: COUNT(b2b_orders confirmadas en el período)">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Pedidos Firmes</span>
+								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+									<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-ord-orders-confirmed">--</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span>Órdenes cerradas</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Listos para entrega</div>
+						</div>
+
+						<!-- KPI 5: Facturación de Pedidos -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Valor Total Pedidos&#10;Fórmula: SUM(total_amount) de b2b_orders confirmadas">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Valor Pedidos</span>
+								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
+									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-ord-orders-val">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-blue-600 font-semibold">
+								<span>USD Mayorista</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Monto en órdenes</div>
+						</div>
+
+						<!-- KPI 6: Ticket Promedio -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ticket Promedio por Pedido&#10;Fórmula: Valor Total Pedidos / Pedidos Confirmados">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ticket Prom.</span>
+								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
+									<i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-ord-avg-ticket">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span>Promedio por orden</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Monto medio pedido</div>
+						</div>
+
+						<!-- KPI 7: Pedidos Pendientes -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Pedidos Pendientes %&#10;Fórmula: (Pedidos pendientes de entrega / Total pedidos) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Pendientes %</span>
+								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
+									<i data-lucide="clock" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400" id="kpi-ord-pending-pct">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-indigo-600 font-semibold">
+								<span>En preparación</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Backlog logístico</div>
+						</div>
+
+						<!-- KPI 8: Cumplimiento a Tiempo -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cumplimiento de Pedidos a Tiempo&#10;Fórmula: (Pedidos entregados a tiempo / Total pedidos cerrados) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cumplimiento</span>
+								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
+									<i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-ord-completed-pct">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span>OTIF estándar</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Entregas en plazo</div>
+						</div>
+					</div>
+
+					<!-- 4 GRÁFICOS ANALÍTICOS DE PEDIDOS Y COTIZACIONES -->
+					<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+						<!-- Gráfico 1: Embudo Comercial -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Embudo Comercial B2B (Funnel)</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Conversión de Cotizado &rarr; En Negociación &rarr; Confirmado &rarr; Facturado</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">Embudo</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-ord-funnel"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 2: Evolución de Pedidos -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Evolución Temporal de Pedidos</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Volumen y valor de pedidos confirmados mes a mes</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">Tendencia</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-ord-evolution"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 3: Distribución por Estado de Pedido -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Distribución de Pedidos por Estado</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Confirmados, en preparación, despachados, facturados y cancelados</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Estados</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-ord-status-dist"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 4: Conversión Mensual -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Tasa de Conversión Histórica</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">% de efectividad en cierre de cotizaciones por mes</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">Efectividad</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-ord-monthly-conversion"></canvas>
+							</div>
+						</div>
+					</div>
+
+					<!-- INDICADORES SECUNDARIOS DE PEDIDOS -->
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tiempo Conversión</span>
+								<p id="sec-ord-conversion-time" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">3.4 días prom.</p>
+								<span class="text-[10px] text-slate-400">Desde cotización</span>
+							</div>
+							<i data-lucide="timer" class="w-4 h-4 text-brand-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tasa Cancelaciones</span>
+								<p id="sec-ord-cancellation-rate" class="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">1.8% de órdenes</p>
+								<span class="text-[10px] text-slate-400">Target &lt; 3.0%</span>
+							</div>
+							<i data-lucide="check-shield" class="w-4 h-4 text-emerald-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Backlog Logístico</span>
+								<p id="sec-ord-backlog" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">6 pedidos en cola</p>
+								<span class="text-[10px] text-slate-400">Listos para despacho</span>
+							</div>
+							<i data-lucide="truck" class="w-4 h-4 text-indigo-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ratio Pedido/Cotiz.</span>
+								<p id="sec-ord-ratio" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">0.78 ratio</p>
+								<span class="text-[10px] text-slate-400">Eficiencia de canal</span>
+							</div>
+							<i data-lucide="git-pull-request" class="w-4 h-4 text-purple-600"></i>
+						</div>
+					</div>
+
+					<!-- BANNER ACCESO A GESTIÓN DE PEDIDOS -->
+					<div class="bg-gradient-to-r from-slate-100 via-white to-slate-100 dark:from-slate-800/80 dark:via-slate-800/40 dark:to-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+						<div class="flex items-center gap-3">
+							<div class="w-9 h-9 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center shrink-0">
+								<i data-lucide="shopping-cart" class="w-4 h-4"></i>
+							</div>
+							<div>
+								<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Bandeja Operativa de Pedidos &amp; Cotizaciones</h4>
+								<p class="text-[11px] text-slate-500 dark:text-slate-400">Crear cotizaciones, convertir a pedidos en firme, modificar ítems y congelar tarifas mayoristas.</p>
+							</div>
+						</div>
+						<button onclick="switchOrdersSubTab('manage')" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-800 text-white hover:bg-brand-700 transition-colors shadow-2xs whitespace-nowrap">
+							<span>Ir a Gestión Operativa</span>
+							<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+						</button>
+					</div>
+				</div><!-- Fin #orders-view-exec -->
+
+				<!-- VISTA 2: GESTIÓN OPERATIVA & REGISTROS -->
+				<div id="orders-view-manage" class="hidden space-y-6">
 
 				<!-- Selector de Sub-Pestañas: Pedidos vs Cotizaciones -->
 				<div class="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-px">
@@ -1442,6 +1989,7 @@
 						<span class="font-mono text-slate-600 dark:text-slate-300">Flujo de aprobación &amp; conversión</span>
 					</div>
 				</div>
+				</div><!-- Fin #orders-view-manage -->
 			</div>
 
 			<!-- SECCIÓN 4.1: FACTURACIÓN COMERCIAL Y COBRANZAS B2B (PASO 7) -->
@@ -1468,62 +2016,269 @@
 					</div>
 				</div>
 
-				<!-- 4 Tarjetas KPI Ejecutivas de Facturación -->
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-					<!-- KPI 1: Ventas Netas B2B (Fórmula Estricta) -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
-						<div>
-							<p class="text-xs font-medium text-slate-500 dark:text-slate-400">Ventas Netas B2B</p>
-							<h3 id="kpi-inv-net-sales" class="text-xl font-bold text-slate-900 dark:text-white mt-1 font-mono">$0.00</h3>
-							<p class="text-[11px] text-emerald-600 dark:text-emerald-400 mt-0.5 flex items-center gap-1 font-medium">
-								<i data-lucide="shield-check" class="w-3 h-3"></i>
-								<span>Ventas válidas − NC (sin imp.)</span>
-							</p>
-						</div>
-						<div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 flex items-center justify-center shrink-0">
-							<i data-lucide="receipt" class="w-5 h-5"></i>
-						</div>
+				<!-- Selector de Sub-Pestañas: Tablero Ejecutivo vs Facturación Operativa -->
+				<div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+					<div class="flex space-x-6 text-xs sm:text-sm font-semibold">
+						<button id="inv-tab-btn-exec" onclick="switchInvoicesSubTab('exec')" class="pb-3 border-b-2 border-brand-800 text-brand-800 dark:text-white dark:border-white transition-all flex items-center gap-2">
+							<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+							<span>Tablero Ejecutivo</span>
+						</button>
+						<button id="inv-tab-btn-manage" onclick="switchInvoicesSubTab('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
+							<i data-lucide="receipt" class="w-4 h-4"></i>
+							<span>Facturación Operativa &amp; Cobros</span>
+						</button>
 					</div>
-
-					<!-- KPI 2: Cuentas por Cobrar (Saldos) -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
-						<div>
-							<p class="text-xs font-medium text-slate-500 dark:text-slate-400">Cuentas por Cobrar (Saldos)</p>
-							<h3 id="kpi-inv-receivables" class="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1 font-mono">$0.00</h3>
-							<p class="text-[11px] text-slate-400 mt-0.5">Cartera pendiente de cobro</p>
-						</div>
-						<div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-							<i data-lucide="wallet" class="w-5 h-5"></i>
-						</div>
-					</div>
-
-					<!-- KPI 3: Recaudación Cobrada -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
-						<div>
-							<p class="text-xs font-medium text-slate-500 dark:text-slate-400">Recaudación Cobrada</p>
-							<h3 id="kpi-inv-collected" class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 font-mono">$0.00</h3>
-							<p class="text-[11px] text-slate-400 mt-0.5">Abonos y pagos liquidados</p>
-						</div>
-						<div class="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-							<i data-lucide="check-circle-2" class="w-5 h-5"></i>
-						</div>
-					</div>
-
-					<!-- KPI 4: Facturas Vencidas / Mora -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
-						<div>
-							<p class="text-xs font-medium text-slate-500 dark:text-slate-400">Facturas Vencidas (Mora)</p>
-							<h3 id="kpi-inv-overdue" class="text-xl font-bold text-rose-600 dark:text-rose-400 mt-1 font-mono">$0.00</h3>
-							<p class="text-[11px] text-rose-600 dark:text-rose-400 mt-0.5 font-medium flex items-center gap-1">
-								<span id="kpi-inv-overdue-count" class="px-1.5 py-0.2 bg-rose-100 dark:bg-rose-950/80 rounded font-bold">0</span>
-								<span>comprobantes en mora</span>
-							</p>
-						</div>
-						<div class="w-10 h-10 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
-							<i data-lucide="alert-circle" class="w-5 h-5"></i>
-						</div>
-					</div>
+					<button onclick="switchInvoicesSubTab('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
+						<span>Gestionar facturas y pagos</span>
+						<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+					</button>
 				</div>
+
+				<!-- VISTA 1: TABLERO EJECUTIVO (8 KPIS + 4 GRÁFICOS + INDICADORES) -->
+				<div id="inv-view-exec" class="space-y-6">
+					<!-- 8 Tarjetas KPI Principales de Facturación y Cobranzas -->
+					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+						<!-- KPI 1: Ventas Netas Facturadas -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas Netas B2B&#10;Fórmula: Total facturado antes de impuestos menos notas de crédito válidas">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas Netas</span>
+								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
+									<i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-inv-net-sales-val">$0.00</div>
+							<!-- Fallback para id legacy -->
+							<span id="kpi-inv-net-sales" class="hidden"></span>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span>Sin impuestos − NC</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Facturación neta</div>
+						</div>
+
+						<!-- KPI 2: Facturas Emitidas -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Facturas Emitidas&#10;Fórmula: COUNT(b2b_invoices con estado válida en el período)">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Facturas</span>
+								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
+									<i data-lucide="files" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-inv-count-val">--</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span>Comprobantes</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Emitidas en período</div>
+						</div>
+
+						<!-- KPI 3: Recaudación Cobrada -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Total Recaudado&#10;Fórmula: SUM(paid_amount) registrado en facturas del período">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Recaudado</span>
+								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+									<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-inv-collected-val">$0.00</div>
+							<span id="kpi-inv-collected" class="hidden"></span>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span>Cobro liquidado</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Abonos recibidos</div>
+						</div>
+
+						<!-- KPI 4: Cuentas por Cobrar (Saldos) -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cuentas por Cobrar&#10;Fórmula: SUM(balance_due) de facturas pendientes">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Por Cobrar</span>
+								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+									<i data-lucide="wallet" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-amber-600 dark:text-amber-400" id="kpi-inv-receivables-val">$0.00</div>
+							<span id="kpi-inv-receivables" class="hidden"></span>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-amber-600 font-semibold">
+								<span>Cartera viva</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Saldo pendiente</div>
+						</div>
+
+						<!-- KPI 5: Tasa de Cobranza (Eficiencia) -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Tasa de Cobranza&#10;Fórmula: (Total Cobrado / Total Facturado) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Tasa Cobranza</span>
+								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
+									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-teal-600 dark:text-teal-400" id="kpi-inv-efficiency-val">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-teal-600 font-semibold">
+								<span>Eficiencia</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">% recuperado</div>
+						</div>
+
+						<!-- KPI 6: Cartera Vencida (Mora) -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cartera Vencida&#10;Fórmula: SUM(balance_due) de facturas vencidas a la fecha">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Mora Vencida</span>
+								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
+									<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-rose-600 dark:text-rose-400" id="kpi-inv-overdue-val">$0.00</div>
+							<span id="kpi-inv-overdue" class="hidden"></span>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-rose-600 font-semibold">
+								<span id="kpi-inv-overdue-count">0 facturas</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Plazo expirado</div>
+						</div>
+
+						<!-- KPI 7: Facturas Vencidas % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Porcentaje de Facturas Vencidas&#10;Fórmula: (Facturas vencidas / Total facturas emitidas) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Mora %</span>
+								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+									<i data-lucide="percent" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-amber-600 dark:text-amber-400" id="kpi-inv-overdue-pct-val">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-amber-600 font-semibold">
+								<span>Incidencia</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Tasa de morosidad</div>
+						</div>
+
+						<!-- KPI 8: DSO (Días Promedio de Cobro) -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Days Sales Outstanding (DSO)&#10;Fórmula: (Cuentas por Cobrar / Ventas Totales) × Días del período">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">DSO</span>
+								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
+									<i data-lucide="clock" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-purple-600 dark:text-purple-400" id="kpi-inv-dso-val">-- d</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span>Días calle</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Rotación cobros</div>
+						</div>
+					</div>
+
+					<!-- 4 GRÁFICOS ANALÍTICOS DE FACTURACIÓN Y COBRANZAS -->
+					<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+						<!-- Gráfico 1: Facturación vs Cobranza -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Facturación vs. Recaudación Efectiva</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Comparativa mensual de facturación emitida frente a cobros ingresados</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">Flujo</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-inv-billed-vs-collected"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 2: Evolución de Ingresos -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Evolución de Ingresos y Tendencia</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Curva acumulada de ingresos y proyección de cierre mensual</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Tendencia</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-inv-revenue-evolution"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 3: Antigüedad de Cartera (Aging) -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Antigüedad de Saldos (Aging)</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Saldos por vencer vs mora 1-30d, 31-60d y &gt;60d</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">Aging</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-inv-aging"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 4: Distribución de Cartera por Estado -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Distribución de Comprobantes por Estado</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Pagadas, parciales, emitidas pendientes y en litigio</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">Estados</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-inv-status-pie"></canvas>
+							</div>
+						</div>
+					</div>
+
+					<!-- INDICADORES SECUNDARIOS DE COBRANZAS -->
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Notas de Crédito %</span>
+								<p id="sec-inv-credit-notes" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">0.8% s/ facturado</p>
+								<span class="text-[10px] text-slate-400">Target &lt; 1.5%</span>
+							</div>
+							<i data-lucide="file-minus" class="w-4 h-4 text-brand-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">DSO Meta</span>
+								<p id="sec-inv-dso-target" class="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">Target: 45 días</p>
+								<span class="text-[10px] text-slate-400">Dentro de política</span>
+							</div>
+							<i data-lucide="calendar" class="w-4 h-4 text-emerald-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Eficiencia de Mes</span>
+								<p id="sec-inv-month-eff" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">88.5% recupero</p>
+								<span class="text-[10px] text-slate-400">Sobre facturas vencidas</span>
+							</div>
+							<i data-lucide="award" class="w-4 h-4 text-indigo-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cartera en Riesgo</span>
+								<p id="sec-inv-risk-amount" class="text-sm font-bold text-rose-600 dark:text-rose-400 mt-0.5">$3,420 en &gt;60d</p>
+								<span class="text-[10px] text-slate-400">Acción legal/cobranza</span>
+							</div>
+							<i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>
+						</div>
+					</div>
+
+					<!-- BANNER ACCESO A GESTIÓN DE FACTURAS -->
+					<div class="bg-gradient-to-r from-slate-100 via-white to-slate-100 dark:from-slate-800/80 dark:via-slate-800/40 dark:to-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+						<div class="flex items-center gap-3">
+							<div class="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0">
+								<i data-lucide="receipt" class="w-4 h-4"></i>
+							</div>
+							<div>
+								<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Facturación Operativa &amp; Registro de Cobros</h4>
+								<p class="text-[11px] text-slate-500 dark:text-slate-400">Facturar pedidos, registrar pagos y amortizaciones, emitir notas de crédito y consultar comprobantes.</p>
+							</div>
+						</div>
+						<button onclick="switchInvoicesSubTab('manage')" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-800 text-white hover:bg-brand-700 transition-colors shadow-2xs whitespace-nowrap">
+							<span>Ir a Facturación Operativa</span>
+							<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+						</button>
+					</div>
+				</div><!-- Fin #inv-view-exec -->
+
+				<!-- VISTA 2: GESTIÓN OPERATIVA & COMPROBANTES -->
+				<div id="inv-view-manage" class="hidden space-y-6">
 
 				<!-- Sub-Navegación: Facturas vs Notas de Crédito vs Mora -->
 				<div class="border-b border-slate-200 dark:border-slate-800 flex items-center gap-6">
@@ -1651,6 +2406,7 @@
 						<span class="font-mono text-slate-600 dark:text-slate-300">Ajustes &amp; Devoluciones</span>
 					</div>
 				</div>
+				</div><!-- Fin #inv-view-manage -->
 			</div>
 
 			<!-- SECCIÓN 6: VENDEDORES Y TERRITORIOS COMERCIALES (MÓDULO FUNCIONAL PASO 9) -->
@@ -1683,79 +2439,268 @@
 					</div>
 				</div>
 
-				<!-- 4 KPI CARDS: FUERZA COMERCIAL Y METAS -->
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-					<!-- Card 1: Ventas Netas del Equipo -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Ventas Netas Equipo</span>
-							<div class="w-7 h-7 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center">
-								<i data-lucide="dollar-sign" class="w-4 h-4"></i>
+				<!-- Selector de Sub-Pestañas: Tablero Ejecutivo vs Fuerza Operativa -->
+				<div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+					<div class="flex space-x-6 text-xs sm:text-sm font-semibold">
+						<button id="reps-tab-btn-exec" onclick="switchSalesRepsSubTab('exec')" class="pb-3 border-b-2 border-brand-800 text-brand-800 dark:text-white dark:border-white transition-all flex items-center gap-2">
+							<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+							<span>Tablero Ejecutivo</span>
+						</button>
+						<button id="reps-tab-btn-manage" onclick="switchSalesRepsSubTab('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
+							<i data-lucide="users" class="w-4 h-4"></i>
+							<span>Gestión de Fuerza de Ventas &amp; Territorios</span>
+						</button>
+					</div>
+					<button onclick="switchSalesRepsSubTab('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
+						<span>Ver fuerza de ventas</span>
+						<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+					</button>
+				</div>
+
+				<!-- VISTA 1: TABLERO EJECUTIVO (8 KPIS + 4 GRÁFICOS + INDICADORES) — CERO NOMBRES INDIVIDUALES -->
+				<div id="reps-view-exec" class="space-y-6">
+					<!-- 8 Tarjetas KPI Principales de Vendedores y Territorios -->
+					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+						<!-- KPI 1: Fuerza de Ventas Activa -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Fuerza de Ventas Activa&#10;Fórmula: COUNT(b2b_sales_reps WHERE active = 1)">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Vendedores</span>
+								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
+									<i data-lucide="users" class="w-3.5 h-3.5"></i>
+								</div>
 							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-reps-active-count-exec">--</div>
+							<!-- Fallback id legacy -->
+							<span id="kpi-reps-active-count" class="hidden"></span>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span>En campo</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Fuerza activa</div>
 						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-reps-team-sales" class="text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">$0.00</span>
+
+						<!-- KPI 2: Ventas Netas del Equipo -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas Netas del Equipo&#10;Fórmula: SUM(total_sales) de toda la fuerza comercial">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas Equipo</span>
+								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
+									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-reps-team-sales-exec">$0.00</div>
+							<span id="kpi-reps-team-sales" class="hidden"></span>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-blue-600 font-semibold">
+								<span>Ventas netas</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Total acumulado</div>
 						</div>
-						<div id="kpi-reps-quota-sub" class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
-							<span>Meta global del mes:</span>
-							<span id="kpi-reps-quota-val" class="font-semibold text-slate-700 dark:text-slate-300">$0.00</span>
+
+						<!-- KPI 3: Promedio por Vendedor -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas Promedio por Vendedor&#10;Fórmula: Ventas Totales del Equipo / Vendedores Activos">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Venta / Rep</span>
+								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
+									<i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-reps-avg-sales-exec">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span>Por colaborador</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Productividad media</div>
+						</div>
+
+						<!-- KPI 4: Productividad por Hora -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas por Hora Trabajada&#10;Fórmula: Ventas Totales / Horas Netas Trabajadas en Campo">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas / Hora</span>
+								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+									<i data-lucide="zap" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-reps-hourly-sales-exec">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span>$/hora ruta</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Rendimiento horario</div>
+						</div>
+
+						<!-- KPI 5: Cumplimiento de Metas % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cumplimiento Global de Cuota&#10;Fórmula: (Ventas Totales / Meta Global Acumulada) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cumpl. Meta</span>
+								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
+									<i data-lucide="target" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-purple-600 dark:text-purple-400" id="kpi-reps-achievement-val-exec">--%</div>
+							<span id="kpi-reps-achievement-val" class="hidden"></span>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-purple-600 font-semibold">
+								<span>Avance de cuota</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Meta global mes</div>
+						</div>
+
+						<!-- KPI 6: Utilidad Bruta Generada -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Utilidad Bruta Generada&#10;Fórmula: Ventas Totales − Costo de Mercancía Vendida (COGS)">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Utilidad Bruta</span>
+								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-reps-profit-exec">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span>Ganancia equipo</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Margen comercial</div>
+						</div>
+
+						<!-- KPI 7: Conversión Comercial % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Tasa de Conversión Comercial&#10;Fórmula: (Pedidos Confirmados / Cotizaciones Gestionadas) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Conversión</span>
+								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
+									<i data-lucide="check-check" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-reps-conversion-exec">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span>Efectividad</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Cierre en campo</div>
+						</div>
+
+						<!-- KPI 8: Crecimiento Comercial % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Crecimiento de Ventas del Equipo&#10;Fórmula: ((Ventas Período Actual − Ventas Período Anterior) / Ventas Período Anterior) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Crecimiento</span>
+								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
+									<i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-reps-growth-exec">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span>vs período ant.</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Variación comercial</div>
 						</div>
 					</div>
 
-					<!-- Card 2: Cumplimiento de Meta Global -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Cumplimiento Global</span>
-							<div class="w-7 h-7 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
-								<i data-lucide="target" class="w-4 h-4"></i>
+					<!-- 4 GRÁFICOS ANALÍTICOS DE VENDEDORES Y TERRITORIOS -->
+					<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+						<!-- Gráfico 1: Productividad Comercial -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Tendencia de Productividad por Vendedor</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Venta promedio generada por representante comercial a lo largo del tiempo</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">Productividad</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-reps-productivity-trend"></canvas>
 							</div>
 						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-reps-achievement-val" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">0%</span>
+
+						<!-- Gráfico 2: Ventas vs Horas Trabajadas -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Ventas vs. Horas de Campo</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Eficiencia comercial comparando facturación lograda frente a horas laborales</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Eficiencia</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-reps-sales-vs-hours"></canvas>
+							</div>
 						</div>
-						<div class="mt-2 w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-							<div id="kpi-reps-achievement-bar" class="h-full bg-emerald-600 rounded-full" style="width: 0%"></div>
+
+						<!-- Gráfico 3: Rendimiento Territorial -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Cumplimiento y Ventas por Territorio</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Facturación neta distribuida por zona comercial (Norte, Sur, Centro, Este, Oeste)</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">Territorio</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-reps-territory-dist"></canvas>
+							</div>
 						</div>
-						<div class="mt-1.5 text-[10px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
-							<span>Avance de cuota mensual</span>
-							<span id="kpi-reps-achievement-note" class="font-medium text-slate-700 dark:text-slate-300">En curso</span>
+
+						<!-- Gráfico 4: Distribución por Tramos de Meta -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Distribución por Tramos de Meta</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Porcentaje del equipo en tramos &lt;80%, 80-100%, 100-120%, &gt;120%</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">Tramos</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-reps-quota-tiers"></canvas>
+							</div>
 						</div>
 					</div>
 
-					<!-- Card 3: Fuerza de Ventas Activa -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Fuerza de Ventas</span>
-							<div class="w-7 h-7 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center">
+					<!-- INDICADORES SECUNDARIOS DE FUERZA COMERCIAL -->
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Territorios Cubiertos</span>
+								<p id="sec-reps-territories-count" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">5 territorios</p>
+								<span class="text-[10px] text-slate-400">100% asignados</span>
+							</div>
+							<i data-lucide="map-pin" class="w-4 h-4 text-brand-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Clientes / Vendedor</span>
+								<p id="sec-reps-clients-ratio" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">7.8 clientes</p>
+								<span class="text-[10px] text-slate-400">Promedio de cartera</span>
+							</div>
+							<i data-lucide="users" class="w-4 h-4 text-indigo-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Meta Mensual Global</span>
+								<p id="sec-reps-monthly-quota" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">$35,000</p>
+								<span class="text-[10px] text-slate-400">Objetivo equipo</span>
+							</div>
+							<i data-lucide="flag" class="w-4 h-4 text-emerald-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Margen Promedio</span>
+								<p id="sec-reps-avg-margin" class="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">27.4% bruto</p>
+								<span class="text-[10px] text-slate-400">Calidad de venta</span>
+							</div>
+							<i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+						</div>
+					</div>
+
+					<!-- BANNER ACCESO A GESTIÓN DE FUERZA DE VENTAS -->
+					<div class="bg-gradient-to-r from-slate-100 via-white to-slate-100 dark:from-slate-800/80 dark:via-slate-800/40 dark:to-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+						<div class="flex items-center gap-3">
+							<div class="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center shrink-0">
 								<i data-lucide="users" class="w-4 h-4"></i>
 							</div>
-						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-reps-active-count" class="text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">0</span>
-							<span class="text-xs text-slate-500">vendedores</span>
-						</div>
-						<div id="kpi-reps-territories-sub" class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1.5 flex items-center justify-between">
-							<span>Territorios cubiertos:</span>
-							<span id="kpi-reps-territories-count" class="font-semibold text-slate-700 dark:text-slate-300">0</span>
-						</div>
-					</div>
-
-					<!-- Card 4: Cartera en Gestión de Cobro -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Cartera Viva Cobranzas</span>
-							<div class="w-7 h-7 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center">
-								<i data-lucide="wallet" class="w-4 h-4"></i>
+							<div>
+								<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Administración de Vendedores, Metas &amp; Territorios</h4>
+								<p class="text-[11px] text-slate-500 dark:text-slate-400">Gestionar perfiles de vendedores, fijar cuotas mensuales, reasignar establecimientos y auditar cambios.</p>
 							</div>
 						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-reps-ar-val" class="text-2xl font-bold text-amber-600 dark:text-amber-400 font-mono tracking-tight">$0.00</span>
-						</div>
-						<div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1.5 flex items-center justify-between">
-							<span>Saldos vivos de clientes asignados</span>
-						</div>
+						<button onclick="switchSalesRepsSubTab('manage')" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-800 text-white hover:bg-brand-700 transition-colors shadow-2xs whitespace-nowrap">
+							<span>Ir a Gestión de Vendedores</span>
+							<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+						</button>
 					</div>
-				</div>
+				</div><!-- Fin #reps-view-exec -->
+
+				<!-- VISTA 2: GESTIÓN OPERATIVA & REGISTROS INDIVIDUALES -->
+				<div id="reps-view-manage" class="hidden space-y-6">
 
 				<!-- SUB-TABS NAVIGATION -->
 				<div class="border-b border-slate-200 dark:border-slate-800">
@@ -1918,6 +2863,7 @@
 						</div>
 					</div>
 				</div>
+				</div><!-- Fin #reps-view-manage -->
 			</div>
 			
 			<!-- ========================================================
@@ -2019,168 +2965,264 @@
 					</div>
 				</div>
 
-				<!-- 6 TARJETAS KPI PRINCIPALES -->
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-					<!-- KPI 1: Ventas Netas Facturadas -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs relative group">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Ventas Netas</span>
-							<div class="w-7 h-7 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center">
-								<i data-lucide="receipt" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2">
-							<span id="kpi-prof-net-sales" class="text-xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">$0.00</span>
-						</div>
-						<div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1.5 truncate" title="Subtotal facturado sin impuestos de ventas emitidas menos notas de crédito válidas">
-							Subtotal facturado − NCs
-						</div>
+				<!-- Selector de Sub-Pestañas: Tablero Ejecutivo vs Matriz Multidimensional -->
+				<div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+					<div class="flex space-x-6 text-xs sm:text-sm font-semibold">
+						<button id="prof-tab-btn-exec" onclick="switchProfitabilitySubTabMain('exec')" class="pb-3 border-b-2 border-brand-800 text-brand-800 dark:text-white dark:border-white transition-all flex items-center gap-2">
+							<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+							<span>Tablero Ejecutivo</span>
+						</button>
+						<button id="prof-tab-btn-manage" onclick="switchProfitabilitySubTabMain('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
+							<i data-lucide="table-2" class="w-4 h-4"></i>
+							<span>Matriz Multidimensional &amp; Costos</span>
+						</button>
 					</div>
-
-					<!-- KPI 2: Costo de Ventas (COGS) -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs relative group">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Costo Ventas</span>
-							<div class="w-7 h-7 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center">
-								<i data-lucide="package" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2">
-							<span id="kpi-prof-cogs" class="text-xl font-bold text-slate-700 dark:text-slate-300 font-mono tracking-tight">$0.00</span>
-						</div>
-						<div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1.5 truncate" title="Costo comercial estándar congelado al momento de facturar cada línea">
-							COGS adquisición congelado
-						</div>
-					</div>
-
-					<!-- KPI 3: Utilidad Bruta Comercial -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs relative group">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Utilidad Bruta</span>
-							<div class="w-7 h-7 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
-								<i data-lucide="dollar-sign" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2">
-							<span id="kpi-prof-gross-profit" class="text-xl font-bold text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">$0.00</span>
-						</div>
-						<div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1.5 truncate" title="Utilidad bruta = Ventas netas − Costo de ventas (COGS)">
-							Ventas netas − Costo
-						</div>
-					</div>
-
-					<!-- KPI 4: Margen Bruto Comercial (%) -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs relative group">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Margen Bruto</span>
-							<div class="w-7 h-7 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center">
-								<i data-lucide="percent" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2 flex items-baseline gap-2">
-							<span id="kpi-prof-margin-val" class="text-xl font-bold text-indigo-600 dark:text-indigo-400 font-mono tracking-tight">0%</span>
-						</div>
-						<div class="mt-2 w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-							<div id="kpi-prof-margin-bar" class="h-full bg-indigo-600 rounded-full" style="width: 0%"></div>
-						</div>
-						<div class="mt-1 text-[10px] text-slate-400 truncate" title="Margen comercial porcentual sobre ingresos netos">
-							(Utilidad / Ventas) × 100
-						</div>
-					</div>
-
-					<!-- KPI 5: Productos con Margen Negativo -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs relative group">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Margen Negativo</span>
-							<div class="w-7 h-7 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center justify-center">
-								<i data-lucide="alert-triangle" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2 flex items-baseline gap-1.5">
-							<span id="kpi-prof-negative-count" class="text-xl font-bold text-rose-600 dark:text-rose-400 font-mono tracking-tight">0</span>
-							<span class="text-xs text-slate-400 font-medium">SKUs</span>
-						</div>
-						<div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1.5 truncate" title="Productos donde el costo de adquisición supera el precio de venta">
-							Precio venta < Costo base
-						</div>
-					</div>
-
-					<!-- KPI 6: Cliente Líder en Utilidad -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs relative group">
-						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
-							<span class="text-xs font-semibold uppercase tracking-wider">Top Cliente Utilidad</span>
-							<div class="w-7 h-7 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center">
-								<i data-lucide="award" class="w-4 h-4"></i>
-							</div>
-						</div>
-						<div class="mt-2">
-							<p id="kpi-prof-top-customer-name" class="text-xs font-bold text-slate-900 dark:text-white truncate">Cargando...</p>
-							<p id="kpi-prof-top-customer-profit" class="text-base font-bold text-amber-600 dark:text-amber-400 font-mono mt-0.5">$0.00</p>
-						</div>
-						<div class="mt-1 text-[10px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">
-							Mayor contribución bruta
-						</div>
-					</div>
+					<button onclick="switchProfitabilitySubTabMain('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
+						<span>Ver desglose multidimensional</span>
+						<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+					</button>
 				</div>
 
-				<!-- 4 GRÁFICOS DE RENTABILIDAD COMERCIAL -->
-				<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-					<!-- Gráfico 1: Evolución de Utilidad Bruta -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
-							<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-								<i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
-								<span>Evolución de Ingresos, Costos y Utilidad Bruta</span>
-							</h3>
-							<span class="text-[10px] font-mono text-slate-400">USD</span>
+				<!-- VISTA 1: TABLERO EJECUTIVO (8 KPIS + 4 GRÁFICOS + INDICADORES) — CERO NOMBRES INDIVIDUALES -->
+				<div id="prof-view-exec" class="space-y-6">
+					<!-- 8 Tarjetas KPI Principales de Rentabilidad Comercial -->
+					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+						<!-- KPI 1: Ventas Netas Facturadas -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas Netas B2B&#10;Fórmula: Subtotal facturado sin impuestos de comprobantes válidos menos notas de crédito">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas Netas</span>
+								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
+									<i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-prof-net-sales">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-blue-600 font-semibold">
+								<span>Facturación neta</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Ingresos netos</div>
 						</div>
-						<div class="h-64 w-full">
-							<canvas id="chart-prof-trend"></canvas>
+
+						<!-- KPI 2: Costo de Ventas (COGS) -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Costo de Ventas (COGS)&#10;Fórmula: Costo comercial estándar congelado al momento de facturar cada línea">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Costo Ventas</span>
+								<div class="w-6 h-6 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0">
+									<i data-lucide="package" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-700 dark:text-slate-300" id="kpi-prof-cogs">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span>COGS estándar</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Costo adquisición</div>
+						</div>
+
+						<!-- KPI 3: Utilidad Bruta Comercial -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Utilidad Bruta Comercial&#10;Fórmula: Ventas Netas Facturadas − Costo de Ventas (COGS)">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Utilidad Bruta</span>
+								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-prof-gross-profit">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span>Ganancia neta</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Ventas − COGS</div>
+						</div>
+
+						<!-- KPI 4: Margen Bruto Comercial % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Margen Bruto Comercial %&#10;Fórmula: (Utilidad Bruta / Ventas Netas) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Margen Bruto</span>
+								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
+									<i data-lucide="percent" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400" id="kpi-prof-margin-val">0%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-indigo-600 font-semibold">
+								<span>Rentabilidad</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Rentabilidad bruta</div>
+						</div>
+
+						<!-- KPI 5: Descuentos y Gastos Comerciales -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Descuentos y Gastos Comerciales&#10;Fórmula: SUM(descuentos otorgados en pedidos y facturas)">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Descuentos</span>
+								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+									<i data-lucide="tag" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-amber-600 dark:text-amber-400" id="kpi-prof-discounts-val">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-amber-600 font-semibold">
+								<span>Rebajas comerciales</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Impacto en margen</div>
+						</div>
+
+						<!-- KPI 6: Contribución Comercial Neta -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Contribución Comercial Neta&#10;Fórmula: Utilidad Bruta − Gastos y Descuentos Comerciales">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Contribución</span>
+								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
+									<i data-lucide="layers" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-teal-600 dark:text-teal-400" id="kpi-prof-contribution-val">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-teal-600 font-semibold">
+								<span>Margen de canal</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Aporte operativo</div>
+						</div>
+
+						<!-- KPI 7: Margen de Contribución % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Margen de Contribución %&#10;Fórmula: (Contribución Comercial / Ventas Netas) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Margen Contr.</span>
+								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
+									<i data-lucide="pie-chart" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-purple-600 dark:text-purple-400" id="kpi-prof-contribution-pct">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-purple-600 font-semibold">
+								<span>Margen neto</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Aporte neto %</div>
+						</div>
+
+						<!-- KPI 8: Crecimiento de Rentabilidad % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Crecimiento de Rentabilidad %&#10;Fórmula: ((Utilidad Período Actual − Utilidad Período Anterior) / Utilidad Período Anterior) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Var. Margen</span>
+								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
+									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-prof-growth-pct">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span>vs período ant.</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Evolución de utilidad</div>
 						</div>
 					</div>
 
-					<!-- Gráfico 2: Margen Bruto por Categoría -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
-							<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-								<i data-lucide="layers" class="w-4 h-4 text-brand-600"></i>
-								<span>Margen Comercial Bruto (%) por Categoría</span>
-							</h3>
-							<span class="text-[10px] font-mono text-slate-400">% Margen</span>
+					<!-- 4 GRÁFICOS ANALÍTICOS DE RENTABILIDAD COMERCIAL -->
+					<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+						<!-- Gráfico 1: Evolución de Ingresos, Costos y Utilidad Bruta -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Evolución de Ingresos, Costos y Utilidad</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Comportamiento temporal de facturación neta vs COGS y margen bruto</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">P&amp;L Bruto</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-prof-trend"></canvas>
+							</div>
 						</div>
-						<div class="h-64 w-full">
-							<canvas id="chart-prof-categories"></canvas>
+
+						<!-- Gráfico 2: Margen por Categoría -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Margen Comercial Bruto (%) por Categoría</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Rentabilidad porcentual comparativa por línea de producto</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">Líneas</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-prof-categories"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 3: Rentabilidad por Segmento / Canal B2B -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Rentabilidad por Canal y Segmento</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Margen bruto y ventas por tipo de cliente (Cadenas, Supermercados, Minimarkets)</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">Segmentos</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-prof-segment-prof"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 4: Distribución de Salud de Margen -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Distribución de Salud de Margen</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Saludables (&ge;20%), moderados (10-20%), bajos (0-10%) y negativos</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">Calidad</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-prof-health"></canvas>
+							</div>
 						</div>
 					</div>
 
-					<!-- Gráfico 3: Top 5 Clientes por Contribución Bruta -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
-							<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-								<i data-lucide="bar-chart-2" class="w-4 h-4 text-amber-500"></i>
-								<span>Top 5 Clientes por Utilidad Bruta Acumulada</span>
-							</h3>
-							<span class="text-[10px] font-mono text-slate-400">USD</span>
+					<!-- INDICADORES SECUNDARIOS DE RENTABILIDAD -->
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Markup Promedio</span>
+								<p id="sec-prof-markup" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">37.8% s/ costo</p>
+								<span class="text-[10px] text-slate-400">Sobre precio de lista</span>
+							</div>
+							<i data-lucide="percent" class="w-4 h-4 text-brand-600"></i>
 						</div>
-						<div class="h-64 w-full">
-							<canvas id="chart-prof-top-customers"></canvas>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Margen Negativo</span>
+								<p id="sec-prof-negative-skus" class="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">0 SKUs bajo costo</p>
+								<span class="text-[10px] text-slate-400">Riesgo cero detectado</span>
+							</div>
+							<i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ratio COGS / Ventas</span>
+								<p id="sec-prof-cogs-ratio" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">72.6% costo directo</p>
+								<span class="text-[10px] text-slate-400">Dentro de proyección</span>
+							</div>
+							<i data-lucide="package" class="w-4 h-4 text-indigo-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Descuento Ponderado</span>
+								<p id="sec-prof-discount-pct" class="text-sm font-bold text-amber-600 dark:text-amber-400 mt-0.5">3.8% s/ facturado</p>
+								<span class="text-[10px] text-slate-400">Escalas comerciales</span>
+							</div>
+							<i data-lucide="tag" class="w-4 h-4 text-amber-600"></i>
 						</div>
 					</div>
 
-					<!-- Gráfico 4: Distribución de Salud de Margen -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-						<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
-							<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-								<i data-lucide="pie-chart" class="w-4 h-4 text-indigo-600"></i>
-								<span>Salud de Margen y Productos con Margen Negativo</span>
-							</h3>
-							<span class="text-[10px] font-mono text-slate-400">Distribución</span>
+					<!-- BANNER ACCESO A MATRIZ MULTIDIMENSIONAL -->
+					<div class="bg-gradient-to-r from-slate-100 via-white to-slate-100 dark:from-slate-800/80 dark:via-slate-800/40 dark:to-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+						<div class="flex items-center gap-3">
+							<div class="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
+								<i data-lucide="table-2" class="w-4 h-4"></i>
+							</div>
+							<div>
+								<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Matriz Multidimensional de Rentabilidad &amp; Gestión de Costos</h4>
+								<p class="text-[11px] text-slate-500 dark:text-slate-400">Desglose por SKU, cliente comercial, vendedor y territorio. Auditoría de ajustes de costos estándar.</p>
+							</div>
 						</div>
-						<div class="h-64 w-full">
-							<canvas id="chart-prof-health"></canvas>
-						</div>
+						<button onclick="switchProfitabilitySubTabMain('manage')" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-800 text-white hover:bg-brand-700 transition-colors shadow-2xs whitespace-nowrap">
+							<span>Ir a la Matriz Operativa</span>
+							<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+						</button>
 					</div>
-				</div>
+				</div><!-- Fin #prof-view-exec -->
+
+				<!-- VISTA 2: MATRIZ MULTIDIMENSIONAL & GESTIÓN DE COSTOS -->
+				<div id="prof-view-manage" class="hidden space-y-6">
 
 				<!-- SUB-TABS: ANÁLISIS MULTIDIMENSIONAL DE RENTABILIDAD -->
 				<div class="border-b border-slate-200 dark:border-slate-800">
@@ -2422,6 +3464,7 @@
 						</div>
 					</div>
 				</div>
+				</div><!-- Fin #prof-view-manage -->
 			</div>
 
 			
@@ -2513,70 +3556,264 @@
 					</div>
 				</div>
 
-				<!-- 4 TARJETAS KPI RESUMEN DE INTELIGENCIA COMERCIAL -->
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-					<!-- KPI 1: Alertas Comerciales Activas -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Alertas Activas</span>
-							<span class="p-2 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400">
-								<i data-lucide="alert-triangle" class="w-4 h-4"></i>
-							</span>
-						</div>
-						<div class="mt-2">
-							<div id="kpi-intel-active-alerts" class="text-2xl font-black font-mono tracking-tight text-slate-900 dark:text-white">0</div>
-							<div class="flex items-center gap-2 mt-1 text-[11px]">
-								<span id="kpi-intel-critical-badge" class="font-bold text-rose-600 dark:text-rose-400">0 críticas</span>
-								<span class="text-slate-400">•</span>
-								<span id="kpi-intel-high-badge" class="font-semibold text-amber-600 dark:text-amber-400">0 altas</span>
-							</div>
-						</div>
+				<!-- Selector de Sub-Pestañas: Tablero Ejecutivo vs Feed Operativo -->
+				<div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+					<div class="flex space-x-6 text-xs sm:text-sm font-semibold">
+						<button id="intel-tab-btn-exec" onclick="switchReportsSubTab('exec')" class="pb-3 border-b-2 border-brand-800 text-brand-800 dark:text-white dark:border-white transition-all flex items-center gap-2">
+							<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+							<span>Tablero Ejecutivo</span>
+						</button>
+						<button id="intel-tab-btn-manage" onclick="switchReportsSubTab('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
+							<i data-lucide="bell" class="w-4 h-4"></i>
+							<span>Feed Operativo de Alertas &amp; Umbrales</span>
+						</button>
 					</div>
-
-					<!-- KPI 2: Clientes Inactivos / En Riesgo -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Clientes en Riesgo</span>
-							<span class="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">
-								<i data-lucide="user-x" class="w-4 h-4"></i>
-							</span>
-						</div>
-						<div class="mt-2">
-							<div id="kpi-intel-inactive-customers" class="text-2xl font-black font-mono tracking-tight text-amber-600 dark:text-amber-400">0</div>
-							<div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Sin compras >30D o caída de ventas</div>
-						</div>
-					</div>
-
-					<!-- KPI 3: Facturas Vencidas en Cobranzas -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Facturas Vencidas</span>
-							<span class="p-2 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400">
-								<i data-lucide="clock" class="w-4 h-4"></i>
-							</span>
-						</div>
-						<div class="mt-2">
-							<div id="kpi-intel-overdue-balance" class="text-2xl font-black font-mono tracking-tight text-slate-900 dark:text-white">$0.00</div>
-							<div class="flex items-center gap-1.5 mt-1 text-[11px] text-purple-700 dark:text-purple-300 font-semibold">
-								<span id="kpi-intel-overdue-count">0 facturas vencidas</span>
-							</div>
-						</div>
-					</div>
-
-					<!-- KPI 4: Oportunidades Comerciales -->
-					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
-						<div class="flex items-center justify-between">
-							<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Oportunidades de Recompra</span>
-							<span class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
-								<i data-lucide="trending-up" class="w-4 h-4"></i>
-							</span>
-						</div>
-						<div class="mt-2">
-							<div id="kpi-intel-opportunities-count" class="text-2xl font-black font-mono tracking-tight text-emerald-600 dark:text-emerald-400">0</div>
-							<div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Cross-selling y productos abandonados</div>
-						</div>
-					</div>
+					<button onclick="switchReportsSubTab('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
+						<span>Ver alertas y clientes en riesgo</span>
+						<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+					</button>
 				</div>
+
+				<!-- VISTA 1: TABLERO EJECUTIVO (8 KPIS + 4 GRÁFICOS + INDICADORES) — CERO NOMBRES INDIVIDUALES -->
+				<div id="intel-view-exec" class="space-y-6">
+					<!-- 8 Tarjetas KPI Principales de Inteligencia Comercial -->
+					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+						<!-- KPI 1: Ventas B2B Consolidadas -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas B2B Consolidadas&#10;Fórmula: Facturación neta consolidada de pedidos y facturas emitidas">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas B2B</span>
+								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
+									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-intel-sales-exec">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-blue-600 font-semibold">
+								<span>Consolidado</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Facturación neta</div>
+						</div>
+
+						<!-- KPI 2: Crecimiento Comercial % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Crecimiento Comercial&#10;Fórmula: ((Ventas Actuales − Ventas Anteriores) / Ventas Anteriores) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Crecimiento</span>
+								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-intel-growth-exec">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span>vs período ant.</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Tendencia ventas</div>
+						</div>
+
+						<!-- KPI 3: Margen Bruto Global % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Margen Bruto Global&#10;Fórmula: ((Ventas Netas − Costos Totales) / Ventas Netas) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Margen Bruto</span>
+								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
+									<i data-lucide="percent" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400" id="kpi-intel-margin-exec">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-indigo-600 font-semibold">
+								<span>Ponderado</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Calidad de margen</div>
+						</div>
+
+						<!-- KPI 4: Cartera de Clientes Activos -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cartera Activa Compradora&#10;Fórmula: COUNT(DISTINCT clientes con transacciones válidas en el período)">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Clientes Act.</span>
+								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
+									<i data-lucide="users" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-intel-customers-exec">--</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span>En cartera viva</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Compradores reales</div>
+						</div>
+
+						<!-- KPI 5: Conversión de Cotizaciones % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Conversión de Cotizaciones&#10;Fórmula: (Pedidos Confirmados / Cotizaciones Totales) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Conversión</span>
+								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
+									<i data-lucide="git-pull-request" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-purple-600 dark:text-purple-400" id="kpi-intel-quotes-conv-exec">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-purple-600 font-semibold">
+								<span>Cierre comercial</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Efectividad pipeline</div>
+						</div>
+
+						<!-- KPI 6: Cumplimiento de Pedidos OTIF % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cumplimiento de Pedidos OTIF&#10;Fórmula: (Pedidos entregados a tiempo y completos / Total despachos) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Fulfillment</span>
+								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+									<i data-lucide="truck" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-intel-fulfillment-exec">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+								<span>OTIF estándar</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Entrega a tiempo</div>
+						</div>
+
+						<!-- KPI 7: Eficiencia de Cobranza % -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Eficiencia de Cobranza&#10;Fórmula: (Total Cobrado / Facturación Neta Emitida) × 100">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Tasa Cobros</span>
+								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
+									<i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-teal-600 dark:text-teal-400" id="kpi-intel-collection-exec">--%</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-teal-600 font-semibold">
+								<span>Recuperación</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Efectividad cobro</div>
+						</div>
+
+						<!-- KPI 8: Productividad Horaria Comercial -->
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Productividad Comercial Horaria&#10;Fórmula: Ventas Consolidadas / Total Horas Trabajadas">
+							<div class="flex items-start justify-between text-slate-500 text-xs">
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas / Hora</span>
+								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
+									<i data-lucide="zap" class="w-3.5 h-3.5"></i>
+								</div>
+							</div>
+							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-intel-prod-hourly-exec">$0.00</div>
+							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+								<span>Por hora laboral</span>
+							</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Eficiencia operativa</div>
+						</div>
+					</div>
+
+					<!-- 4 GRÁFICOS ANALÍTICOS DE INTELIGENCIA COMERCIAL -->
+					<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+						<!-- Gráfico 1: Tendencia de Ingresos Consolidados -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Tendencia de Ventas Consolidadas</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Evolución de facturación mensual y curva acumulada</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">Tendencia</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-intel-sales-trend"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 2: Ventas vs Rentabilidad -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Ventas vs. Rentabilidad Bruta</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Relación entre volumen de ventas y margen generado</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Rentabilidad</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-intel-sales-vs-prof"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 3: Embudo Comercial Integral -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Embudo Comercial Global</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Flujo integral de oportunidades: Cotizado &rarr; En Curso &rarr; Confirmado &rarr; Cobrado</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">Embudo</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-intel-funnel"></canvas>
+							</div>
+						</div>
+
+						<!-- Gráfico 4: Radar de Cumplimiento de Metas -->
+						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+								<div>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Radar de Cumplimiento de Objetivos B2B</h3>
+									<p class="text-[11px] text-slate-400 mt-0.5">Desempeño multidimensional frente a metas estratégicas fijadas</p>
+								</div>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">Radar</span>
+							</div>
+							<div class="relative h-64 mt-3">
+								<canvas id="chart-intel-radar"></canvas>
+							</div>
+						</div>
+					</div>
+
+					<!-- INDICADORES SECUNDARIOS DE INTELIGENCIA -->
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Alertas Activas</span>
+								<p id="sec-intel-alerts-count" class="text-sm font-bold text-amber-600 dark:text-amber-400 mt-0.5">3 alertas vivas</p>
+								<span class="text-[10px] text-slate-400">1 crítica, 2 altas</span>
+							</div>
+							<i data-lucide="bell" class="w-4 h-4 text-amber-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Clientes en Riesgo</span>
+								<p id="sec-intel-risk-clients" class="text-sm font-bold text-rose-600 dark:text-rose-400 mt-0.5">2 cuentas &gt;30d</p>
+								<span class="text-[10px] text-slate-400">Sin compras recientes</span>
+							</div>
+							<i data-lucide="user-x" class="w-4 h-4 text-rose-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Oportunidades</span>
+								<p id="sec-intel-reorder-opps" class="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">5 de recompra</p>
+								<span class="text-[10px] text-slate-400">Ciclo de reposición</span>
+							</div>
+							<i data-lucide="lightbulb" class="w-4 h-4 text-emerald-600"></i>
+						</div>
+						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
+							<div>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tasa de Resolución</span>
+								<p id="sec-intel-resolution-rate" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">85.7% resueltas</p>
+								<span class="text-[10px] text-slate-400">Alertas atendidas</span>
+							</div>
+							<i data-lucide="check-circle-2" class="w-4 h-4 text-indigo-600"></i>
+						</div>
+					</div>
+
+					<!-- BANNER ACCESO A GESTIÓN DE ALERTAS -->
+					<div class="bg-gradient-to-r from-slate-100 via-white to-slate-100 dark:from-slate-800/80 dark:via-slate-800/40 dark:to-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+						<div class="flex items-center gap-3">
+							<div class="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center shrink-0">
+								<i data-lucide="bell" class="w-4 h-4"></i>
+							</div>
+							<div>
+								<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Centro Operativo de Alertas, Clientes en Riesgo &amp; Umbrales</h4>
+								<p class="text-[11px] text-slate-500 dark:text-slate-400">Revisar alertas activas, ejecutar acciones comerciales sobre cuentas en riesgo y ajustar umbrales del motor analítico.</p>
+							</div>
+						</div>
+						<button onclick="switchReportsSubTab('manage')" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-800 text-white hover:bg-brand-700 transition-colors shadow-2xs whitespace-nowrap">
+							<span>Ir al Feed de Alertas</span>
+							<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+						</button>
+					</div>
+				</div><!-- Fin #intel-view-exec -->
+
+				<!-- VISTA 2: FEED OPERATIVO DE ALERTAS & UMBRALES -->
+				<div id="intel-view-manage" class="hidden space-y-6">
 
 				<!-- NAVEGACIÓN POR SUB-PESTAÑAS DE INTELIGENCIA COMERCIAL -->
 				<div class="border-b border-slate-200 dark:border-slate-800">
@@ -2865,6 +4102,7 @@
 						</form>
 					</div>
 				</div>
+				</div><!-- Fin #intel-view-manage -->
 			</div>
 
 			<!-- MODAL: MARCAR ALERTA COMO REVISADA -->
@@ -4989,6 +6227,7 @@
 			reports: { icon: 'bar-chart-3', title_es: 'Reportes y Analítica', title_en: 'Reports & Analytics', desc_es: 'Centro de reportes consolidados para dirección comercial, auditoría de precios, OTIF y rotación mayorista.', desc_en: 'Consolidated executive reports hub for commercial leadership, pricing audits, OTIF, and inventory turns.' },
 			settings: { icon: 'settings', title_es: 'Configuración', title_en: 'Settings', desc_es: 'Parámetros generales de la plataforma de ventas B2B, integración con ERP/EDI y políticas de crédito.', desc_en: 'General B2B sales system configuration, ERP/EDI integrations, and credit policy parameters.' },
 			schedules: { icon: 'calendar-clock', title_es: 'Horarios y Cobertura', title_en: 'Schedules & Coverage', desc_es: 'Planificación laboral optimizada según ventas, demanda B2B, productividad por rol y presupuesto.', desc_en: 'Smart shift planning, demand coverage, and labor budget optimization.' },
+			operations: { icon: 'clipboard-list', title_es: 'Operaciones y Tareas', title_en: 'Operations & Tasks', desc_es: 'Supervisión de tareas operativas de almacén, reposición y control de incidencias.', desc_en: 'Supervision of warehouse operational tasks, restocking, and incident control.' },
 			employees: { icon: 'user-check', title_es: 'Directorio de Personal', title_en: 'Staff Directory', desc_es: 'Colaboradores operacionales, reponedores, fuerza de ventas y personal logístico.', desc_en: 'Commercial staffing, merchandisers, and operations personnel.' },
 			attendance: { icon: 'clock', title_es: 'Asistencia y Puntualidad', title_en: 'Attendance & Punctuality', desc_es: 'Comparativa de horas programadas vs trabajadas, horas productivas y control de tardanzas.', desc_en: 'Tracking worked vs scheduled hours.' },
 			'shift-requests': { icon: 'clipboard-check', title_es: 'Solicitudes de Personal', title_en: 'Shift Requests', desc_es: 'Aprobación de cambios de turno, solicitudes de vacaciones y permisos por horas.', desc_en: 'Shift swaps, permissions, and vacations.' }
@@ -5021,7 +6260,7 @@
 			const path = window.location.pathname;
 			const parts = path.split('/').filter(Boolean);
 			if (parts.length >= 2 && parts[0] === 'b2b') return parts[1];
-			if (parts.length === 1 && (parts[0] === 'customers' || parts[0] === 'products' || parts[0] === 'orders' || parts[0] === 'invoices' || parts[0] === 'sales-reps' || parts[0] === 'profitability' || parts[0] === 'reports' || parts[0] === 'settings')) return parts[0];
+			if (parts.length === 1 && (parts[0] === 'customers' || parts[0] === 'products' || parts[0] === 'orders' || parts[0] === 'invoices' || parts[0] === 'sales-reps' || parts[0] === 'profitability' || parts[0] === 'reports' || parts[0] === 'settings' || parts[0] === 'schedules' || parts[0] === 'operations' || parts[0] === 'employees' || parts[0] === 'attendance' || parts[0] === 'shift-requests')) return parts[0];
 			return 'sales';
 		}
 
@@ -5099,6 +6338,7 @@
 			const repHubContainer = document.getElementById('section-reports');
 			const settContainer = document.getElementById('section-settings');
 			const schedContainer = document.getElementById('section-schedules');
+			const operContainer = document.getElementById('section-operations');
 			const empContainer = document.getElementById('section-employees');
 			const attContainer = document.getElementById('section-attendance');
 			const reqContainer = document.getElementById('section-shift-requests');
@@ -5114,6 +6354,7 @@
 			if (repHubContainer) repHubContainer.classList.add('hidden');
 			if (settContainer) settContainer.classList.add('hidden');
 			if (schedContainer) schedContainer.classList.add('hidden');
+			if (operContainer) operContainer.classList.add('hidden');
 			if (empContainer) empContainer.classList.add('hidden');
 			if (attContainer) attContainer.classList.add('hidden');
 			if (reqContainer) reqContainer.classList.add('hidden');
@@ -5148,6 +6389,8 @@
 			} else if (sectionId === 'schedules') {
 				if (schedContainer) schedContainer.classList.remove('hidden');
 				if (typeof initWorkforceModule === 'function') initWorkforceModule();
+			} else if (sectionId === 'operations') {
+				if (operContainer) operContainer.classList.remove('hidden');
 			} else if (sectionId === 'employees') {
 				if (empContainer) empContainer.classList.remove('hidden');
 				if (typeof loadWfmEmployees === 'function') loadWfmEmployees();
@@ -5163,6 +6406,10 @@
 				document.getElementById('placeholder-title').textContent = currentLang === 'es' ? meta.title_es : meta.title_en;
 				document.getElementById('placeholder-desc').textContent = currentLang === 'es' ? (meta.desc_es || '') : (meta.desc_en || '');
 				if (typeof lucide !== 'undefined') lucide.createIcons();
+			}
+
+			if (typeof loadModuleAnalytics === 'function' && sectionId !== 'sales' && sectionId !== 'settings') {
+				loadModuleAnalytics(sectionId);
 			}
 
 			window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -11959,7 +13206,8 @@
 
 	</script>
 
-	{{-- MODALES Y SCRIPTS WFM --}}
+	{{-- MODALES Y SCRIPTS WFM & ANALYTICS --}}
+	@include('b2b.analytics_dashboard_scripts')
 	@include('b2b.workforce_modals')
 	@include('b2b.demo_engine_scripts')
 	@include('b2b.workforce_scripts')

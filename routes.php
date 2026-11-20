@@ -97,6 +97,7 @@ $app->group('', function (RouteCollectorProxy $group)
 	$group->get('/profitability', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.profitability');
 	$group->get('/reports', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.reports');
 	$group->get('/settings', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.settings');
+	$group->get('/operations', [B2bSalesOverviewController::class, 'SalesOverview'])->setName('b2b.operations');
 
 	// Sitio comercial público (rutas con nombre site.* = sin autenticación)
 	$group->get('/features', [SiteController::class, 'Features'])->setName('site.features');
@@ -1199,6 +1200,7 @@ $app->group('/api', function (RouteCollectorProxy $group)
 	// B2B Wholesale: Tablero Ejecutivo de Ventas & Analítica API (Paso 8)
 	$group->get('/b2b/dashboard/executive', [\Grocy\Controllers\Api\B2bDashboardApiController::class, 'GetExecutiveDashboard']);
 	$group->get('/b2b/dashboard/filters', [\Grocy\Controllers\Api\B2bDashboardApiController::class, 'GetFilterOptions']);
+	$group->get('/b2b/analytics/{module:[a-z-]+}', [\Grocy\Controllers\Api\B2bAnalyticsApiController::class, 'GetAnalytics']);
 
 	// B2B Wholesale: Vendedores, Territorios y Metas Comerciales API (Paso 9)
 	$group->get('/b2b/sales-reps/metrics', [\Grocy\Controllers\Api\B2bSalesRepApiController::class, 'GetMetrics']);

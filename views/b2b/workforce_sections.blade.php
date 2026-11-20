@@ -126,108 +126,160 @@
 	</div>
 
 	<!-- ========================================================
-	     PESTAÑA 1: RESUMEN (KPIS, GRÁFICO PRINCIPAL Y RECOMENDACIONES)
+	     PESTAÑA 1: RESUMEN (8 KPIS + 3 GRÁFICOS + RECOMENDACIONES)
 	     ======================================================== -->
 	<div id="wfm-tab-content-summary" class="space-y-6">
-		<!-- 5 INDICADORES PRINCIPALES (CON PERÍODO Y EXPLICACIÓN DE CÁLCULO) -->
-		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-			<!-- KPI 1: Ventas Previstas -->
-			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-xs flex flex-col justify-between">
+		<!-- 8 INDICADORES PRINCIPALES DE HORARIOS Y COBERTURA -->
+		<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+			<!-- KPI 1: Horas Requeridas -->
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-xs flex flex-col justify-between" title="Horas Requeridas&#10;Fórmula: Ventas previstas / meta de facturación por hora, sujeto a cobertura mínima de almacén">
 				<div>
-					<div class="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs">
-						<span class="font-medium text-slate-700 dark:text-slate-300">1. Ventas Previstas</span>
-						<i data-lucide="trending-up" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+					<div class="flex items-center justify-between text-slate-500 text-xs">
+						<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Horas Requeridas</span>
+						<i data-lucide="calculator" class="w-3.5 h-3.5 text-indigo-600"></i>
 					</div>
-					<div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="wfm-kpi-sales">
-						$48,500.00
-					</div>
-					<div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-						<span class="px-1.5 py-0.2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold rounded text-[10px]">Semana 47</span>
-						<span>+8.4% vs anterior</span>
-					</div>
-				</div>
-				<div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 leading-tight">
-					<strong class="text-slate-600 dark:text-slate-300">Cálculo:</strong> Pedidos B2B confirmados en ERP ($38.5k) más proyección de reposición mayorista por tendencia de consumo.
-				</div>
-			</div>
-
-			<!-- KPI 2: Horas Recomendadas -->
-			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-xs flex flex-col justify-between">
-				<div>
-					<div class="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs">
-						<span class="font-medium text-slate-700 dark:text-slate-300">2. Horas Recomendadas</span>
-						<i data-lucide="calculator" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
-					</div>
-					<div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="wfm-kpi-rec-hours">
+					<div class="mt-2 text-xl font-bold font-mono tracking-tight text-slate-900 dark:text-white" id="wfm-kpi-rec-hours">
 						340.0 hrs
 					</div>
-					<div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-						<span class="px-1.5 py-0.2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold rounded text-[10px]">Semana 47</span>
-						<span>Meta: $150/h laboral</span>
+					<div class="mt-1 text-[10px] text-indigo-600 font-semibold">
+						<span>Demanda óptima</span>
 					</div>
 				</div>
-				<div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 leading-tight">
-					<strong class="text-slate-600 dark:text-slate-300">Cálculo:</strong> Ventas previstas / meta de facturación por hora, sujeto a cobertura mínima de almacén (2 colaboradores por franja).
+				<div class="mt-2 pt-1 border-t border-slate-100 dark:border-slate-800/80 text-[9px] text-slate-400 truncate">
+					Cálculo por ventas
 				</div>
 			</div>
 
-			<!-- KPI 3: Horas Programadas -->
-			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-xs flex flex-col justify-between">
+			<!-- KPI 2: Horas Programadas -->
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-xs flex flex-col justify-between" title="Horas Programadas&#10;Fórmula: Suma de horas netas de turnos asignados en la semana descontando descansos">
 				<div>
-					<div class="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs">
-						<span class="font-medium text-slate-700 dark:text-slate-300">3. Horas Programadas</span>
-						<i data-lucide="clock" class="w-4 h-4 text-brand-700 dark:text-brand-400"></i>
+					<div class="flex items-center justify-between text-slate-500 text-xs">
+						<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Horas Programadas</span>
+						<i data-lucide="clock" class="w-3.5 h-3.5 text-brand-700"></i>
 					</div>
-					<div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="wfm-kpi-sched-hours">
+					<div class="mt-2 text-xl font-bold font-mono tracking-tight text-slate-900 dark:text-white" id="wfm-kpi-sched-hours">
 						236.0 hrs
 					</div>
-					<div class="mt-1 text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1" id="wfm-kpi-hours-var">
-						<span class="px-1.5 py-0.2 bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-semibold rounded text-[10px]">Semana 47</span>
-						<span>-104.0 hrs brecha</span>
+					<div class="mt-1 text-[10px] text-amber-600 font-semibold" id="wfm-kpi-hours-var">
+						<span>Turnos asignados</span>
 					</div>
 				</div>
-				<div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 leading-tight">
-					<strong class="text-slate-600 dark:text-slate-300">Cálculo:</strong> Suma de horas netas de turnos asignados en la semana, descontando descansos reglamentarios (45 min/turno).
-				</div>
-			</div>
-
-			<!-- KPI 4: Costo Laboral Estimado -->
-			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-xs flex flex-col justify-between">
-				<div>
-					<div class="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs">
-						<span class="font-medium text-slate-700 dark:text-slate-300">4. Costo Laboral Est.</span>
-						<i data-lucide="dollar-sign" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
-					</div>
-					<div class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white" id="wfm-kpi-cost">
-						$1,884.00
-					</div>
-					<div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400" id="wfm-kpi-budget-var">
-						<span class="px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold rounded text-[10px]">Semana 47</span>
-						<span>Ppto: $2,800 (+916 margen)</span>
-					</div>
-				</div>
-				<div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 leading-tight">
-					<strong class="text-slate-600 dark:text-slate-300">Cálculo:</strong> Horas programadas de cada colaborador multiplicadas por su tarifa contractual horaria ($7.50 a $12.00/h).
+				<div class="mt-2 pt-1 border-t border-slate-100 dark:border-slate-800/80 text-[9px] text-slate-400 truncate">
+					Matriz activa
 				</div>
 			</div>
 
-			<!-- KPI 5: Cobertura de Personal -->
-			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-xs flex flex-col justify-between col-span-1 sm:col-span-2 lg:col-span-1">
+			<!-- KPI 3: Cobertura de Personal % -->
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-xs flex flex-col justify-between" title="Cobertura de Personal&#10;Fórmula: (Horas Programadas / Horas Requeridas) × 100">
 				<div>
-					<div class="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs">
-						<span class="font-medium text-slate-700 dark:text-slate-300">5. Cobertura de Personal</span>
-						<i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+					<div class="flex items-center justify-between text-slate-500 text-xs">
+						<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cobertura</span>
+						<i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
 					</div>
-					<div class="mt-2 text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400" id="wfm-kpi-coverage">
+					<div class="mt-2 text-xl font-bold font-mono tracking-tight text-emerald-600 dark:text-emerald-400" id="wfm-kpi-coverage">
 						69.4%
 					</div>
-					<div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-						<span class="px-1.5 py-0.2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold rounded text-[10px]">Semana 47</span>
-						<span>Mínimo operacional alcanzado</span>
+					<div class="mt-1 text-[10px] text-emerald-600 font-semibold">
+						<span>Nivel servicio</span>
 					</div>
 				</div>
-				<div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 leading-tight">
-					<strong class="text-slate-600 dark:text-slate-300">Cálculo:</strong> (Horas Programadas 236.0h / Horas Recomendadas 340.0h) * 100 con factor de cumplimiento del 69.4%.
+				<div class="mt-2 pt-1 border-t border-slate-100 dark:border-slate-800/80 text-[9px] text-slate-400 truncate">
+					Prog. vs demanda
+				</div>
+			</div>
+
+			<!-- KPI 4: Costo Laboral Estimado $ -->
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-xs flex flex-col justify-between" title="Costo Laboral Estimado&#10;Fórmula: Horas programadas de cada colaborador × tarifa contractual horaria">
+				<div>
+					<div class="flex items-center justify-between text-slate-500 text-xs">
+						<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Costo Laboral</span>
+						<i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-amber-600"></i>
+					</div>
+					<div class="mt-2 text-xl font-bold font-mono tracking-tight text-slate-900 dark:text-white" id="wfm-kpi-cost">
+						$1,884.00
+					</div>
+					<div class="mt-1 text-[10px] text-slate-400">
+						<span>Nómina semanal</span>
+					</div>
+				</div>
+				<div class="mt-2 pt-1 border-t border-slate-100 dark:border-slate-800/80 text-[9px] text-slate-400 truncate">
+					Tarifa contractual
+				</div>
+			</div>
+
+			<!-- KPI 5: Productividad Laboral $/h -->
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-xs flex flex-col justify-between" title="Productividad Laboral&#10;Fórmula: Ventas previstas / Horas laborales programadas">
+				<div>
+					<div class="flex items-center justify-between text-slate-500 text-xs">
+						<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Productividad</span>
+						<i data-lucide="zap" class="w-3.5 h-3.5 text-blue-600"></i>
+					</div>
+					<div class="mt-2 text-xl font-bold font-mono tracking-tight text-blue-600 dark:text-blue-400" id="wfm-kpi-productivity">
+						$205.51/h
+					</div>
+					<div class="mt-1 text-[10px] text-blue-600 font-semibold">
+						<span>Venta / hora</span>
+					</div>
+				</div>
+				<div class="mt-2 pt-1 border-t border-slate-100 dark:border-slate-800/80 text-[9px] text-slate-400 truncate">
+					Meta: $150/h
+				</div>
+			</div>
+
+			<!-- KPI 6: Déficit de Horas -->
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-xs flex flex-col justify-between" title="Déficit de Horas&#10;Fórmula: MAX(0, Horas Requeridas − Horas Programadas)">
+				<div>
+					<div class="flex items-center justify-between text-slate-500 text-xs">
+						<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Déficit Horas</span>
+						<i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-600"></i>
+					</div>
+					<div class="mt-2 text-xl font-bold font-mono tracking-tight text-amber-600 dark:text-amber-400" id="wfm-kpi-deficit">
+						104.0 hrs
+					</div>
+					<div class="mt-1 text-[10px] text-amber-600 font-semibold">
+						<span>Brecha a cubrir</span>
+					</div>
+				</div>
+				<div class="mt-2 pt-1 border-t border-slate-100 dark:border-slate-800/80 text-[9px] text-slate-400 truncate">
+					Turnos faltantes
+				</div>
+			</div>
+
+			<!-- KPI 7: Horas Extras Proyectadas -->
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-xs flex flex-col justify-between" title="Horas Extras Proyectadas&#10;Fórmula: Horas programadas por encima de 48h semanales por colaborador">
+				<div>
+					<div class="flex items-center justify-between text-slate-500 text-xs">
+						<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Horas Extras</span>
+						<i data-lucide="calendar-plus" class="w-3.5 h-3.5 text-purple-600"></i>
+					</div>
+					<div class="mt-2 text-xl font-bold font-mono tracking-tight text-purple-600 dark:text-purple-400" id="wfm-kpi-overtime">
+						0.0 hrs
+					</div>
+					<div class="mt-1 text-[10px] text-emerald-600 font-semibold">
+						<span>0 sobrecosto</span>
+					</div>
+				</div>
+				<div class="mt-2 pt-1 border-t border-slate-100 dark:border-slate-800/80 text-[9px] text-slate-400 truncate">
+					Límite legal OK
+				</div>
+			</div>
+
+			<!-- KPI 8: Presupuesto Utilizado % -->
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-3.5 shadow-xs flex flex-col justify-between" title="Presupuesto Utilizado %&#10;Fórmula: (Costo Laboral Estimado / Presupuesto Semanal Asignado) × 100">
+				<div>
+					<div class="flex items-center justify-between text-slate-500 text-xs">
+						<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Presupuesto %</span>
+						<i data-lucide="pie-chart" class="w-3.5 h-3.5 text-emerald-600"></i>
+					</div>
+					<div class="mt-2 text-xl font-bold font-mono tracking-tight text-emerald-600 dark:text-emerald-400" id="wfm-kpi-budget-pct">
+						67.3%
+					</div>
+					<div class="mt-1 text-[10px] text-emerald-600 font-semibold">
+						<span>+$916 margen</span>
+					</div>
+				</div>
+				<div class="mt-2 pt-1 border-t border-slate-100 dark:border-slate-800/80 text-[9px] text-slate-400 truncate">
+					Ppto: $2,800
 				</div>
 			</div>
 		</div>
@@ -262,6 +314,37 @@
 
 			<div class="h-64 sm:h-72 w-full relative">
 				<canvas id="wfmSalesVsHoursChart"></canvas>
+			</div>
+		</div>
+
+		<!-- 2 GRÁFICOS COMPLEMENTARIOS: COBERTURA HORARIA Y COSTO POR FUNCIÓN -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+			<!-- Gráfico 2: Cobertura Horaria por Franja -->
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-xs flex flex-col justify-between">
+				<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+					<div>
+						<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Cobertura Horaria por Franja del Día</h3>
+						<p class="text-[11px] text-slate-400 mt-0.5">Demanda recomendada vs dotación programada (07:00 a 20:00)</p>
+					</div>
+					<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">Franjas</span>
+				</div>
+				<div class="relative h-64 mt-3">
+					<canvas id="chart-sch-hourly-coverage"></canvas>
+				</div>
+			</div>
+
+			<!-- Gráfico 3: Costo y Productividad por Rol / Función -->
+			<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-xs flex flex-col justify-between">
+				<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+					<div>
+						<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Costo y Eficiencia Laboral por Función</h3>
+						<p class="text-[11px] text-slate-400 mt-0.5">Distribución presupuestaria por rol: Ventas, Reposición, Despacho, Admin</p>
+					</div>
+					<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Costos</span>
+				</div>
+				<div class="relative h-64 mt-3">
+					<canvas id="chart-sch-cost-function"></canvas>
+				</div>
 			</div>
 		</div>
 
@@ -936,137 +1019,1250 @@
 	</div>
 </div>
 
-{{-- SECCIÓN 10: EMPLEADOS (MENU LATERAL) --}}
+{{-- SECCIÓN 9.1: OPERACIONES Y TAREAS (DASHBOARD EJECUTIVO + CONSOLA OPERATIVA) --}}
+<div id="section-operations" class="hidden space-y-6">
+	<!-- Header con Título y Filtros -->
+	<div class="pb-3 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+		<div class="flex items-center gap-2.5">
+			<div class="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 flex items-center justify-center">
+				<i data-lucide="check-square" class="w-5 h-5"></i>
+			</div>
+			<div>
+				<h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+					<span>Operaciones y Tareas en Tienda</span>
+					<span class="px-2 py-0.5 text-[11px] font-semibold rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300">FEFO Activo</span>
+				</h1>
+				<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+					Supervisión del cumplimiento de reposición, auditorías FEFO, productividad en góndola y gestión de incidencias.
+				</p>
+			</div>
+		</div>
+
+		<div class="flex items-center gap-2">
+			<button onclick="openCreateTaskModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-800 hover:bg-brand-700 text-white shadow-xs transition-all">
+				<i data-lucide="plus" class="w-3.5 h-3.5"></i>
+				<span>Nueva Tarea</span>
+			</button>
+		</div>
+	</div>
+
+	<!-- Selector de Sub-Pestañas: Tablero Ejecutivo vs Consola Operativa -->
+	<div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+		<div class="flex space-x-6 text-xs sm:text-sm font-semibold">
+			<button id="ops-tab-btn-exec" onclick="switchOperationsSubTab('exec')" class="pb-3 border-b-2 border-brand-800 text-brand-800 dark:text-white dark:border-white transition-all flex items-center gap-2">
+				<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+				<span>Tablero Ejecutivo</span>
+			</button>
+			<button id="ops-tab-btn-manage" onclick="switchOperationsSubTab('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
+				<i data-lucide="list-checks" class="w-4 h-4"></i>
+				<span>Consola de Tareas &amp; Reposición</span>
+			</button>
+		</div>
+		<button onclick="switchOperationsSubTab('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
+			<span>Gestionar tareas operativas</span>
+			<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+		</button>
+	</div>
+
+	<!-- VISTA 1: TABLERO EJECUTIVO DE OPERACIONES (8 KPIS + 3 GRÁFICOS + INDICADORES) -->
+	<div id="ops-view-exec" class="space-y-6">
+		<!-- 8 Tarjetas KPI Principales -->
+		<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+			<!-- KPI 1: Tareas Pendientes -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Tareas Pendientes</span>
+					<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+						<i data-lucide="clock" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-ops-pending">8</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-amber-600 font-semibold">
+					<span>-27.3%</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">En ejecución</div>
+			</div>
+
+			<!-- KPI 2: Tareas Completadas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Completadas</span>
+					<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+						<i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-ops-completed">42</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>+10.5%</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Verificadas</div>
+			</div>
+
+			<!-- KPI 3: Tareas Vencidas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Vencidas</span>
+					<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
+						<i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-rose-600 dark:text-rose-400" id="kpi-ops-overdue">2</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>-50.0%</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Fuera de plazo</div>
+			</div>
+
+			<!-- KPI 4: Cumplimiento Operativo -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cumplimiento</span>
+					<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
+						<i data-lucide="percent" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400" id="kpi-ops-compliance">80.8%</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>+2.3 pp</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Eficacia campo</div>
+			</div>
+
+			<!-- KPI 5: Productividad Reposición -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Productividad</span>
+					<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
+						<i data-lucide="zap" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-ops-prod">48.5</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-teal-600 font-semibold">
+					<span>+7.8%</span>
+					<span class="text-slate-400">cjs/h</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Cajas repuestas/h</div>
+			</div>
+
+			<!-- KPI 6: Alertas de Reposición -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Alertas Góndola</span>
+					<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+						<i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-amber-600 dark:text-amber-400" id="kpi-ops-alerts">5</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>-37.5%</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Stock mínimo</div>
+			</div>
+
+			<!-- KPI 7: Incidencias Operativas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Incidencias</span>
+					<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
+						<i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-ops-incidents">3</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>-40.0%</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Mermas/roturas</div>
+			</div>
+
+			<!-- KPI 8: Cumplimiento FEFO -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Rotación FEFO</span>
+					<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+						<i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-ops-fefo">97.4%</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>+1.9 pp</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Fecha vencimiento</div>
+			</div>
+		</div>
+
+		<!-- 2 Gráficos Principales -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+			<!-- Gráfico 1: Cumplimiento Operativo por Tipo de Tarea -->
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-600"></i>
+						<span>Cumplimiento Operativo por Función &amp; Actividad</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Tareas</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-ops-compliance-shift"></canvas>
+				</div>
+			</div>
+
+			<!-- Gráfico 2: Distribución de Tareas por Estado -->
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="pie-chart" class="w-4 h-4 text-indigo-600"></i>
+						<span>Distribución de Tareas por Estado</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Proporción</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-ops-status-dist"></canvas>
+				</div>
+			</div>
+		</div>
+
+		<!-- Indicadores Secundarios de Desempeño (4 Cards) -->
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Adopción Lector Código Barras</p>
+					<h4 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">94.2%</h4>
+					<p class="text-[10px] text-emerald-600 font-medium">Escaneos válidos</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+					<i data-lucide="qr-code" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Góndolas Auditadas Hoy</p>
+					<h4 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">100%</h4>
+					<p class="text-[10px] text-blue-600 font-medium">8 sedes cubiertas</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+					<i data-lucide="store" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Tasa de Merma en Tienda</p>
+					<h4 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">0.12%</h4>
+					<p class="text-[10px] text-slate-400">Bajo umbral (target &lt;0.25%)</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+					<i data-lucide="shield-check" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Disponibilidad en Anaquel</p>
+					<h4 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">99.1%</h4>
+					<p class="text-[10px] text-indigo-600 font-medium">Cero quiebres críticos</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center">
+					<i data-lucide="layers" class="w-4 h-4"></i>
+				</div>
+			</div>
+		</div>
+
+		<!-- Gráficos de Riesgo y FEFO -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+			<!-- Evolución de Incidencias Operativas -->
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="trending-down" class="w-4 h-4 text-emerald-600"></i>
+						<span>Evolución Semanal de Incidencias &amp; Discrepancias</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Casos</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-ops-incidents-trend"></canvas>
+				</div>
+			</div>
+
+			<!-- Cumplimiento de Rotación FEFO en el Tiempo -->
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="shield-check" class="w-4 h-4 text-teal-600"></i>
+						<span>Tasa de Adherencia a Protocolo FEFO (%)</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">%</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-ops-fefo-trend"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- VISTA 2: GESTIÓN OPERATIVA DE TAREAS Y REPOSICIÓN -->
+	<div id="ops-view-manage" class="hidden space-y-6">
+		<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-wrap items-center justify-between gap-3">
+			<div class="flex items-center gap-2">
+				<span class="text-xs font-semibold text-slate-700 dark:text-slate-300">Filtrar por Estado:</span>
+				<select id="wfm-tasks-filter-status" onchange="renderWfmTasksTable()" class="text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1.5 text-slate-800 dark:text-slate-200">
+					<option value="all">Todas las tareas</option>
+					<option value="pending">Solo Pendientes</option>
+					<option value="completed">Solo Completadas</option>
+				</select>
+			</div>
+			<button onclick="openCreateTaskModal()" class="px-3 py-1.5 bg-brand-800 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold">
+				+ Crear Tarea Operativa
+			</button>
+		</div>
+
+		<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden">
+			<div class="overflow-x-auto">
+				<table class="w-full text-left border-collapse text-xs">
+					<thead>
+						<tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-500 uppercase">
+							<th class="p-3">Prioridad / Tarea</th>
+							<th class="p-3">Asignado a</th>
+							<th class="p-3">Sede</th>
+							<th class="p-3">Fecha Límite</th>
+							<th class="p-3 text-center">Estado</th>
+							<th class="p-3 text-right">Acción</th>
+						</tr>
+					</thead>
+					<tbody id="wfm-tasks-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+						<!-- Render dinámico -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+{{-- SECCIÓN 10: PERSONAL Y DOTACIÓN (DASHBOARD EJECUTIVO + DIRECTORIO DE GESTIÓN) --}}
 <div id="section-employees" class="hidden space-y-6">
-	<div class="pb-4 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+	<div class="pb-3 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 		<div class="flex items-center gap-2.5">
 			<div class="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 flex items-center justify-center">
 				<i data-lucide="user-check" class="w-5 h-5"></i>
 			</div>
 			<div>
 				<h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-					Directorio de Personal & Dotación
+					Personal y Dotación
 				</h1>
 				<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-					Colaboradores operacionales, reponedores, fuerza de ventas y personal logístico.
+					Estructura organizacional, ausentismo, rotación laboral, cobertura de puestos y costos de nómina.
 				</p>
 			</div>
 		</div>
 
 		<div class="flex items-center gap-2">
-			<input type="text" id="wfm-emp-search-2" oninput="filterEmployeesTable(this.value)" placeholder="Buscar colaborador o código..." class="text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-slate-800 dark:text-slate-200 w-64" />
+			<button onclick="switchEmployeesSubTab('manage')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs">
+				<i data-lucide="users" class="w-3.5 h-3.5"></i>
+				<span>Ver Directorio Completo</span>
+			</button>
 		</div>
 	</div>
 
-	<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden">
-		<div class="overflow-x-auto">
-			<table class="w-full text-left border-collapse text-xs">
-				<thead>
-					<tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-						<th class="p-3">Código / Nombre</th>
-						<th class="p-3">Rol & Función</th>
-						<th class="p-3">Departamento</th>
-						<th class="p-3">Establecimiento & Zona</th>
-						<th class="p-3 text-center">Horas Contratadas</th>
-						<th class="p-3 text-right">Costo Hora ($)</th>
-						<th class="p-3">Supervisor</th>
-						<th class="p-3 text-center">Estado</th>
-					</tr>
-				</thead>
-				<tbody id="wfm-employees-tbody-2" class="divide-y divide-slate-100 dark:divide-slate-800">
-					<!-- Rellenado dinámicamente -->
-				</tbody>
-			</table>
+	<!-- Selector de Sub-Pestañas: Tablero Ejecutivo vs Directorio Operativo -->
+	<div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+		<div class="flex space-x-6 text-xs sm:text-sm font-semibold">
+			<button id="emp-tab-btn-exec" onclick="switchEmployeesSubTab('exec')" class="pb-3 border-b-2 border-brand-800 text-brand-800 dark:text-white dark:border-white transition-all flex items-center gap-2">
+				<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+				<span>Tablero Ejecutivo</span>
+			</button>
+			<button id="emp-tab-btn-manage" onclick="switchEmployeesSubTab('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
+				<i data-lucide="users" class="w-4 h-4"></i>
+				<span>Directorio de Personal &amp; Gestión</span>
+			</button>
+		</div>
+		<button onclick="switchEmployeesSubTab('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
+			<span>Gestionar colaboradores</span>
+			<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+		</button>
+	</div>
+
+	<!-- VISTA 1: TABLERO EJECUTIVO (8 KPIS + 3 GRÁFICOS + INDICADORES) — CERO NOMBRES INDIVIDUALES -->
+	<div id="emp-view-exec" class="space-y-6">
+		<!-- 8 Tarjetas KPI Principales -->
+		<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+			<!-- KPI 1: Personal Activo -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Personal Activo</span>
+					<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
+						<i data-lucide="users" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-emp-active">20</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+					<span>100% en plantilla</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Nómina activa</div>
+			</div>
+
+			<!-- KPI 2: Ausentismo -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ausentismo</span>
+					<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+						<i data-lucide="user-x" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-emp-absenteeism">1.8%</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>-0.6 pp</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Bajo estándar (target &lt;3%)</div>
+			</div>
+
+			<!-- KPI 3: Rotación -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Rotación Anual</span>
+					<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
+						<i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-emp-turnover">4.2%</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>-0.8 pp</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Alta estabilidad</div>
+			</div>
+
+			<!-- KPI 4: Horas Contratadas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Horas Contratadas</span>
+					<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
+						<i data-lucide="clock" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-emp-hours">960 hrs</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+					<span>Semanal base</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Capacidad teórica</div>
+			</div>
+
+			<!-- KPI 5: Costo por Hora -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Costo Prom. Hora</span>
+					<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+						<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-emp-hourly-cost">$18.25/h</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+					<span>Tarifa media</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Nómina horaria</div>
+			</div>
+
+			<!-- KPI 6: Productividad Media -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Productividad</span>
+					<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
+						<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-teal-600 dark:text-teal-400" id="kpi-emp-prod">$2,620</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-teal-600 font-semibold">
+					<span>+8.4%</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Venta / colaborador</div>
+			</div>
+
+			<!-- KPI 7: Cobertura Puestos Clave -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Puestos Clave</span>
+					<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+						<i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-emp-key-roles">96.0%</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>Cubierto</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Línea crítica</div>
+			</div>
+
+			<!-- KPI 8: Vacantes Abiertas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Vacantes</span>
+					<div class="w-6 h-6 rounded-md bg-sky-50 dark:bg-sky-950/60 text-sky-600 flex items-center justify-center shrink-0">
+						<i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-emp-vacancies">1</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+					<span>En selección</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Repositor ruta</div>
+			</div>
+		</div>
+
+		<!-- 2 Gráficos Principales -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+			<!-- Gráfico 1: Dotación por Función y Departamento -->
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="users" class="w-4 h-4 text-brand-600"></i>
+						<span>Dotación de Personal por Función &amp; Departamento</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Headcount</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-emp-role-dist"></canvas>
+				</div>
+			</div>
+
+			<!-- Gráfico 2: Distribución de Nómina por Establecimiento -->
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="pie-chart" class="w-4 h-4 text-indigo-600"></i>
+						<span>Distribución de Nómina por Establecimiento Logístico</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Costo ($ USD)</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-emp-payroll-loc"></canvas>
+				</div>
+			</div>
+		</div>
+
+		<!-- Indicadores Secundarios (4 Cards) -->
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Capacitación en Protocolos</p>
+					<h4 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">98.0%</h4>
+					<p class="text-[10px] text-slate-400">Certificación FEFO y POS</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+					<i data-lucide="award" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Antigüedad Media</p>
+					<h4 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">1.8 años</h4>
+					<p class="text-[10px] text-blue-600 font-medium">Estabilidad alta</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+					<i data-lucide="calendar" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Dependencia Horas Extras</p>
+					<h4 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">3.6%</h4>
+					<p class="text-[10px] text-emerald-600 font-medium">Bajo control (&lt;5%)</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center">
+					<i data-lucide="clock" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Ratio Nómina / Ingresos</p>
+					<h4 class="text-lg font-bold text-teal-600 dark:text-teal-400 mt-0.5">14.8%</h4>
+					<p class="text-[10px] text-slate-400">Benchmark mayorista</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center">
+					<i data-lucide="pie-chart" class="w-4 h-4"></i>
+				</div>
+			</div>
+		</div>
+
+		<!-- Gráficos de Contratos y Estabilidad -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
+						<span>Modalidad de Contratación &amp; Jornada</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">%</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-emp-contract-types"></canvas>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="activity" class="w-4 h-4 text-emerald-600"></i>
+						<span>Curva de Disponibilidad Laboral Semanal</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Horas</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-emp-availability"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- VISTA 2: DIRECTORIO OPERATIVO DE PERSONAL -->
+	<div id="emp-view-manage" class="hidden space-y-6">
+		<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-wrap items-center justify-between gap-3">
+			<div class="relative w-full sm:w-80">
+				<i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+				<input type="text" id="wfm-emp-search-2" oninput="filterEmployeesTable(this.value)" placeholder="Buscar colaborador, código o rol..." class="text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-2 pl-9 text-slate-800 dark:text-slate-200 w-full" />
+			</div>
+			<div class="text-xs text-slate-500">
+				Total registros: <span class="font-bold text-slate-800 dark:text-white">20 colaboradores</span>
+			</div>
+		</div>
+
+		<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden">
+			<div class="overflow-x-auto">
+				<table class="w-full text-left border-collapse text-xs">
+					<thead>
+						<tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+							<th class="p-3">Código / Nombre</th>
+							<th class="p-3">Rol &amp; Función</th>
+							<th class="p-3">Departamento</th>
+							<th class="p-3">Establecimiento &amp; Zona</th>
+							<th class="p-3 text-center">Horas Contratadas</th>
+							<th class="p-3 text-right">Costo Hora ($)</th>
+							<th class="p-3">Supervisor</th>
+							<th class="p-3 text-center">Estado</th>
+						</tr>
+					</thead>
+					<tbody id="wfm-employees-tbody-2" class="divide-y divide-slate-100 dark:divide-slate-800">
+						<!-- Rellenado dinámicamente -->
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>
 
-{{-- SECCIÓN 11: ASISTENCIA --}}
+{{-- SECCIÓN 11: ASISTENCIA Y PUNTUALIDAD (DASHBOARD EJECUTIVO + REGISTRO DE MARCACIONES) --}}
 <div id="section-attendance" class="hidden space-y-6">
-	<div class="pb-4 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+	<div class="pb-3 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 		<div class="flex items-center gap-2.5">
 			<div class="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 flex items-center justify-center">
 				<i data-lucide="clock" class="w-5 h-5"></i>
 			</div>
 			<div>
 				<h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-					Asistencia & Puntualidad Real
+					Asistencia &amp; Puntualidad
 				</h1>
 				<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-					Comparativa de horas programadas vs trabajadas, horas productivas y control de tardanzas.
+					Monitoreo de horas programadas vs trabajadas, horas productivas, tardanzas y sobretiempo.
 				</p>
+			</div>
+		</div>
+
+		<div class="flex items-center gap-2">
+			<button onclick="switchAttendanceSubTab('manage')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs">
+				<i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+				<span>Ver Marcaciones en Vivo</span>
+			</button>
+		</div>
+	</div>
+
+	<!-- Selector de Sub-Pestañas: Tablero Ejecutivo vs Marcaciones -->
+	<div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+		<div class="flex space-x-6 text-xs sm:text-sm font-semibold">
+			<button id="att-tab-btn-exec" onclick="switchAttendanceSubTab('exec')" class="pb-3 border-b-2 border-brand-800 text-brand-800 dark:text-white dark:border-white transition-all flex items-center gap-2">
+				<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+				<span>Tablero Ejecutivo</span>
+			</button>
+			<button id="att-tab-btn-manage" onclick="switchAttendanceSubTab('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
+				<i data-lucide="fingerprint" class="w-4 h-4"></i>
+				<span>Registro Diario de Marcaciones</span>
+			</button>
+		</div>
+		<button onclick="switchAttendanceSubTab('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
+			<span>Auditar marcaciones</span>
+			<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+		</button>
+	</div>
+
+	<!-- VISTA 1: TABLERO EJECUTIVO DE ASISTENCIA (8 KPIS + 3 GRÁFICOS + INDICADORES) -->
+	<div id="att-view-exec" class="space-y-6">
+		<!-- 8 Tarjetas KPI Principales -->
+		<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+			<!-- KPI 1: Tasa de Asistencia -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Asistencia</span>
+					<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+						<i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-att-rate">98.5%</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>+1.3 pp</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Jornada cumplida</div>
+			</div>
+
+			<!-- KPI 2: Tasa de Puntualidad -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Puntualidad</span>
+					<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
+						<i data-lucide="clock" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-blue-600 dark:text-blue-400" id="kpi-att-punctuality">96.8%</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>+1.8 pp</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Entradas a tiempo</div>
+			</div>
+
+			<!-- KPI 3: Horas Trabajadas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Horas Trabajadas</span>
+					<div class="w-6 h-6 rounded-md bg-brand-50 dark:bg-brand-950/60 text-brand-700 flex items-center justify-center shrink-0">
+						<i data-lucide="activity" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-att-hours-worked">232.5 hrs</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>98.5% meta</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Marcación real</div>
+			</div>
+
+			<!-- KPI 4: Horas Programadas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Programadas</span>
+					<div class="w-6 h-6 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 flex items-center justify-center shrink-0">
+						<i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-att-hours-target">236.0 hrs</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+					<span>Semana 47</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Planilla de turnos</div>
+			</div>
+
+			<!-- KPI 5: Horas Productivas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Productivas</span>
+					<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
+						<i data-lucide="zap" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400" id="kpi-att-hours-prod">224.0 hrs</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-indigo-600 font-semibold">
+					<span>96.3%</span>
+					<span class="text-slate-400">efectivas</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">En reposición/ruta</div>
+			</div>
+
+			<!-- KPI 6: Ausencias Injustificadas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ausencias</span>
+					<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
+						<i data-lucide="user-x" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-att-absences">0</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>0 faltas</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Injustificadas</div>
+			</div>
+
+			<!-- KPI 7: Tardanzas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Tardanzas</span>
+					<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+						<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-amber-600 dark:text-amber-400" id="kpi-att-tardiness">2</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>-50.0%</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">&gt;5 min retraso</div>
+			</div>
+
+			<!-- KPI 8: Horas Extras -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Horas Extras</span>
+					<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
+						<i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-att-overtime">4.5 hrs</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+					<span>Autorizadas</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Sobretiempo real</div>
+			</div>
+		</div>
+
+		<!-- 2 Gráficos Principales -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+			<!-- Evolución Diaria de Asistencia y Puntualidad -->
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
+						<span>Evolución Diaria de Asistencia y Puntualidad (%)</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">%</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-att-trend"></canvas>
+				</div>
+			</div>
+
+			<!-- Comparativa de Horas: Programadas vs Trabajadas vs Productivas -->
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-600"></i>
+						<span>Comparativa Horaria: Programadas vs. Reales</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Horas</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-att-hours-compare"></canvas>
+				</div>
+			</div>
+		</div>
+
+		<!-- Indicadores Secundarios (4 Cards) -->
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Geocerca Verificada</p>
+					<h4 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">100%</h4>
+					<p class="text-[10px] text-slate-400">Marcaciones en punto asignado</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+					<i data-lucide="map-pin" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Demora Media en Tardanza</p>
+					<h4 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">8.5 min</h4>
+					<p class="text-[10px] text-blue-600 font-medium">Bajo impacto operativo</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+					<i data-lucide="clock" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Adherencia a Refrigerios</p>
+					<h4 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">98.2%</h4>
+					<p class="text-[10px] text-slate-400">Tiempos reglamentarios</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center">
+					<i data-lucide="coffee" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Asistencia Perfecta</p>
+					<h4 class="text-lg font-bold text-teal-600 dark:text-teal-400 mt-0.5">18 / 20</h4>
+					<p class="text-[10px] text-slate-400">90% de colaboradores</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center">
+					<i data-lucide="award" class="w-4 h-4"></i>
+				</div>
+			</div>
+		</div>
+
+		<!-- Gráficos de Incidencias de Asistencia -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="pie-chart" class="w-4 h-4 text-amber-600"></i>
+						<span>Distribución de Tardanzas por Establecimiento</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Casos</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-att-incidents-loc"></canvas>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="clock" class="w-4 h-4 text-purple-600"></i>
+						<span>Cumplimiento Horario por Día de la Semana</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Horas</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-att-weekday-compliance"></canvas>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<!-- Desglose de Horas -->
-	<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-		<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-4">
-			<div class="text-xs text-slate-500">Horas Programadas</div>
-			<div class="text-xl font-bold text-slate-900 dark:text-white mt-1">236.0 hrs</div>
-			<div class="text-[11px] text-slate-400 mt-0.5">Semana 47</div>
-		</div>
-		<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-4">
-			<div class="text-xs text-slate-500">Horas Trabajadas</div>
-			<div class="text-xl font-bold text-brand-700 dark:text-brand-400 mt-1">232.5 hrs</div>
-			<div class="text-[11px] text-emerald-600 mt-0.5">98.5% cumplimiento</div>
-		</div>
-		<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-4">
-			<div class="text-xs text-slate-500">Horas Productivas</div>
-			<div class="text-xl font-bold text-indigo-600 dark:text-indigo-400 mt-1">224.0 hrs</div>
-			<div class="text-[11px] text-slate-400 mt-0.5">Visitas y reposición</div>
-		</div>
-		<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-4">
-			<div class="text-xs text-slate-500">Horas Pagadas</div>
-			<div class="text-xl font-bold text-slate-900 dark:text-white mt-1">236.0 hrs</div>
-			<div class="text-[11px] text-slate-400 mt-0.5">Planilla semanal</div>
-		</div>
-	</div>
-
-	<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs">
-		<h3 class="text-sm font-bold text-slate-900 dark:text-white mb-3">Registro Diario de Marcaciones</h3>
-		<p class="text-xs text-slate-500 mb-4">Registro en tiempo real de entradas, descansos y salidas de personal en puntos de venta y almacenes.</p>
-		<div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/40 text-xs text-slate-600 dark:text-slate-300">
-			✓ 100% de colaboradores marcando con geolocalización activa en establecimiento asignado. 0 incidencias críticas registradas en la jornada.
+	<!-- VISTA 2: REGISTRO DIARIO DE MARCACIONES -->
+	<div id="att-view-manage" class="hidden space-y-6">
+		<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs">
+			<div class="flex items-center justify-between mb-4">
+				<div>
+					<h3 class="text-sm font-bold text-slate-900 dark:text-white">Consola de Marcaciones en Tiempo Real</h3>
+					<p class="text-xs text-slate-500 mt-0.5">Control biométrico y de geocerca para entradas, descansos y salidas de personal.</p>
+				</div>
+				<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1.5">
+					<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+					<span>Geocercas sincronizadas</span>
+				</span>
+			</div>
+			<div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/40 text-xs text-slate-600 dark:text-slate-300">
+				✓ 100% de colaboradores marcando con geolocalización activa en establecimiento asignado. 0 incidencias críticas registradas en la jornada.
+			</div>
 		</div>
 	</div>
 </div>
 
-{{-- SECCIÓN 12: SOLICITUDES --}}
+{{-- SECCIÓN 12: SOLICITUDES Y PERMISOS (DASHBOARD EJECUTIVO + GESTIÓN OPERATIVA) --}}
 <div id="section-shift-requests" class="hidden space-y-6">
-	<div class="pb-4 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+	<div class="pb-3 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 		<div class="flex items-center gap-2.5">
 			<div class="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/60 flex items-center justify-center">
 				<i data-lucide="clipboard-check" class="w-5 h-5"></i>
 			</div>
 			<div>
 				<h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-					Solicitudes de Personal & Permisos
+					Solicitudes y Permisos
 				</h1>
 				<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-					Aprobación de cambios de turno, solicitudes de vacaciones y permisos por horas.
+					Aprobación de cambios de turno, solicitudes de vacaciones, permisos por horas y licencias.
 				</p>
+			</div>
+		</div>
+
+		<div class="flex items-center gap-2">
+			<button onclick="switchRequestsSubTab('manage')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs">
+				<i data-lucide="check-square" class="w-3.5 h-3.5"></i>
+				<span>Bandeja de Aprobación</span>
+			</button>
+		</div>
+	</div>
+
+	<!-- Selector de Sub-Pestañas: Tablero Ejecutivo vs Gestión -->
+	<div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+		<div class="flex space-x-6 text-xs sm:text-sm font-semibold">
+			<button id="req-tab-btn-exec" onclick="switchRequestsSubTab('exec')" class="pb-3 border-b-2 border-brand-800 text-brand-800 dark:text-white dark:border-white transition-all flex items-center gap-2">
+				<i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+				<span>Tablero Ejecutivo</span>
+			</button>
+			<button id="req-tab-btn-manage" onclick="switchRequestsSubTab('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
+				<i data-lucide="inbox" class="w-4 h-4"></i>
+				<span>Bandeja de Aprobación &amp; Permisos</span>
+			</button>
+		</div>
+		<button onclick="switchRequestsSubTab('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
+			<span>Resolver solicitudes</span>
+			<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+		</button>
+	</div>
+
+	<!-- VISTA 1: TABLERO EJECUTIVO DE SOLICITUDES (8 KPIS + 3 GRÁFICOS + INDICADORES) -->
+	<div id="req-view-exec" class="space-y-6">
+		<!-- 8 Tarjetas KPI Principales -->
+		<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+			<!-- KPI 1: Solicitudes Recibidas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Recibidas</span>
+					<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
+						<i data-lucide="inbox" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-req-received">6</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-blue-600 font-semibold">
+					<span>+20.0%</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Trámites totales</div>
+			</div>
+
+			<!-- KPI 2: Pendientes -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Pendientes</span>
+					<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+						<i data-lucide="clock" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-amber-600 dark:text-amber-400" id="kpi-req-pending">3</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>-25.0%</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">En supervisión</div>
+			</div>
+
+			<!-- KPI 3: Aprobadas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Aprobadas</span>
+					<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+						<i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-req-approved">2</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>66.7% tasa</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Autorizadas</div>
+			</div>
+
+			<!-- KPI 4: Rechazadas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Rechazadas</span>
+					<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
+						<i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-req-rejected">1</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400 font-semibold">
+					<span>Por cobertura</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">No procedentes</div>
+			</div>
+
+			<!-- KPI 5: Tiempo de Resolución -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Resolución</span>
+					<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
+						<i data-lucide="zap" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-req-resolution">3.8 hrs</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>-26.9%</span>
+					<span class="text-slate-400">vs. ant.</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">SLA respuesta</div>
+			</div>
+
+			<!-- KPI 6: Permisos Activos -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Permisos Activos</span>
+					<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
+						<i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-req-active-leaves">2</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+					<span>Esta semana</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Ausencias prog.</div>
+			</div>
+
+			<!-- KPI 7: Cambios de Turno -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cambios Turno</span>
+					<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
+						<i data-lucide="arrow-right-left" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-req-swaps">3</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-purple-600 font-semibold">
+					<span>50% del total</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Swaps entre pares</div>
+			</div>
+
+			<!-- KPI 8: Solicitudes Vencidas -->
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-start justify-between text-slate-500 text-xs">
+					<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Vencidas</span>
+					<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
+						<i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+					</div>
+				</div>
+				<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-req-expired">0</div>
+				<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
+					<span>100% SLA</span>
+				</div>
+				<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Cero desatendidas</div>
+			</div>
+		</div>
+
+		<!-- 2 Gráficos Principales -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+			<!-- Gráfico 1: Distribución por Tipo de Solicitud -->
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="pie-chart" class="w-4 h-4 text-brand-600"></i>
+						<span>Distribución de Solicitudes por Tipo</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Proporción</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-req-type-dist"></canvas>
+				</div>
+			</div>
+
+			<!-- Gráfico 2: Tasa de Resolución & Dictámenes -->
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-600"></i>
+						<span>Dictámenes: Aprobadas vs. En Revisión vs. Rechazadas</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Casos</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-req-resolution"></canvas>
+				</div>
+			</div>
+		</div>
+
+		<!-- Indicadores Secundarios (4 Cards) -->
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Tasa de Aprobación</p>
+					<h4 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">66.7%</h4>
+					<p class="text-[10px] text-slate-400">2 de 3 resueltas</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+					<i data-lucide="check-circle" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Cumplimiento SLA (&lt;24h)</p>
+					<h4 class="text-lg font-bold text-blue-600 dark:text-blue-400 mt-0.5">100%</h4>
+					<p class="text-[10px] text-slate-400">Tiempo meta 24 horas</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center">
+					<i data-lucide="clock" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Ingreso vía App Móvil</p>
+					<h4 class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">100%</h4>
+					<p class="text-[10px] text-slate-400">Cero papeleo físico</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center">
+					<i data-lucide="smartphone" class="w-4 h-4"></i>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex items-center justify-between">
+				<div>
+					<p class="text-[11px] text-slate-500 dark:text-slate-400">Índice Flexibilidad Laboral</p>
+					<h4 class="text-lg font-bold text-teal-600 dark:text-teal-400 mt-0.5">9.4 / 10</h4>
+					<p class="text-[10px] text-slate-400">Satisfacción de equipo</p>
+				</div>
+				<div class="w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center">
+					<i data-lucide="smile" class="w-4 h-4"></i>
+				</div>
+			</div>
+		</div>
+
+		<!-- Gráficos de Evolución de Solicitudes -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="trending-up" class="w-4 h-4 text-brand-600"></i>
+						<span>Evolución Semanal de Solicitudes Recibidas vs. Resueltas</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Trámites</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-req-evolution"></canvas>
+				</div>
+			</div>
+
+			<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+				<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+					<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+						<i data-lucide="bar-chart-2" class="w-4 h-4 text-purple-600"></i>
+						<span>Distribución por Motivo de Permiso</span>
+					</h3>
+					<span class="text-[10px] font-mono text-slate-400">Casos</span>
+				</div>
+				<div class="h-64 w-full">
+					<canvas id="chart-req-reasons"></canvas>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden">
-		<div class="overflow-x-auto">
-			<table class="w-full text-left border-collapse text-xs">
-				<thead>
-					<tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-						<th class="p-3">Colaborador Solicitante</th>
-						<th class="p-3">Tipo de Solicitud</th>
-						<th class="p-3">Fecha del Turno</th>
-						<th class="p-3">Motivo / Reemplazo</th>
-						<th class="p-3 text-center">Estado</th>
-						<th class="p-3 text-right">Acción</th>
-					</tr>
-				</thead>
-				<tbody id="wfm-requests-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
-					<!-- Rellenado dinámicamente -->
-				</tbody>
-			</table>
+	<!-- VISTA 2: BANDEJA DE APROBACIÓN DE SOLICITUDES -->
+	<div id="req-view-manage" class="hidden space-y-6">
+		<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden">
+			<div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+				<h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">Bandeja de Dictamen para Supervisores</h3>
+				<span class="text-xs text-slate-500">Dictámenes con impacto en turnos en tiempo real</span>
+			</div>
+			<div class="overflow-x-auto">
+				<table class="w-full text-left border-collapse text-xs">
+					<thead>
+						<tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+							<th class="p-3">Colaborador Solicitante</th>
+							<th class="p-3">Tipo de Solicitud</th>
+							<th class="p-3">Fecha del Turno</th>
+							<th class="p-3">Motivo / Reemplazo</th>
+							<th class="p-3 text-center">Estado</th>
+							<th class="p-3 text-right">Acción</th>
+						</tr>
+					</thead>
+					<tbody id="wfm-requests-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+						<!-- Rellenado dinámicamente -->
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>
