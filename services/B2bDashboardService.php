@@ -88,9 +88,9 @@ class B2bDashboardService extends BaseService
 			],
 			'period_presets' => [
 				['code' => '7D', 'label' => 'Últimos 7 Días'],
-				['code' => 'MTD', 'label' => 'Mes a la Fecha (MTD)'],
-				['code' => 'QTD', 'label' => 'Trimestre a la Fecha (QTD)'],
-				['code' => 'YTD', 'label' => 'Año a la Fecha (YTD)'],
+				['code' => 'MTD', 'label' => 'Mes actual hasta hoy'],
+				['code' => 'QTD', 'label' => 'Trimestre actual hasta hoy'],
+				['code' => 'YTD', 'label' => 'Año actual hasta hoy'],
 				['code' => 'CUSTOM', 'label' => 'Rango Personalizado']
 			]
 		];
@@ -162,7 +162,7 @@ class B2bDashboardService extends BaseService
 
 			return [
 				'preset' => 'QTD',
-				'period_label' => 'Q' . $quarter . ' ' . $ref->format('Y') . ' a la fecha',
+				'period_label' => 'Trimestre ' . $quarter . ' de ' . $ref->format('Y') . ' hasta hoy',
 				'current' => ['start' => $currStart->format('Y-m-d'), 'end' => $currEnd->format('Y-m-d')],
 				'previous' => ['start' => $prevStart->format('Y-m-d'), 'end' => $prevEnd->format('Y-m-d')],
 				'days' => (int)$currStart->diff($currEnd)->days + 1
@@ -178,7 +178,7 @@ class B2bDashboardService extends BaseService
 
 			return [
 				'preset' => 'YTD',
-				'period_label' => 'Año ' . $ref->format('Y') . ' a la fecha',
+				'period_label' => 'Año ' . $ref->format('Y') . ' hasta hoy',
 				'current' => ['start' => $currStart->format('Y-m-d'), 'end' => $currEnd->format('Y-m-d')],
 				'previous' => ['start' => $prevStart->format('Y-m-d'), 'end' => $prevEnd->format('Y-m-d')],
 				'days' => (int)$currStart->diff($currEnd)->days + 1
@@ -193,7 +193,7 @@ class B2bDashboardService extends BaseService
 
 		return [
 			'preset' => 'MTD',
-			'period_label' => $ref->format('F Y') . ' a la fecha',
+			'period_label' => ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][(int)$ref->format('n') - 1] . ' ' . $ref->format('Y') . ' hasta hoy',
 			'current' => ['start' => $currStart->format('Y-m-d'), 'end' => $currEnd->format('Y-m-d')],
 			'previous' => ['start' => $prevStart->format('Y-m-d'), 'end' => $prevEnd->format('Y-m-d')],
 			'days' => (int)$currStart->diff($currEnd)->days + 1

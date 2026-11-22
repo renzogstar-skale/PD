@@ -64,7 +64,7 @@ class B2bAnalyticsService extends BaseService
 				}
 				$prevFrom = sprintf('%04d-%02d-01', $prevQYear, $prevQStartMonth);
 				$prevTo = date('Y-m-d', strtotime('-1 day', strtotime($currFrom)));
-				$label = "Trimestre Q{$quarter} {$refYear} a la Fecha";
+				$label = "Trimestre {$quarter} de {$refYear} hasta hoy";
 				$prevLabel = 'Trimestre Anterior';
 				$days = max(1, (int)round((strtotime($currTo) - strtotime($currFrom)) / 86400) + 1);
 				break;
@@ -75,7 +75,7 @@ class B2bAnalyticsService extends BaseService
 				$prevY = $refYear - 1;
 				$prevFrom = sprintf('%04d-01-01', $prevY);
 				$prevTo = sprintf('%04d-%02d-%02d', $prevY, $refMonth, min(28, $refDay));
-				$label = "Año {$refYear} a la Fecha";
+				$label = "Año {$refYear} hasta hoy";
 				$prevLabel = "Año {$prevY} al mismo corte";
 				$days = max(1, (int)round((strtotime($currTo) - strtotime($currFrom)) / 86400) + 1);
 				break;
@@ -105,7 +105,7 @@ class B2bAnalyticsService extends BaseService
 				$prevFrom = sprintf('%04d-%02d-01', $prevYear, $prevMonth);
 				$prevTo = sprintf('%04d-%02d-%02d', $prevYear, $prevMonth, min(28, $refDay));
 				$monthNames = [1=>'Enero', 2=>'Febrero', 3=>'Marzo', 4=>'Abril', 5=>'Mayo', 6=>'Junio', 7=>'Julio', 8=>'Agosto', 9=>'Septiembre', 10=>'Octubre', 11=>'Noviembre', 12=>'Diciembre'];
-				$label = "Mes a la Fecha ({$monthNames[$refMonth]} {$refYear})";
+				$label = "Mes actual hasta hoy ({$monthNames[$refMonth]} {$refYear})";
 				$prevLabel = "Mismo corte mes ant. ({$monthNames[$prevMonth]})";
 				$days = max(1, (int)round((strtotime($currTo) - strtotime($currFrom)) / 86400) + 1);
 				break;
@@ -465,7 +465,7 @@ class B2bAnalyticsService extends BaseService
 				'avg_sales_per_establishment' => ['label' => 'Ventas Promedio / Almacén', 'value' => '$' . number_format($avgSalesPerEst, 2), 'status' => 'teal'],
 				'avg_profitability_per_customer' => ['label' => 'Margen Bruto Promedio / Cliente', 'value' => '22.8%', 'status' => 'emerald'],
 				'commercial_coverage' => ['label' => 'Cobertura Comercial de Sedes', 'value' => $coveragePct . '%', 'status' => 'blue'],
-				'customer_lifetime_value' => ['label' => 'Valor de Vida del Cliente (CLV)', 'value' => '$' . number_format($clv, 2), 'status' => 'purple']
+				'customer_lifetime_value' => ['label' => 'Valor estimado del cliente a 12 meses', 'value' => '$' . number_format($clv, 2), 'status' => 'purple']
 			],
 			'charts' => [
 				'evolution_trend' => [
@@ -681,7 +681,7 @@ class B2bAnalyticsService extends BaseService
 				'avg_unit_cost' => ['label' => 'Costo Promedio Unitario', 'value' => '$' . number_format($avgUnitCost, 2), 'status' => 'slate'],
 				'avg_margin_by_top_cat' => ['label' => 'Margen Categoría Líder (Lácteos)', 'value' => '21.2%', 'status' => 'emerald'],
 				'top_category_sales_share' => ['label' => 'Participación Cat. Líder en Venta', 'value' => '38.0%', 'status' => 'blue'],
-				'negative_margin_products_pct' => ['label' => 'SKU con Margen Negativo', 'value' => '0.0%', 'status' => 'emerald'],
+				'negative_margin_products_pct' => ['label' => 'Productos con margen negativo', 'value' => '0.0%', 'status' => 'emerald'],
 				'catalog_turnover_index' => ['label' => 'Índice de Rotación del Catálogo', 'value' => $turnoverIndex . 'x', 'status' => 'indigo'],
 				'category_sales_growth' => ['label' => 'Crecimiento Ventas Categoría', 'value' => '+7.4%', 'status' => 'emerald'],
 				'top_products_concentration' => ['label' => 'Concentración en Top 5 Productos', 'value' => $topProductsConcentration . '%', 'status' => 'amber']
@@ -820,7 +820,7 @@ class B2bAnalyticsService extends BaseService
 					'definition' => 'Monto total en dólares correspondiente a los pedidos comerciales recepcionados.'
 				],
 				'avg_ticket_order' => [
-					'title' => 'Ticket Promedio',
+					'title' => 'Valor promedio por pedido',
 					'value' => $avgTicket,
 					'formatted' => '$' . number_format($avgTicket, 2),
 					'prev' => round($avgTicket * 0.97, 2),
@@ -856,7 +856,7 @@ class B2bAnalyticsService extends BaseService
 				'avg_conversion_time_days' => ['label' => 'Tiempo Promedio de Conversión', 'value' => $avgConversionDays . ' días', 'status' => 'teal'],
 				'avg_processing_time_hours' => ['label' => 'Tiempo Promedio Procesamiento', 'value' => $avgProcessingHours . ' horas', 'status' => 'blue'],
 				'cancelled_orders_pct' => ['label' => 'Pedidos Cancelados', 'value' => $cancelledPct . '%', 'status' => 'rose'],
-				'on_time_delivery_pct' => ['label' => 'Cumplimiento de Entregas (OTIF)', 'value' => $onTimeDeliveryPct . '%', 'status' => 'emerald'],
+				'on_time_delivery_pct' => ['label' => 'Entregas completas y a tiempo', 'value' => $onTimeDeliveryPct . '%', 'status' => 'emerald'],
 				'orders_growth_pct' => ['label' => 'Crecimiento de Pedidos vs Ant.', 'value' => '+11.1%', 'status' => 'emerald'],
 				'pending_orders_value' => ['label' => 'Valor de Pedidos Pendientes', 'value' => '$' . number_format($pendingOrdersVal, 2), 'status' => 'indigo']
 			],
@@ -1042,7 +1042,7 @@ class B2bAnalyticsService extends BaseService
 					'definition' => 'Proporción de comprobantes comerciales que registran atraso frente al total emitido.'
 				],
 				'dso_days' => [
-					'title' => 'Días de Cobro (DSO)',
+					'title' => 'Días promedio de cobro',
 					'value' => $dso,
 					'formatted' => $dso . 'd',
 					'prev' => 21.0,
@@ -1250,7 +1250,7 @@ class B2bAnalyticsService extends BaseService
 				'territory_sales_share' => ['label' => 'Participación Territorio Líder', 'value' => $topTerritoryShare . '%', 'status' => 'blue'],
 				'avg_active_customers_per_rep' => ['label' => 'Clientes Activos / Vendedor', 'value' => $avgCustomersPerRep . ' clientes', 'status' => 'teal'],
 				'avg_orders_per_rep' => ['label' => 'Pedidos / Vendedor', 'value' => $avgOrdersPerRep . ' pedidos', 'status' => 'slate'],
-				'avg_commercial_ticket' => ['label' => 'Ticket Promedio Comercial', 'value' => '$' . number_format($avgTicket, 2), 'status' => 'teal'],
+				'avg_commercial_ticket' => ['label' => 'Valor promedio por venta', 'value' => '$' . number_format($avgTicket, 2), 'status' => 'teal'],
 				'gross_margin_per_hour' => ['label' => 'Margen Bruto / Hora ($/h)', 'value' => '$' . number_format($grossMarginPerHour, 2) . '/h', 'status' => 'emerald'],
 				'effective_hours_productivity' => ['label' => 'Horas Efectivas Promedio', 'value' => '34.2 h/sem', 'status' => 'blue'],
 				'territories_meeting_quota_pct' => ['label' => 'Territorios en Meta (>=100%)', 'value' => $territoriesMeetingQuota . '%', 'status' => 'emerald']
@@ -1359,7 +1359,7 @@ class B2bAnalyticsService extends BaseService
 					'formatted' => '$' . number_format($cogs, 2),
 					'prev' => round($cogs * 0.93, 2),
 					'variance' => $this->FormatVariance($cogs, round($cogs * 0.93, 2), true),
-					'sub' => 'COGS real de adquisición',
+					'sub' => 'Costo real de compra',
 					'formula' => 'SUM(Unidades vendidas × Costo unitario promedio ponderado)',
 					'definition' => 'Costo directo de adquisición de la mercadería comercializada durante el período.'
 				],
@@ -1603,7 +1603,7 @@ class B2bAnalyticsService extends BaseService
 					'formatted' => $orderFulfillmentPct . '%',
 					'prev' => 95.0,
 					'variance' => $this->FormatVariance($orderFulfillmentPct, 95.0),
-					'sub' => 'OTIF de despacho',
+					'sub' => 'Entregas completas y a tiempo',
 					'formula' => '(Pedidos entregados a tiempo y completos / Total despachos) × 100',
 					'definition' => 'Nivel de servicio logístico y entrega comercial en tiempo y forma acordados.'
 				],
@@ -1922,7 +1922,7 @@ class B2bAnalyticsService extends BaseService
 					'definition' => 'Eventos anómalos notificados por el personal durante la manipulación y despacho.'
 				],
 				'fefo_compliance_pct' => [
-					'title' => 'Cumplimiento FEFO',
+					'title' => 'Rotación por vencimiento',
 					'value' => $fefoCompliancePct,
 					'formatted' => $fefoCompliancePct . '%',
 					'prev' => 95.5,
@@ -2305,7 +2305,7 @@ class B2bAnalyticsService extends BaseService
 					'formatted' => number_format($avgResolutionHours, 1) . ' hrs',
 					'prev' => $prevResolution,
 					'variance' => $this->FormatVariance($avgResolutionHours, $prevResolution, true),
-					'sub' => 'SLA de respuesta',
+					'sub' => 'Plazo de respuesta',
 					'formula' => 'AVG(Horas transcurridas entre registro y dictamen)',
 					'definition' => 'Tiempo medio que toma la supervisión en resolver y responder formalmente la solicitud.'
 				],
@@ -2342,7 +2342,7 @@ class B2bAnalyticsService extends BaseService
 			],
 			'secondary_indicators' => [
 				'approval_rate_pct' => ['label' => 'Tasa de Aprobación', 'value' => '66.7%', 'status' => 'emerald'],
-				'sla_compliance' => ['label' => 'Cumplimiento SLA (<24h)', 'value' => '100%', 'status' => 'blue'],
+				'sla_compliance' => ['label' => 'Respondidas en menos de 24 horas', 'value' => '100%', 'status' => 'blue'],
 				'digital_submission_ratio' => ['label' => 'Ingreso vía App Móvil', 'value' => '100%', 'status' => 'emerald'],
 				'staff_satisfaction' => ['label' => 'Índice de Flexibilidad Laboral', 'value' => '9.4 / 10', 'status' => 'teal']
 			],

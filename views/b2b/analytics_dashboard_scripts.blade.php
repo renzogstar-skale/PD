@@ -390,21 +390,15 @@ function renderCustomersAnalytics(data) {
 	setSafeText('kpi-cust-new-val', k.new_customers?.formatted);
 	setSafeHtml('kpi-cust-new-var', `<span class="${k.new_customers?.variance?.class || ''}">${k.new_customers?.variance?.text || 'N/D'}</span>`);
 
-	setSafeText('kpi-cust-inactive-val', k.churn_rate?.formatted);
-	setSafeText('kpi-cust-inactive', k.churn_rate?.formatted);
-	setSafeHtml('kpi-cust-inactive-var', `<span class="${k.churn_rate?.variance?.class || ''}">${k.churn_rate?.variance?.text || 'N/D'}</span>`);
+	// Clientes inactivos, Locales con compras y Clientes con deuda vencida conservan el valor de su propia métrica (B2bCustomerService); no se sobrescriben con otras.
 
 	setSafeText('kpi-cust-retention-val', k.retention_rate?.formatted);
 	setSafeHtml('kpi-cust-retention-var', `<span class="${k.retention_rate?.variance?.class || ''}">${k.retention_rate?.variance?.text || 'N/D'}</span>`);
 
-	setSafeText('kpi-cust-est-val', k.total_customer_revenue?.formatted);
-	setSafeHtml('kpi-cust-est-var', `<span class="${k.total_customer_revenue?.variance?.class || ''}">${k.total_customer_revenue?.variance?.text || 'N/D'}</span>`);
 
 	setSafeText('kpi-cust-freq-val', k.purchase_frequency?.formatted);
 	setSafeHtml('kpi-cust-freq-var', `<span class="${k.purchase_frequency?.variance?.class || ''}">${k.purchase_frequency?.variance?.text || 'N/D'}</span>`);
 
-	setSafeText('kpi-cust-overdue-val', k.portfolio_growth?.formatted);
-	setSafeHtml('kpi-cust-overdue-var', `<span class="${k.portfolio_growth?.variance?.class || ''}">${k.portfolio_growth?.variance?.text || 'N/D'}</span>`);
 
 	setSafeText('kpi-cust-avg-sales-val', k.avg_revenue_per_customer?.formatted);
 	setSafeHtml('kpi-cust-avg-sales-var', `<span class="${k.avg_revenue_per_customer?.variance?.class || ''}">${k.avg_revenue_per_customer?.variance?.text || 'N/D'}</span>`);
@@ -830,7 +824,7 @@ function renderProfitabilityAnalytics(data) {
 					backgroundColor: '#3b82f6'
 				},
 				{
-					label: 'COGS ($)',
+					label: 'Costo de los productos vendidos ($)',
 					data: c.sales_costs_margin.cogs || [],
 					backgroundColor: '#64748b'
 				},
@@ -956,7 +950,7 @@ function renderReportsAnalytics(data) {
 		renderOrCreateChart('chart-intel-funnel', 'bar', {
 			labels: c.commercial_funnel.labels || [],
 			datasets: [{
-				label: 'Monto en Funnel ($)',
+				label: 'Monto en etapas del proceso de venta ($)',
 				data: c.commercial_funnel.values || [],
 				backgroundColor: ['#6366f1', '#3b82f6', '#10b981', '#059669']
 			}]

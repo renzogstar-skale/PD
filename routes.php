@@ -1254,6 +1254,8 @@ $app->group('/api', function (RouteCollectorProxy $group)
 	// Módulo 9: Gestión Inteligente de Horarios y Cobertura (WFM)
 	$group->get('/b2b/wfm/dashboard', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'GetDashboard']);
 	$group->get('/b2b/wfm/schedule', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'GetSchedule']);
+	$group->get('/b2b/wfm/schedule/daily', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'GetDailySchedule']);
+	$group->get('/b2b/wfm/schedule/monthly', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'GetMonthlySchedule']);
 	$group->get('/b2b/wfm/active-shift', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'GetActiveShift']);
 	$group->post('/b2b/wfm/shifts', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'SaveShift']);
 	$group->delete('/b2b/wfm/shifts/{id:[0-9]+}', [\Grocy\Controllers\Api\B2bWorkforceApiController::class, 'DeleteShift']);

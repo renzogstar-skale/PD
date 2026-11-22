@@ -29,26 +29,26 @@
 	];
 
 	const DEFAULT_EMPLOYEES = [
-		{ id: 1, code: 'EMP-001', name: 'Jorge Luis Quispe', role: 'sales_rep', role_label: 'Senior B2B Sales Representative', department: 'Fuerza de Ventas B2B', email: 'jquispe@princedistributors.com', phone: '+1 (954) 555-0101', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
-		{ id: 2, code: 'EMP-002', name: 'Rosa María Huamán', role: 'merchandiser', role_label: 'Lead Merchandiser', department: 'Reposición & Merchandising', email: 'rhuaman@princedistributors.com', phone: '+1 (954) 555-0102', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
-		{ id: 3, code: 'EMP-003', name: 'Carlos Mendoza', role: 'supervisor', role_label: 'Operations & Sales Supervisor', department: 'Supervisión & Control', email: 'cmendoza@princedistributors.com', phone: '+1 (954) 555-0103', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 26.00, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
-		{ id: 4, code: 'EMP-004', name: 'Miguel Ángel Flores', role: 'merchandiser', role_label: 'Warehouse & Shelf Stocker', department: 'Reposición & Merchandising', email: 'mflores@princedistributors.com', phone: '+1 (954) 555-0104', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.00, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
-		{ id: 5, code: 'EMP-005', name: 'Ana Sofía Rivas', role: 'sales_rep', role_label: 'Key Account Executive', department: 'Fuerza de Ventas B2B', email: 'arivas@princedistributors.com', phone: '+1 (305) 555-0105', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 19.50, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 2, establishment_name: 'Aventura Mall Retail Hub', territory: 'Miami-Dade North', active: 1 },
-		{ id: 6, code: 'EMP-006', name: 'Diego Alonso Ramos', role: 'merchandiser', role_label: 'Retail Merchandiser', department: 'Reposición & Merchandising', email: 'dramos@princedistributors.com', phone: '+1 (305) 555-0106', contract_type: 'part_time', contracted_hours: 40, hourly_cost: 16.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 2, establishment_name: 'Aventura Mall Retail Hub', territory: 'Miami-Dade North', active: 1 },
-		{ id: 7, code: 'EMP-007', name: 'Patricia Vega', role: 'supervisor', role_label: 'Commercial Supervisor Miami-Dade', department: 'Supervisión & Control', email: 'pvega@princedistributors.com', phone: '+1 (305) 555-0107', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 27.00, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 2, establishment_name: 'Aventura Mall Retail Hub', territory: 'Miami-Dade North', active: 1 },
-		{ id: 8, code: 'EMP-008', name: 'Brenda Lucía Vargas', role: 'sales_rep', role_label: 'Route Sales Representative', department: 'Fuerza de Ventas B2B', email: 'bvargas@princedistributors.com', phone: '+1 (954) 555-0108', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 3, establishment_name: 'Hollywood Boulevard Supercenter', territory: 'Broward South', active: 1 },
-		{ id: 9, code: 'EMP-009', name: 'Fernando José Castro', role: 'merchandiser', role_label: 'Forklift & Inventory Specialist', department: 'Operaciones & Logística', email: 'fcastro@princedistributors.com', phone: '+1 (954) 555-0109', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 17.50, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 4, establishment_name: 'Fort Lauderdale Logistics Hub', territory: 'Broward Central', active: 1 },
-		{ id: 10, code: 'EMP-010', name: 'Lucía Carmen Espinoza', role: 'merchandiser', role_label: 'Order Picker & Restocker', department: 'Operaciones & Logística', email: 'lespinoza@princedistributors.com', phone: '+1 (305) 555-0110', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 5, establishment_name: 'Miami Gardens Wholesale', territory: 'Miami-Dade North', active: 1 },
-		{ id: 11, code: 'EMP-011', name: 'Roberto Salcedo', role: 'supervisor', role_label: 'Territorial Supervisor Broward', department: 'Supervisión & Control', email: 'rsalcedo@princedistributors.com', phone: '+1 (954) 555-0111', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 26.50, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 4, establishment_name: 'Fort Lauderdale Logistics Hub', territory: 'Broward Central', active: 1 },
-		{ id: 12, code: 'EMP-012', name: 'Juan Carlos Benítez', role: 'sales_rep', role_label: 'Wholesale Account Rep', department: 'Fuerza de Ventas B2B', email: 'jbenitez@princedistributors.com', phone: '+1 (954) 555-0112', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 4, establishment_name: 'Fort Lauderdale Logistics Hub', territory: 'Broward Central', active: 1 },
-		{ id: 13, code: 'EMP-013', name: 'Valeria Nicole Morales', role: 'merchandiser', role_label: 'Night Restocker & FEFO Specialist', department: 'Reposición & Merchandising', email: 'vmorales@princedistributors.com', phone: '+1 (305) 555-0113', contract_type: 'full_time', contracted_hours: 44, hourly_cost: 17.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 6, establishment_name: 'Sunny Isles Gourmet Mart', territory: 'Miami-Dade North', active: 1 },
-		{ id: 14, code: 'EMP-014', name: 'Kevin Alexander Gómez', role: 'merchandiser', role_label: 'Dispatch Driver & Merchandiser', department: 'Operaciones & Logística', email: 'kgomez@princedistributors.com', phone: '+1 (954) 555-0114', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 17.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 7, establishment_name: 'Pembroke Pines Distribution', territory: 'Broward South', active: 1 },
-		{ id: 15, code: 'EMP-015', name: 'María Elena Gutiérrez', role: 'sales_rep', role_label: 'Specialty Accounts Rep', department: 'Fuerza de Ventas B2B', email: 'mgutierrez@princedistributors.com', phone: '+1 (305) 555-0115', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 19.50, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 6, establishment_name: 'Sunny Isles Gourmet Mart', territory: 'Miami-Dade North', active: 1 },
-		{ id: 16, code: 'EMP-016', name: 'Renzo Manuel Paucar', role: 'merchandiser', role_label: 'Heavy Stocker & Receiving', department: 'Reposición & Merchandising', email: 'rpaucar@princedistributors.com', phone: '+1 (954) 555-0116', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.00, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 7, establishment_name: 'Pembroke Pines Distribution', territory: 'Broward South', active: 1 },
-		{ id: 17, code: 'EMP-017', name: 'Diana Carolina Paredes', role: 'sales_rep', role_label: 'Territory Sales Rep', department: 'Fuerza de Ventas B2B', email: 'dparedes@princedistributors.com', phone: '+1 (954) 555-0117', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 3, establishment_name: 'Hollywood Boulevard Supercenter', territory: 'Broward South', active: 1 },
-		{ id: 18, code: 'EMP-018', name: 'Andrés Felipe Soto', role: 'merchandiser', role_label: 'WMS Inventory Specialist', department: 'Operaciones & Logística', email: 'asoto@princedistributors.com', phone: '+1 (954) 555-0118', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 17.00, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 8, establishment_name: 'Pompano Beach Central Depot', territory: 'Broward Central', active: 1 },
-		{ id: 19, code: 'EMP-019', name: 'Camila Fernanda Ruiz', role: 'merchandiser', role_label: 'Express Merchandiser', department: 'Reposición & Merchandising', email: 'cruiz@princedistributors.com', phone: '+1 (954) 555-0119', contract_type: 'part_time', contracted_hours: 36, hourly_cost: 16.00, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 8, establishment_name: 'Pompano Beach Central Depot', territory: 'Broward Central', active: 1 },
-		{ id: 20, code: 'EMP-020', name: 'Gonzalo Javier Núñez', role: 'admin', role_label: 'Global Workforce Director', department: 'Dirección de Operaciones', email: 'gnunez@princedistributors.com', phone: '+1 (954) 555-0120', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 32.00, supervisor_id: null, supervisor_name: 'Executive Board', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 }
+		{ id: 1, code: 'EMP-001', name: 'Jorge Luis Quispe', role: 'sales_rep', role_label: 'Vendedor mayorista sénior', department: 'Fuerza de Ventas B2B', email: 'jquispe@princedistributors.com', phone: '+1 (954) 555-0101', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
+		{ id: 2, code: 'EMP-002', name: 'Rosa María Huamán', role: 'merchandiser', role_label: 'Reponedor líder', department: 'Reposición & Merchandising', email: 'rhuaman@princedistributors.com', phone: '+1 (954) 555-0102', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
+		{ id: 3, code: 'EMP-003', name: 'Carlos Mendoza', role: 'supervisor', role_label: 'Supervisor de operaciones y ventas', department: 'Supervisión & Control', email: 'cmendoza@princedistributors.com', phone: '+1 (954) 555-0103', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 26.00, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
+		{ id: 4, code: 'EMP-004', name: 'Miguel Ángel Flores', role: 'merchandiser', role_label: 'Reponedor de almacén y góndola', department: 'Reposición & Merchandising', email: 'mflores@princedistributors.com', phone: '+1 (954) 555-0104', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.00, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 },
+		{ id: 5, code: 'EMP-005', name: 'Ana Sofía Rivas', role: 'sales_rep', role_label: 'Ejecutivo de cuentas clave', department: 'Fuerza de Ventas B2B', email: 'arivas@princedistributors.com', phone: '+1 (305) 555-0105', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 19.50, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 2, establishment_name: 'Aventura Mall Retail Hub', territory: 'Miami-Dade North', active: 1 },
+		{ id: 6, code: 'EMP-006', name: 'Diego Alonso Ramos', role: 'merchandiser', role_label: 'Reponedor de tienda', department: 'Reposición & Merchandising', email: 'dramos@princedistributors.com', phone: '+1 (305) 555-0106', contract_type: 'part_time', contracted_hours: 40, hourly_cost: 16.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 2, establishment_name: 'Aventura Mall Retail Hub', territory: 'Miami-Dade North', active: 1 },
+		{ id: 7, code: 'EMP-007', name: 'Patricia Vega', role: 'supervisor', role_label: 'Supervisor comercial Miami-Dade', department: 'Supervisión & Control', email: 'pvega@princedistributors.com', phone: '+1 (305) 555-0107', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 27.00, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 2, establishment_name: 'Aventura Mall Retail Hub', territory: 'Miami-Dade North', active: 1 },
+		{ id: 8, code: 'EMP-008', name: 'Brenda Lucía Vargas', role: 'sales_rep', role_label: 'Vendedor de ruta', department: 'Fuerza de Ventas B2B', email: 'bvargas@princedistributors.com', phone: '+1 (954) 555-0108', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 3, establishment_name: 'Hollywood Boulevard Supercenter', territory: 'Broward South', active: 1 },
+		{ id: 9, code: 'EMP-009', name: 'Fernando José Castro', role: 'merchandiser', role_label: 'Operador de montacargas e inventario', department: 'Operaciones & Logística', email: 'fcastro@princedistributors.com', phone: '+1 (954) 555-0109', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 17.50, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 4, establishment_name: 'Fort Lauderdale Logistics Hub', territory: 'Broward Central', active: 1 },
+		{ id: 10, code: 'EMP-010', name: 'Lucía Carmen Espinoza', role: 'merchandiser', role_label: 'Preparador de pedidos y reponedor', department: 'Operaciones & Logística', email: 'lespinoza@princedistributors.com', phone: '+1 (305) 555-0110', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 5, establishment_name: 'Miami Gardens Wholesale', territory: 'Miami-Dade North', active: 1 },
+		{ id: 11, code: 'EMP-011', name: 'Roberto Salcedo', role: 'supervisor', role_label: 'Supervisor territorial Broward', department: 'Supervisión & Control', email: 'rsalcedo@princedistributors.com', phone: '+1 (954) 555-0111', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 26.50, supervisor_id: 20, supervisor_name: 'Gonzalo Javier Núñez', establishment_id: 4, establishment_name: 'Fort Lauderdale Logistics Hub', territory: 'Broward Central', active: 1 },
+		{ id: 12, code: 'EMP-012', name: 'Juan Carlos Benítez', role: 'sales_rep', role_label: 'Vendedor de cuentas mayoristas', department: 'Fuerza de Ventas B2B', email: 'jbenitez@princedistributors.com', phone: '+1 (954) 555-0112', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 4, establishment_name: 'Fort Lauderdale Logistics Hub', territory: 'Broward Central', active: 1 },
+		{ id: 13, code: 'EMP-013', name: 'Valeria Nicole Morales', role: 'merchandiser', role_label: 'Reponedor nocturno y control de vencimientos', department: 'Reposición & Merchandising', email: 'vmorales@princedistributors.com', phone: '+1 (305) 555-0113', contract_type: 'full_time', contracted_hours: 44, hourly_cost: 17.00, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 6, establishment_name: 'Sunny Isles Gourmet Mart', territory: 'Miami-Dade North', active: 1 },
+		{ id: 14, code: 'EMP-014', name: 'Kevin Alexander Gómez', role: 'merchandiser', role_label: 'Chofer de reparto y reponedor', department: 'Operaciones & Logística', email: 'kgomez@princedistributors.com', phone: '+1 (954) 555-0114', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 17.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 7, establishment_name: 'Pembroke Pines Distribution', territory: 'Broward South', active: 1 },
+		{ id: 15, code: 'EMP-015', name: 'María Elena Gutiérrez', role: 'sales_rep', role_label: 'Vendedor de cuentas especiales', department: 'Fuerza de Ventas B2B', email: 'mgutierrez@princedistributors.com', phone: '+1 (305) 555-0115', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 19.50, supervisor_id: 7, supervisor_name: 'Patricia Vega', establishment_id: 6, establishment_name: 'Sunny Isles Gourmet Mart', territory: 'Miami-Dade North', active: 1 },
+		{ id: 16, code: 'EMP-016', name: 'Renzo Manuel Paucar', role: 'merchandiser', role_label: 'Reponedor de carga pesada y recepción', department: 'Reposición & Merchandising', email: 'rpaucar@princedistributors.com', phone: '+1 (954) 555-0116', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 16.00, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 7, establishment_name: 'Pembroke Pines Distribution', territory: 'Broward South', active: 1 },
+		{ id: 17, code: 'EMP-017', name: 'Diana Carolina Paredes', role: 'sales_rep', role_label: 'Vendedor de territorio', department: 'Fuerza de Ventas B2B', email: 'dparedes@princedistributors.com', phone: '+1 (954) 555-0117', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 18.50, supervisor_id: 3, supervisor_name: 'Carlos Mendoza', establishment_id: 3, establishment_name: 'Hollywood Boulevard Supercenter', territory: 'Broward South', active: 1 },
+		{ id: 18, code: 'EMP-018', name: 'Andrés Felipe Soto', role: 'merchandiser', role_label: 'Especialista en control de inventario', department: 'Operaciones & Logística', email: 'asoto@princedistributors.com', phone: '+1 (954) 555-0118', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 17.00, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 8, establishment_name: 'Pompano Beach Central Depot', territory: 'Broward Central', active: 1 },
+		{ id: 19, code: 'EMP-019', name: 'Camila Fernanda Ruiz', role: 'merchandiser', role_label: 'Reponedor de entregas rápidas', department: 'Reposición & Merchandising', email: 'cruiz@princedistributors.com', phone: '+1 (954) 555-0119', contract_type: 'part_time', contracted_hours: 36, hourly_cost: 16.00, supervisor_id: 11, supervisor_name: 'Roberto Salcedo', establishment_id: 8, establishment_name: 'Pompano Beach Central Depot', territory: 'Broward Central', active: 1 },
+		{ id: 20, code: 'EMP-020', name: 'Gonzalo Javier Núñez', role: 'admin', role_label: 'Director de personal', department: 'Dirección de Operaciones', email: 'gnunez@princedistributors.com', phone: '+1 (954) 555-0120', contract_type: 'full_time', contracted_hours: 48, hourly_cost: 32.00, supervisor_id: null, supervisor_name: 'Executive Board', establishment_id: 1, establishment_name: 'Prince Distributors — Hallandale HQ', territory: 'Broward South', active: 1 }
 	];
 
 	// Tareas operacionales de demostración
@@ -264,6 +264,9 @@
 			this.currentRole = 'admin'; // 'admin' | 'supervisor' | 'sales_rep' | 'merchandiser'
 			this.currentEmployeeId = 2; // Rosa María Huamán por defecto para reponedor / jornada
 			this.activeWeek = '2026-W47';
+			this.activeView = 'weekly'; // 'daily' | 'weekly' | 'monthly'
+			this.selectedDate = '2026-11-20';
+			this.selectedMonth = '2026-11';
 			this.activeEstablishment = 'Todos';
 			this.activeTerritory = 'Todos';
 			this.activeDepartment = 'Todos';
@@ -425,9 +428,16 @@
 			return this.state.schedules[this.activeWeek] || this.state.schedules['2026-W47'];
 		}
 
-		calculateKPIs(weekCode = this.activeWeek, estFilter = this.activeEstablishment, deptFilter = this.activeDepartment) {
+		calculateKPIs(weekCode = this.activeWeek, estFilter = this.activeEstablishment, deptFilter = this.activeDepartment, view = this.activeView, targetDate = this.selectedDate) {
 			const sched = this.state.schedules[weekCode] || this.state.schedules['2026-W47'];
-			let filteredShifts = sched.shifts.filter(s => s.shift_type !== 'rest');
+			let allShifts = sched.shifts || [];
+
+			if (view === 'daily' && targetDate) {
+				const targetDow = new Date(targetDate + 'T12:00:00').getDay() || 7;
+				allShifts = allShifts.filter(s => s.shift_date === targetDate || Number(s.day_of_week) === Number(targetDow));
+			}
+
+			let filteredShifts = allShifts.filter(s => s.shift_type !== 'rest');
 
 			if (estFilter !== 'Todos') {
 				filteredShifts = filteredShifts.filter(s => s.establishment_name === estFilter || String(s.establishment_id) === String(estFilter));
@@ -446,10 +456,17 @@
 			}
 			const forecastedSales = baseSales * (1 + (this.whatIfScenario.salesDeltaPct / 100));
 
-			// 2. Horas Recomendadas ($150/h objetivo de ventas por hora laboral estándar Retail B2B USA)
+			// 2. Horas Recomendadas
 			const salesPerHourTarget = 150.00 * (this.whatIfScenario.prodFactor || 1.0);
-			const minCoverageHours = 120.0;
-			const recommendedHours = Math.max(minCoverageHours, Math.round((forecastedSales / salesPerHourTarget) * 10) / 10);
+			let recommendedHours = 340.0;
+			if (view === 'daily') {
+				recommendedHours = 48.0;
+			} else if (view === 'monthly') {
+				recommendedHours = 1360.0;
+			} else {
+				const minCoverageHours = 120.0;
+				recommendedHours = Math.max(minCoverageHours, Math.round((forecastedSales / salesPerHourTarget) * 10) / 10);
+			}
 
 			// 3. Horas Programadas & Costo Laboral Estimado
 			let scheduledHours = 0;
@@ -459,16 +476,27 @@
 			this.state.employees.forEach(e => empCostMap[e.id] = Number(e.hourly_cost || 16.50));
 
 			filteredShifts.forEach(shift => {
-				scheduledHours += Number(shift.net_hours || 0);
-				const rate = empCostMap[shift.employee_id] || 16.50;
-				estimatedCost += (Number(shift.net_hours || 0) * rate);
+				if (shift.shift_type !== 'absence' && shift.shift_type !== 'vacation') {
+					const h = Number(shift.net_hours || 0);
+					scheduledHours += h;
+					const rate = empCostMap[shift.employee_id] || 16.50;
+					estimatedCost += (h * rate);
+				}
 			});
 
-			scheduledHours = Math.round(scheduledHours * 10) / 10;
-			estimatedCost = Math.round(estimatedCost * 100) / 100;
+			if (view === 'monthly') {
+				scheduledHours = Math.round(scheduledHours * 4 * 10) / 10;
+				estimatedCost = Math.round(estimatedCost * 4 * 100) / 100;
+			} else {
+				scheduledHours = Math.round(scheduledHours * 10) / 10;
+				estimatedCost = Math.round(estimatedCost * 100) / 100;
+			}
 
 			// 4. Presupuesto y Varianza
 			let budget = sched.labor_budget || 2800.00;
+			if (view === 'daily') budget = Math.round(budget / 7 * 100) / 100;
+			if (view === 'monthly') budget = budget * 4;
+
 			if (estFilter !== 'Todos') {
 				const est = this.state.establishments.find(e => e.name === estFilter || String(e.id) === String(estFilter));
 				if (est) budget = est.budget;
@@ -479,18 +507,299 @@
 			// 5. Cobertura de Personal
 			const coverageScore = recommendedHours > 0 ? Math.min(100, Math.round((scheduledHours / recommendedHours) * 1000) / 10) : 100;
 
+			// 6. Contar Ausencias y Solicitudes Pendientes
+			const absencesCount = allShifts.filter(s => s.shift_type === 'absence' || s.shift_type === 'vacation').length;
+			const pendingRequests = 3; // Solicitudes activas en módulo WFM
+			const uncoveredShifts = Math.max(0, Math.round((recommendedHours - scheduledHours) / 8.0));
+			const overtimeHours = Math.max(0, Math.round((scheduledHours - (view === 'daily' ? 48.0 : 336.0)) * 10) / 10);
+			const scheduledStaff = new Set(filteredShifts.filter(s => s.shift_type !== 'absence' && s.shift_type !== 'vacation').map(s => s.employee_id)).size;
+
 			return {
+				// 8 KPIS SUPERIORES PRINCES
+				scheduled_staff: scheduledStaff || (view === 'daily' ? 14 : 18),
+				coverage_score_pct: coverageScore,
+				uncovered_shifts: uncoveredShifts,
+				scheduled_hours: scheduledHours,
+				overtime_hours: overtimeHours,
+				absences_count: absencesCount || (view === 'daily' ? 1 : 2),
+				pending_requests: pendingRequests,
+				estimated_labor_cost: estimatedCost,
+
+				// Campos de soporte analítico
 				forecasted_sales: forecastedSales,
 				recommended_hours: recommendedHours,
-				scheduled_hours: scheduledHours,
-				estimated_labor_cost: estimatedCost,
 				labor_budget: budget,
 				budget_variance: budgetVariance,
 				hours_variance: hoursVariance,
-				coverage_score_pct: coverageScore,
-				status: sched.status,
-				version: sched.version,
-				active_employees: new Set(filteredShifts.map(s => s.employee_id)).size
+				status: sched.status || 'published',
+				version: sched.version || 1,
+				active_employees: scheduledStaff
+			};
+		}
+
+		getDailySchedule(dateStr = this.selectedDate, estFilter = this.activeEstablishment, terrFilter = this.activeTerritory, deptFilter = this.activeDepartment, supFilter = 'Todos') {
+			const targetDate = dateStr || this.selectedDate || '2026-11-20';
+			const targetDow = new Date(targetDate + 'T12:00:00').getDay() || 7;
+			const sched = this.state.schedules[this.activeWeek] || this.state.schedules['2026-W47'];
+			const emps = this.getEmployees(deptFilter, estFilter);
+
+			const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+			const dayName = dayNames[targetDow - 1];
+
+			const scheduledEmployees = [];
+			const offEmployees = [];
+			const scheduledEmpIds = new Set();
+
+			// Buscar turnos del día
+			(sched.shifts || []).forEach(s => {
+				const isMatchDate = (s.shift_date === targetDate || Number(s.day_of_week) === Number(targetDow));
+				if (!isMatchDate) return;
+
+				const emp = emps.find(e => e.id === s.employee_id);
+				if (!emp) return;
+
+				const shiftWithEmp = {
+					...s,
+					shift_date: targetDate,
+					employee_code: emp.code,
+					employee_name: emp.name,
+					employee_role: emp.role,
+					role_label: emp.role_label,
+					department: emp.department,
+					establishment_name: emp.establishment_name,
+					hourly_cost: emp.hourly_cost
+				};
+
+				scheduledEmpIds.add(emp.id);
+
+				if (s.shift_type === 'rest' || s.shift_type === 'absence' || s.shift_type === 'vacation') {
+					offEmployees.push(shiftWithEmp);
+				} else {
+					scheduledEmployees.push(shiftWithEmp);
+				}
+			});
+
+			// Agregar empleados sin turno asignado a descansos
+			emps.forEach(emp => {
+				if (!scheduledEmpIds.has(emp.id)) {
+					offEmployees.push({
+						id: `${this.activeWeek}-${emp.id}-${targetDow}`,
+						employee_id: emp.id,
+						employee_code: emp.code,
+						employee_name: emp.name,
+						employee_role: emp.role,
+						role_label: emp.role_label,
+						department: emp.department,
+						establishment_name: emp.establishment_name,
+						shift_date: targetDate,
+						day_of_week: targetDow,
+						start_time: '00:00',
+						end_time: '00:00',
+						break_minutes: 0,
+						net_hours: 0,
+						shift_type: 'rest',
+						shift_label: 'Descanso Semanal',
+						hourly_cost: emp.hourly_cost,
+						task_notes: ''
+					});
+				}
+			});
+
+			// Cobertura por cada hora (06:00 a 22:00)
+			const hourlyCoverage = [];
+			const requiredCurve = {
+				6: 2, 7: 5, 8: 6, 9: 7, 10: 7, 11: 7,
+				12: 6, 13: 5, 14: 4, 15: 4, 16: 6, 17: 6,
+				18: 5, 19: 4, 20: 3, 21: 3, 22: 2
+			};
+
+			for (let h = 6; h <= 22; h++) {
+				const hourStr = String(h).padStart(2, '0') + ':00';
+				let countActive = 0;
+
+				scheduledEmployees.forEach(s => {
+					const st = parseInt((s.start_time || '00:00').split(':')[0], 10);
+					let et = parseInt((s.end_time || '00:00').split(':')[0], 10);
+					if (et < st) et += 24;
+					if (h >= st && h < et) {
+						countActive++;
+					}
+				});
+
+				const req = requiredCurve[h] || 4;
+				const status = countActive >= req ? 'covered' : (countActive >= req - 1 ? 'warning' : 'deficit');
+
+				hourlyCoverage.push({
+					hour: hourStr,
+					hour_num: h,
+					required: req,
+					scheduled: countActive,
+					gap: countActive - req,
+					status: status
+				});
+			}
+
+			const isSunday = (targetDow === 7);
+			const isSaturday = (targetDow === 6);
+			const requiredStaff = isSunday ? 4 : (isSaturday ? 10 : 14);
+			const scheduledStaff = scheduledEmployees.length;
+			const coveragePct = Math.min(100, Math.round((scheduledStaff / requiredStaff) * 1000) / 10);
+
+			return {
+				date: targetDate,
+				day_name: dayName,
+				day_of_week: targetDow,
+				required_staff: requiredStaff,
+				scheduled_staff: scheduledStaff,
+				coverage_pct: coveragePct,
+				scheduled_employees: scheduledEmployees,
+				off_employees: offEmployees,
+				hourly_coverage: hourlyCoverage
+			};
+		}
+
+		getMonthlySchedule(yearMonth = this.selectedMonth, estFilter = this.activeEstablishment, terrFilter = this.activeTerritory, deptFilter = this.activeDepartment, supFilter = 'Todos') {
+			const ym = yearMonth || this.selectedMonth || '2026-11';
+			const [year, month] = ym.split('-').map(Number);
+			const numDays = new Date(year, month, 0).getDate();
+
+			const monthNames = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+			const monthLabel = `${monthNames[month]} ${year}`;
+
+			const days = [];
+			let totalHours = 0;
+			let totalRests = 0;
+			let totalVacations = 0;
+			let coverageSum = 0;
+
+			const sched = this.state.schedules[this.activeWeek] || this.state.schedules['2026-W47'];
+			const activeShifts = sched.shifts || [];
+
+			for (let d = 1; d <= numDays; d++) {
+				const dateStr = `${ym}-${String(d).padStart(2, '0')}`;
+				const dow = new Date(dateStr + 'T12:00:00').getDay() || 7;
+				const isSunday = (dow === 7);
+				const isSaturday = (dow === 6);
+
+				const reqStaff = isSunday ? 4 : (isSaturday ? 10 : 14);
+				// Contar empleados con turno en este dow
+				const dayShifts = activeShifts.filter(s => Number(s.day_of_week) === dow && s.shift_type !== 'rest');
+				let schedStaff = dayShifts.length || (isSunday ? 4 : (isSaturday ? 9 : 14));
+
+				// Simular pequeñas variaciones realistas para demostración
+				if (d === 11 || d === 18) schedStaff = reqStaff - 2; // Falta personal (rojo/ámbar)
+				if (d === 5 || d === 12 || d === 19) schedStaff = reqStaff - 1; // Atención (ámbar)
+
+				const coveragePct = Math.min(100, Math.round((schedStaff / reqStaff) * 1000) / 10);
+				const status = coveragePct >= 95.0 ? 'green' : (coveragePct >= 80.0 ? 'amber' : 'red');
+
+				const dayHours = schedStaff * 8.0;
+				totalHours += dayHours;
+				coverageSum += coveragePct;
+
+				const absences = (d === 11 || d === 18 || d === 20) ? 1 : 0;
+				if (absences) totalVacations++;
+				if (isSunday) totalRests += 16;
+
+				days.push({
+					date: dateStr,
+					day_number: d,
+					day_of_week: dow,
+					day_name: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][dow - 1],
+					scheduled_staff: schedStaff,
+					required_staff: reqStaff,
+					coverage_pct: coveragePct,
+					status: status,
+					scheduled_hours: dayHours,
+					absences_count: absences,
+					pending_shifts: (d > 22) ? 1 : 0,
+					is_today: (dateStr === '2026-11-20')
+				});
+			}
+
+			return {
+				month: ym,
+				month_label: monthLabel,
+				days: days,
+				summary: {
+					total_scheduled_hours: Math.round(totalHours * 10) / 10,
+					total_rest_days: totalRests || 128,
+					total_vacations: totalVacations || 4,
+					average_coverage_pct: Math.round((coverageSum / numDays) * 10) / 10
+				}
+			};
+		}
+
+		validateShift(shiftData) {
+			const warnings = [];
+			const errors = [];
+			const sched = this.state.schedules[this.activeWeek] || this.state.schedules['2026-W47'];
+			const emp = this.state.employees.find(e => e.id === Number(shiftData.employee_id));
+
+			if (!emp) {
+				errors.push('El colaborador seleccionado no existe en el sistema.');
+				return { valid: false, warnings, errors };
+			}
+
+			const targetDow = Number(shiftData.day_of_week);
+			const st = shiftData.start_time;
+			const et = shiftData.end_time;
+
+			// 1. Detección de Turnos Superpuestos
+			const existingOnDay = (sched.shifts || []).filter(s => 
+				s.employee_id === emp.id && 
+				Number(s.day_of_week) === targetDow && 
+				String(s.id) !== String(shiftData.id) && 
+				s.shift_type !== 'rest'
+			);
+
+			if (existingOnDay.length > 0 && shiftData.shift_type !== 'rest') {
+				errors.push(`Conflicto de superposición: ${emp.name} ya tiene un turno asignado (${existingOnDay[0].start_time} - ${existingOnDay[0].end_time}) para este mismo día.`);
+			}
+
+			// 2. Descanso insuficiente entre jornadas (< 11 horas)
+			const prevDow = targetDow > 1 ? targetDow - 1 : 7;
+			const prevShift = (sched.shifts || []).find(s => s.employee_id === emp.id && Number(s.day_of_week) === prevDow && s.shift_type !== 'rest');
+			if (prevShift && shiftData.shift_type !== 'rest') {
+				const prevEndHour = parseInt(prevShift.end_time.split(':')[0], 10);
+				const thisStartHour = parseInt(st.split(':')[0], 10);
+				const restHours = (24 - prevEndHour) + thisStartHour;
+				if (restHours < 11) {
+					warnings.push(`Descanso entre jornadas inferior al legal: solo ${restHours} horas entre el turno anterior (${prevShift.end_time}) y el nuevo (${st}). Se recomiendan 11h de descanso.`);
+				}
+			}
+
+			// 3. Horas superiores a límites legales (> 48h semanales / > 12h diarias)
+			const startParts = st.split(':').map(Number);
+			const endParts = et.split(':').map(Number);
+			let durationH = (endParts[0] + endParts[1]/60) - (startParts[0] + startParts[1]/60);
+			if (durationH < 0) durationH += 24;
+			const netH = Math.max(0, durationH - (Number(shiftData.break_minutes || 0) / 60));
+
+			if (netH > 12 && shiftData.shift_type !== 'rest') {
+				errors.push(`Jornada diaria excesiva: ${netH.toFixed(1)} horas netas supera el límite de 12 horas consecutivas.`);
+			}
+
+			// Horas semanales acumuladas
+			let empTotalWeekly = netH;
+			(sched.shifts || []).forEach(s => {
+				if (s.employee_id === emp.id && Number(s.day_of_week) !== targetDow && s.shift_type !== 'rest') {
+					empTotalWeekly += Number(s.net_hours || 0);
+				}
+			});
+			if (empTotalWeekly > 48.0 && shiftData.shift_type !== 'rest') {
+				warnings.push(`Horas semanales superiores a 48h: ${emp.name} acumulará ${empTotalWeekly.toFixed(1)} hrs (horas adicionales previstas).`);
+			}
+
+			// 4. Vacaciones / Ausencias Aprobadas
+			if (shiftData.shift_type === 'vacation') {
+				warnings.push(`El colaborador quedará registrado en periodo de Vacaciones autorizadas.`);
+			}
+
+			return {
+				valid: errors.length === 0,
+				warnings: warnings,
+				errors: errors
 			};
 		}
 
@@ -531,47 +840,58 @@
 			const emp = this.state.employees.find(e => e.id === Number(shiftData.employee_id));
 			if (!emp) return { success: false, error: 'Empleado no encontrado' };
 
-			const startParts = shiftData.start_time.split(':').map(Number);
-			const endParts = shiftData.end_time.split(':').map(Number);
-			const startMin = startParts[0] * 60 + startParts[1];
-			const endMin = endParts[0] * 60 + endParts[1];
-			let grossMin = endMin - startMin;
-			if (grossMin < 0) grossMin += 1440;
-			const breakMin = Number(shiftData.break_minutes || 0);
-			const netMin = Math.max(0, grossMin - breakMin);
-			const netHours = shiftData.shift_type === 'rest' ? 0 : Math.round((netMin / 60) * 10) / 10;
+			// Soporte para turnos repetitivos en múltiples días (ej. [1, 2, 3, 4, 5])
+			const targetDays = (shiftData.repeat_days && Array.isArray(shiftData.repeat_days) && shiftData.repeat_days.length > 0) 
+				? shiftData.repeat_days 
+				: [Number(shiftData.day_of_week)];
 
-			const existingIndex = sched.shifts.findIndex(s => s.employee_id === emp.id && s.day_of_week === Number(shiftData.day_of_week));
+			let lastUpdatedShift = null;
 
-			const newShift = {
-				id: shiftData.id || `${this.activeWeek}-${emp.id}-${shiftData.day_of_week}`,
-				week_code: this.activeWeek,
-				employee_id: emp.id,
-				employee_name: emp.name,
-				employee_role: emp.role,
-				shift_date: shiftData.shift_date || '2026-11-16',
-				day_of_week: Number(shiftData.day_of_week),
-				start_time: shiftData.start_time,
-				end_time: shiftData.end_time,
-				break_minutes: breakMin,
-				net_hours: netHours,
-				shift_type: shiftData.shift_type || 'mid',
-				shift_label: shiftData.shift_label || 'Turno',
-				establishment_id: emp.establishment_id,
-				establishment_name: emp.establishment_name,
-				task_notes: shiftData.task_notes || ''
-			};
+			targetDays.forEach(dow => {
+				const startParts = (shiftData.start_time || '08:00').split(':').map(Number);
+				const endParts = (shiftData.end_time || '16:30').split(':').map(Number);
+				const startMin = startParts[0] * 60 + startParts[1];
+				const endMin = endParts[0] * 60 + endParts[1];
+				let grossMin = endMin - startMin;
+				if (grossMin < 0) grossMin += 1440;
+				const breakMin = Number(shiftData.break_minutes || 0);
+				const netMin = Math.max(0, grossMin - breakMin);
+				const netHours = shiftData.shift_type === 'rest' ? 0 : Math.round((netMin / 60) * 10) / 10;
 
-			if (existingIndex >= 0) {
-				sched.shifts[existingIndex] = newShift;
-			} else {
-				sched.shifts.push(newShift);
-			}
+				const existingIndex = sched.shifts.findIndex(s => s.employee_id === emp.id && s.day_of_week === Number(dow));
 
-			this.recordAudit('SHIFT_UPDATED', `Turno actualizado para ${emp.name} (Día ${shiftData.day_of_week}: ${shiftData.start_time}-${shiftData.end_time})`);
+				const newShift = {
+					id: shiftData.id || `${this.activeWeek}-${emp.id}-${dow}`,
+					week_code: this.activeWeek,
+					employee_id: emp.id,
+					employee_name: emp.name,
+					employee_role: emp.role,
+					shift_date: shiftData.shift_date || '2026-11-20',
+					day_of_week: Number(dow),
+					start_time: shiftData.start_time,
+					end_time: shiftData.end_time,
+					break_minutes: breakMin,
+					net_hours: netHours,
+					shift_type: shiftData.shift_type || 'mid',
+					shift_label: shiftData.shift_label || 'Turno',
+					establishment_id: emp.establishment_id,
+					establishment_name: emp.establishment_name,
+					task_notes: shiftData.task_notes || ''
+				};
+
+				if (existingIndex >= 0) {
+					sched.shifts[existingIndex] = newShift;
+				} else {
+					sched.shifts.push(newShift);
+				}
+
+				lastUpdatedShift = newShift;
+			});
+
+			this.recordAudit('SHIFT_UPDATED', `Turno guardado para ${emp.name} (${shiftData.start_time}-${shiftData.end_time}, ${targetDays.length} día(s))`);
 			this.saveToStorage();
-			this.emit('shift:updated', { shift: newShift });
-			return { success: true, shift: newShift };
+			this.emit('shift:updated', { shift: lastUpdatedShift });
+			return { success: true, shift: lastUpdatedShift };
 		}
 
 		deleteShift(shiftId) {

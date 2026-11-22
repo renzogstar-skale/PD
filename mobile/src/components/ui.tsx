@@ -12,8 +12,12 @@ import {
   ActivityIndicator,
   ViewStyle,
   TextStyle,
+  Modal,
+  ScrollView,
+  Pressable,
 } from 'react-native';
 import { useTheme } from '../lib/theme';
+import { kpiExplanation, kpiShort } from '../lib/kpi';
 
 // --- TYPOGRAPHY ---
 export const Typography = {
@@ -284,9 +288,66 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   );
 };
 
+// --- EXPLICACIÓN DE INDICADOR (diccionario centralizado) ---
+export const KpiInfo: React.FC<{ kpi: string; color?: string }> = ({ kpi, color }) => {
+  const { colors, settings } = useTheme();
+  const [open, setOpen] = React.useState(false);
+  const lang = settings.language === 'en' ? 'en' : 'es';
+  const info = kpiExplanation(kpi, lang);
+  if (!info) return null;
+
+  return (
+    <>
+      <TouchableOpacity
+        onPress={() => setOpen(true)}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        accessibilityRole="button"
+        accessibilityLabel={(lang === 'en' ? 'What this indicator means: ' : 'Qué significa este indicador: ') + info.title}
+        style={{ marginLeft: 4 }}
+      >
+        <RNText style={{ color: color || colors.textMuted, fontSize: 13 }}>ⓘ</RNText>
+      </TouchableOpacity>
+      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+        <Pressable
+          onPress={() => setOpen(false)}
+          style={{ flex: 1, backgroundColor: 'rgba(15,23,42,0.55)', justifyContent: 'center', padding: 20 }}
+        >
+          <Pressable
+            onPress={() => {}}
+            style={{ backgroundColor: colors.card, borderRadius: 16, maxHeight: '80%', borderWidth: 1, borderColor: colors.border }}
+          >
+            <ScrollView contentContainerStyle={{ padding: 18 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                <RNText style={[Typography.h3(colors.text), { flex: 1, paddingRight: 12 }]}>{info.title}</RNText>
+                <TouchableOpacity
+                  onPress={() => setOpen(false)}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  accessibilityLabel={lang === 'en' ? 'Close' : 'Cerrar'}
+                >
+                  <RNText style={{ color: colors.textMuted, fontSize: 18 }}>✕</RNText>
+                </TouchableOpacity>
+              </View>
+              {info.rows.map((r) => (
+                <View key={r.label} style={{ marginTop: 10 }}>
+                  <RNText style={{ color: colors.textMuted, fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.4 }}>
+                    {r.label}
+                  </RNText>
+                  <RNText style={{ color: colors.text, fontSize: 13, lineHeight: 19, marginTop: 2 }}>{r.text}</RNText>
+                </View>
+              ))}
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </>
+  );
+};
+
 // --- STAT KPI CARD ---
 export interface StatCardProps {
-  title: string;
+  /** Identificador del diccionario de indicadores: aporta el nombre visible y la explicación. */
+  kpi?: string;
+  title?: string;
   value: string;
   icon: string;
   subtitle?: string;
@@ -295,6 +356,7 @@ export interface StatCardProps {
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
+  kpi,
   title,
   value,
   icon,
@@ -302,13 +364,17 @@ export const StatCard: React.FC<StatCardProps> = ({
   color,
   style,
 }) => {
-  const { colors } = useTheme();
+  const { colors, settings } = useTheme();
   const accent = color || colors.primary;
+  const label = title ?? (kpi ? kpiShort(kpi, settings.language === 'en' ? 'en' : 'es') : '');
 
   return (
     <Card style={{ flex: 1, minWidth: 140, ...(style || {}) }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <RNText style={Typography.caption(colors.textMuted)}>{title}</RNText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1 }}>
+          <RNText style={[Typography.caption(colors.textMuted), { flexShrink: 1 }]}>{label}</RNText>
+          {kpi ? <KpiInfo kpi={kpi} /> : null}
+        </View>
         <RNText style={{ fontSize: 18 }}>{icon}</RNText>
       </View>
       <RNText style={[Typography.h2(accent), { marginVertical: 4 }]}>{value}</RNText>

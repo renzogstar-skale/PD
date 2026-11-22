@@ -54,6 +54,34 @@ class B2bWorkforceApiController extends BaseApiController
 		}
 	}
 
+	public function GetDailySchedule(Request $request, Response $response, array $args): Response
+	{
+		try {
+			$params = $request->getQueryParams();
+			$data = $this->WfmService()->GetDailySchedule($params);
+			return $this->JsonResponse($response, [
+				'success' => true,
+				...$data
+			]);
+		} catch (Exception $ex) {
+			return $this->GenericErrorResponse($response, $ex->getMessage(), 400);
+		}
+	}
+
+	public function GetMonthlySchedule(Request $request, Response $response, array $args): Response
+	{
+		try {
+			$params = $request->getQueryParams();
+			$data = $this->WfmService()->GetMonthlySchedule($params);
+			return $this->JsonResponse($response, [
+				'success' => true,
+				...$data
+			]);
+		} catch (Exception $ex) {
+			return $this->GenericErrorResponse($response, $ex->getMessage(), 400);
+		}
+	}
+
 	public function GetActiveShift(Request $request, Response $response, array $args): Response
 	{
 		try {

@@ -1,0 +1,3256 @@
+{
+	"meta": {
+		"version": "1.0.0",
+		"periods": {
+			"filter": {
+				"es": "El período elegido en los filtros de la pantalla (por defecto, el mes actual hasta hoy).",
+				"en": "The period selected in the screen filters (by default, the current month to date)."
+			},
+			"snapshot": {
+				"es": "Situación a la fecha de hoy (no depende del período).",
+				"en": "Status as of today (does not depend on the period)."
+			},
+			"week": {
+				"es": "La semana seleccionada en la planificación.",
+				"en": "The week selected in the schedule."
+			},
+			"month": {
+				"es": "El mes en curso.",
+				"en": "The current month."
+			},
+			"year": {
+				"es": "Últimos 12 meses.",
+				"en": "Last 12 months."
+			},
+			"last60": {
+				"es": "Últimos 60 días.",
+				"en": "Last 60 days."
+			},
+			"history": {
+				"es": "Todo el historial registrado: esta pantalla no filtra por fechas.",
+				"en": "All recorded history: this screen does not filter by date."
+			},
+			"compare": {
+				"es": "El período elegido comparado con el período anterior de igual duración.",
+				"en": "The selected period compared with the previous period of the same length."
+			}
+		},
+		"sources": {
+			"invoices": {
+				"es": "Facturas emitidas y notas de crédito.",
+				"en": "Issued invoices and credit notes."
+			},
+			"payments": {
+				"es": "Pagos registrados en las facturas.",
+				"en": "Payments recorded on invoices."
+			},
+			"orders": {
+				"es": "Pedidos de venta.",
+				"en": "Sales orders."
+			},
+			"quotes": {
+				"es": "Cotizaciones enviadas a clientes.",
+				"en": "Quotes sent to customers."
+			},
+			"customers": {
+				"es": "Ficha de clientes y locales de entrega.",
+				"en": "Customer and delivery location records."
+			},
+			"products": {
+				"es": "Catálogo de productos, precios y costos.",
+				"en": "Product catalog, prices and costs."
+			},
+			"reps": {
+				"es": "Vendedores, territorios y metas asignadas.",
+				"en": "Sales reps, territories and assigned targets."
+			},
+			"schedules": {
+				"es": "Turnos planificados y presupuesto laboral.",
+				"en": "Planned shifts and labor budget."
+			},
+			"tasks": {
+				"es": "Tareas de reposición y control en tienda.",
+				"en": "Store restocking and control tasks."
+			},
+			"staff": {
+				"es": "Ficha del personal y contratos.",
+				"en": "Staff records and contracts."
+			},
+			"attendance": {
+				"es": "Registros de entrada y salida del personal.",
+				"en": "Staff clock-in and clock-out records."
+			},
+			"requests": {
+				"es": "Solicitudes de permisos, vacaciones y cambios de turno.",
+				"en": "Leave, vacation and shift-swap requests."
+			},
+			"inventory": {
+				"es": "Existencias, movimientos de inventario y ventas por producto.",
+				"en": "Stock levels, inventory movements and product sales."
+			},
+			"deliveries": {
+				"es": "Pedidos despachados y su confirmación de entrega.",
+				"en": "Dispatched orders and delivery confirmations."
+			}
+		},
+		"labels": {
+			"es": {
+				"what": "Qué mide",
+				"formula": "Cómo se calcula",
+				"period": "Período evaluado",
+				"interpretation": "Cómo interpretarlo",
+				"decision": "Qué decisión permite tomar",
+				"example": "Ejemplo",
+				"source": "Fuente de datos",
+				"evaluation": "Criterio de evaluación",
+				"more": "Ver detalle",
+				"info": "Qué significa este indicador"
+			},
+			"en": {
+				"what": "What it measures",
+				"formula": "How it is calculated",
+				"period": "Period evaluated",
+				"interpretation": "How to read it",
+				"decision": "Decision it supports",
+				"example": "Example",
+				"source": "Data source",
+				"evaluation": "Evaluation criteria",
+				"more": "View details",
+				"info": "What this indicator means"
+			}
+		}
+	},
+	"kpis": {
+		"net_sales": {
+			"id": "net_sales",
+			"category": "sales",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices"
+			],
+			"es": {
+				"short": "Ventas netas facturadas",
+				"name": "Ventas netas facturadas",
+				"what": "El importe facturado a clientes, sin impuestos y después de restar las notas de crédito. No es dinero cobrado.",
+				"formula": "Total facturado sin impuestos − Notas de crédito del período.",
+				"interpretation": "Si sube, el negocio vende más. Compárelo siempre con lo cobrado: facturar no significa haber recibido el dinero.",
+				"decision": "Evaluar si se alcanza la meta mensual y en qué clientes o productos reforzar la venta.",
+				"example": "Facturas por $100.000 y notas de crédito por $2.000 → ventas netas de $98.000.",
+				"evaluation": "Favorable: crece frente al período anterior. Alerta: cae más de 5%. Crítico: cae más de 10%."
+			},
+			"en": {
+				"short": "Net invoiced sales",
+				"name": "Net invoiced sales",
+				"what": "The amount invoiced to customers, excluding taxes and after subtracting credit notes. It is not cash collected.",
+				"formula": "Total invoiced excl. taxes − Credit notes in the period.",
+				"interpretation": "If it rises, the business is selling more. Always compare it with collections: invoicing is not the same as being paid.",
+				"decision": "Check progress toward the monthly target and which customers or products need more sales effort.",
+				"example": "Invoices for $100,000 and credit notes for $2,000 → net sales of $98,000.",
+				"evaluation": "Good: grows vs. previous period. Warning: drops more than 5%. Critical: drops more than 10%."
+			}
+		},
+		"consolidated_sales": {
+			"id": "consolidated_sales",
+			"category": "sales",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"orders"
+			],
+			"es": {
+				"short": "Ventas totales del período",
+				"name": "Ventas totales del período",
+				"what": "La facturación neta de todas las facturas emitidas en el período, sumando todos los canales.",
+				"formula": "Suma de facturas válidas sin impuestos − Notas de crédito.",
+				"interpretation": "Es la cifra de referencia de la dirección para medir el tamaño del negocio en el período.",
+				"decision": "Comparar el resultado con la meta y con el período anterior antes de ajustar el plan comercial.",
+				"example": "Canal mayorista $80.000 + canal institucional $20.000 → $100.000.",
+				"evaluation": "Favorable: igual o superior a la meta del período."
+			},
+			"en": {
+				"short": "Total sales for the period",
+				"name": "Total sales for the period",
+				"what": "Net invoicing of all invoices issued in the period, across all channels.",
+				"formula": "Sum of valid invoices excl. taxes − Credit notes.",
+				"interpretation": "Leadership reference figure for the size of the business in the period.",
+				"decision": "Compare against target and previous period before adjusting the commercial plan.",
+				"example": "Wholesale $80,000 + institutional $20,000 → $100,000.",
+				"evaluation": "Good: equal to or above the period target."
+			}
+		},
+		"sales_growth": {
+			"id": "sales_growth",
+			"category": "sales",
+			"unit": "percent",
+			"period": "compare",
+			"source": [
+				"invoices"
+			],
+			"es": {
+				"short": "Crecimiento de ventas",
+				"name": "Crecimiento de ventas vs. período anterior",
+				"what": "Cuánto cambiaron las ventas netas respecto del período anterior de igual duración. No es margen de ganancia.",
+				"formula": "((Ventas netas actuales − Ventas netas anteriores) / Ventas netas anteriores) × 100.",
+				"interpretation": "Un valor positivo indica crecimiento; uno negativo, caída. Revise si el cambio viene de más clientes, más pedidos o pedidos más grandes.",
+				"decision": "Decidir si mantener, acelerar o corregir las acciones comerciales vigentes.",
+				"example": "Mes anterior $90.000, mes actual $99.000 → +10%.",
+				"evaluation": "Favorable: > 0%. Alerta: entre 0% y −5%. Crítico: < −5%."
+			},
+			"en": {
+				"short": "Sales growth",
+				"name": "Sales growth vs. previous period",
+				"what": "How much net sales changed versus the previous period of the same length. It is not profit margin.",
+				"formula": "((Current net sales − Previous net sales) / Previous net sales) × 100.",
+				"interpretation": "Positive means growth; negative means decline. Check whether the change comes from more customers, more orders or larger orders.",
+				"decision": "Decide whether to keep, accelerate or correct current commercial actions.",
+				"example": "Previous month $90,000, current month $99,000 → +10%.",
+				"evaluation": "Good: > 0%. Warning: 0% to −5%. Critical: < −5%."
+			}
+		},
+		"avg_invoice_value": {
+			"id": "avg_invoice_value",
+			"category": "sales",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices"
+			],
+			"es": {
+				"short": "Valor promedio por factura",
+				"name": "Valor promedio por factura",
+				"what": "El importe medio de cada factura válida emitida en el período.",
+				"formula": "Ventas netas facturadas / Cantidad de facturas válidas.",
+				"interpretation": "Si baja, los clientes compran en menor cantidad por compra; si sube, cada venta es más grande.",
+				"decision": "Definir promociones por volumen o venta de productos complementarios para aumentar el tamaño de cada compra.",
+				"example": "$39.000 en ventas netas con 26 facturas → $1.500 por factura.",
+				"evaluation": "Favorable: estable o en aumento frente al período anterior."
+			},
+			"en": {
+				"short": "Average invoice value",
+				"name": "Average invoice value",
+				"what": "The average amount of each valid invoice issued in the period.",
+				"formula": "Net invoiced sales / Number of valid invoices.",
+				"interpretation": "If it falls, customers buy less per purchase; if it rises, each sale is larger.",
+				"decision": "Plan volume promotions or complementary-product sales to grow the size of each purchase.",
+				"example": "$39,000 net sales over 26 invoices → $1,500 per invoice.",
+				"evaluation": "Good: stable or rising vs. previous period."
+			}
+		},
+		"receivable": {
+			"id": "receivable",
+			"category": "billing",
+			"unit": "currency",
+			"period": "snapshot",
+			"source": [
+				"invoices",
+				"payments"
+			],
+			"es": {
+				"short": "Cuentas por cobrar",
+				"name": "Cuentas por cobrar",
+				"what": "El dinero que los clientes todavía deben por facturas emitidas, vencidas o no.",
+				"formula": "Suma del saldo pendiente de pago de todas las facturas abiertas.",
+				"interpretation": "Una cifra alta inmoviliza dinero de la empresa. Revise qué parte ya está vencida.",
+				"decision": "Priorizar la gestión de cobro y revisar los límites de crédito de los clientes con mayor saldo.",
+				"example": "3 facturas abiertas con saldos de $2.000, $1.500 y $500 → $4.000 por cobrar.",
+				"evaluation": "Favorable: menos de 30 días de ventas pendientes de cobro."
+			},
+			"en": {
+				"short": "Accounts receivable",
+				"name": "Accounts receivable",
+				"what": "Money customers still owe on issued invoices, overdue or not.",
+				"formula": "Sum of the unpaid balance of all open invoices.",
+				"interpretation": "A high figure ties up company cash. Check how much of it is already overdue.",
+				"decision": "Prioritize collection work and review credit limits of customers with the largest balances.",
+				"example": "3 open invoices with balances of $2,000, $1,500 and $500 → $4,000 receivable.",
+				"evaluation": "Good: less than 30 days of sales pending collection."
+			}
+		},
+		"active_customers": {
+			"id": "active_customers",
+			"category": "customers",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"orders",
+				"customers"
+			],
+			"es": {
+				"short": "Clientes activos",
+				"name": "Clientes activos (con compras en el período)",
+				"what": "Cantidad de clientes distintos con al menos una factura válida o un pedido confirmado en el período.",
+				"formula": "Conteo de clientes distintos con compras en el período.",
+				"interpretation": "Indica el tamaño real de la cartera que está comprando, no la cantidad de clientes registrados.",
+				"decision": "Detectar si la base compradora crece y planificar visitas a los clientes que no aparecen.",
+				"example": "36 clientes registrados, 11 compraron este mes → 11 clientes activos.",
+				"evaluation": "Favorable: estable o en aumento frente al período anterior."
+			},
+			"en": {
+				"short": "Active customers",
+				"name": "Active customers (with purchases in the period)",
+				"what": "Number of distinct customers with at least one valid invoice or confirmed order in the period.",
+				"formula": "Count of distinct customers with purchases in the period.",
+				"interpretation": "Shows the real size of the buying customer base, not the number of registered customers.",
+				"decision": "Detect whether the buying base grows and plan visits to customers who are missing.",
+				"example": "36 registered customers, 11 bought this month → 11 active customers.",
+				"evaluation": "Good: stable or rising vs. previous period."
+			}
+		},
+		"new_customers": {
+			"id": "new_customers",
+			"category": "customers",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"customers"
+			],
+			"es": {
+				"short": "Clientes nuevos",
+				"name": "Clientes nuevos",
+				"what": "Clientes cuya primera compra histórica ocurrió dentro del período.",
+				"formula": "Conteo de clientes cuya fecha de primera compra está dentro del período.",
+				"interpretation": "Mide la capacidad de captar clientes. Cero clientes nuevos durante varios meses limita el crecimiento.",
+				"decision": "Evaluar la efectividad de la prospección y asignar metas de captación a los vendedores.",
+				"example": "Si 3 clientes compraron por primera vez en noviembre → 3 clientes nuevos.",
+				"evaluation": "Favorable: al menos 1 cliente nuevo por vendedor al mes."
+			},
+			"en": {
+				"short": "New customers",
+				"name": "New customers",
+				"what": "Customers whose first-ever purchase happened within the period.",
+				"formula": "Count of customers whose first purchase date falls in the period.",
+				"interpretation": "Measures customer acquisition. Zero new customers for several months limits growth.",
+				"decision": "Evaluate prospecting effectiveness and set acquisition targets for reps.",
+				"example": "If 3 customers bought for the first time in November → 3 new customers.",
+				"evaluation": "Good: at least 1 new customer per rep per month."
+			}
+		},
+		"inactive_customers": {
+			"id": "inactive_customers",
+			"category": "customers",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"invoices",
+				"customers"
+			],
+			"es": {
+				"short": "Clientes inactivos",
+				"name": "Clientes inactivos (sin compras en 30 días)",
+				"what": "Clientes registrados y habilitados que no compran desde hace más días que el límite configurado (30 días por defecto). Un cliente inactivo todavía puede recuperarse; no es un cliente perdido.",
+				"formula": "Conteo de clientes habilitados sin facturas ni pedidos en los últimos 30 días.",
+				"interpretation": "Una cifra creciente anticipa pérdida de clientes. Actúe antes de que dejen de comprar definitivamente.",
+				"decision": "Programar llamadas o visitas de recuperación y ofrecer condiciones especiales.",
+				"example": "36 clientes habilitados, 25 sin compras en 30 días → 25 inactivos.",
+				"evaluation": "Alerta: más del 30% de la cartera inactiva."
+			},
+			"en": {
+				"short": "Inactive customers",
+				"name": "Inactive customers (no purchases in 30 days)",
+				"what": "Registered, enabled customers who have not bought for longer than the configured limit (30 days by default). An inactive customer can still be recovered; it is not a lost customer.",
+				"formula": "Count of enabled customers with no invoices or orders in the last 30 days.",
+				"interpretation": "A growing figure anticipates customer loss. Act before they stop buying for good.",
+				"decision": "Schedule recovery calls or visits and offer special conditions.",
+				"example": "36 enabled customers, 25 without purchases in 30 days → 25 inactive.",
+				"evaluation": "Warning: more than 30% of the base inactive."
+			}
+		},
+		"customer_retention": {
+			"id": "customer_retention",
+			"category": "customers",
+			"unit": "percent",
+			"period": "compare",
+			"source": [
+				"invoices",
+				"customers"
+			],
+			"es": {
+				"short": "Retención de clientes",
+				"name": "Retención de clientes",
+				"what": "Porcentaje de clientes que compraron en el período anterior y volvieron a comprar en el período actual.",
+				"formula": "(Clientes que compraron en ambos períodos / Clientes que compraron en el período anterior) × 100.",
+				"interpretation": "Cuanto más alto, más fiel es la cartera. Es el complemento de la tasa de pérdida de clientes.",
+				"decision": "Identificar clientes que no repitieron compra y activar acciones de fidelización.",
+				"example": "20 clientes compraron el mes pasado y 17 repitieron este mes → 85%.",
+				"evaluation": "Favorable: ≥ 85%. Alerta: 70–85%. Crítico: < 70%."
+			},
+			"en": {
+				"short": "Customer retention",
+				"name": "Customer retention",
+				"what": "Percentage of customers who bought in the previous period and bought again in the current period.",
+				"formula": "(Customers who bought in both periods / Customers who bought in the previous period) × 100.",
+				"interpretation": "The higher, the more loyal the base. It is the complement of the customer loss rate.",
+				"decision": "Identify customers who did not reorder and trigger loyalty actions.",
+				"example": "20 customers bought last month and 17 bought again this month → 85%.",
+				"evaluation": "Good: ≥ 85%. Warning: 70–85%. Critical: < 70%."
+			}
+		},
+		"churn_rate": {
+			"id": "churn_rate",
+			"category": "customers",
+			"unit": "percent",
+			"period": "compare",
+			"source": [
+				"invoices",
+				"customers"
+			],
+			"es": {
+				"short": "Tasa de pérdida de clientes",
+				"name": "Tasa de pérdida de clientes",
+				"what": "Porcentaje de clientes que compraron en el período anterior y no volvieron a comprar en el período actual.",
+				"formula": "100% − Retención de clientes = (Clientes del período anterior que no repitieron compra / Clientes del período anterior) × 100.",
+				"interpretation": "Un porcentaje elevado puede indicar problemas de precios, servicio, entregas o competencia.",
+				"decision": "Contactar a los clientes que dejaron de comprar y revisar las causas antes de que se pierdan definitivamente.",
+				"example": "Había 250 clientes compradores al inicio y 12 no volvieron a comprar → 4,8%.",
+				"evaluation": "Favorable: ≤ 10%. Alerta: 10–20%. Crítico: > 20%."
+			},
+			"en": {
+				"short": "Customer loss rate",
+				"name": "Customer loss rate",
+				"what": "Percentage of customers who bought in the previous period and did not buy again in the current period.",
+				"formula": "100% − Customer retention = (Previous-period customers who did not reorder / Previous-period customers) × 100.",
+				"interpretation": "A high percentage may point to pricing, service, delivery or competition issues.",
+				"decision": "Contact customers who stopped buying and review causes before they are lost for good.",
+				"example": "250 buying customers at the start and 12 did not buy again → 4.8%.",
+				"evaluation": "Good: ≤ 10%. Warning: 10–20%. Critical: > 20%."
+			}
+		},
+		"active_locations": {
+			"id": "active_locations",
+			"category": "customers",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"customers"
+			],
+			"es": {
+				"short": "Locales con compras",
+				"name": "Locales de entrega con compras",
+				"what": "Cantidad de locales o almacenes de entrega distintos que recibieron al menos una compra en el período.",
+				"formula": "Conteo de locales de entrega distintos con facturas o pedidos en el período.",
+				"interpretation": "Un cliente puede tener varios locales; este dato muestra la cobertura real de la distribución.",
+				"decision": "Planificar rutas de reparto y detectar locales de un mismo cliente que dejaron de pedir.",
+				"example": "Un cliente con 4 locales donde solo 3 pidieron → 3 locales con compras.",
+				"evaluation": "Favorable: estable o en aumento."
+			},
+			"en": {
+				"short": "Locations with purchases",
+				"name": "Delivery locations with purchases",
+				"what": "Number of distinct delivery locations or stores that received at least one purchase in the period.",
+				"formula": "Count of distinct delivery locations with invoices or orders in the period.",
+				"interpretation": "A customer may have several locations; this shows real distribution coverage.",
+				"decision": "Plan delivery routes and detect locations of the same customer that stopped ordering.",
+				"example": "A customer with 4 locations where only 3 ordered → 3 locations with purchases.",
+				"evaluation": "Good: stable or rising."
+			}
+		},
+		"purchase_frequency": {
+			"id": "purchase_frequency",
+			"category": "customers",
+			"unit": "ratio",
+			"period": "filter",
+			"source": [
+				"orders",
+				"customers"
+			],
+			"es": {
+				"short": "Frecuencia de compra",
+				"name": "Frecuencia de compra por cliente",
+				"what": "Promedio de pedidos confirmados por cada cliente que compró en el período.",
+				"formula": "Pedidos confirmados del período / Clientes con compras en el período.",
+				"interpretation": "Si baja, los clientes espacian sus pedidos; puede anticipar inactividad.",
+				"decision": "Ajustar la frecuencia de visitas o llamadas de toma de pedidos.",
+				"example": "27 pedidos de 11 clientes → 2,5 pedidos por cliente.",
+				"evaluation": "Favorable: ≥ 2 pedidos por cliente al mes."
+			},
+			"en": {
+				"short": "Purchase frequency",
+				"name": "Purchase frequency per customer",
+				"what": "Average number of confirmed orders per customer who bought in the period.",
+				"formula": "Confirmed orders in the period / Customers with purchases in the period.",
+				"interpretation": "If it falls, customers order less often; it can anticipate inactivity.",
+				"decision": "Adjust the frequency of order-taking visits or calls.",
+				"example": "27 orders from 11 customers → 2.5 orders per customer.",
+				"evaluation": "Good: ≥ 2 orders per customer per month."
+			}
+		},
+		"customers_overdue": {
+			"id": "customers_overdue",
+			"category": "customers",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"invoices",
+				"payments"
+			],
+			"es": {
+				"short": "Clientes con deuda vencida",
+				"name": "Clientes con deuda vencida",
+				"what": "Cantidad de clientes con al menos una factura vencida y con saldo pendiente de pago.",
+				"formula": "Conteo de clientes distintos con facturas vencidas y saldo mayor a cero.",
+				"interpretation": "Señala riesgo de cobro. Conviene revisar estos clientes antes de aprobar nuevos pedidos a crédito.",
+				"decision": "Retener pedidos a crédito, negociar planes de pago o suspender la línea de crédito.",
+				"example": "5 clientes tienen facturas vencidas sin pagar → 5.",
+				"evaluation": "Favorable: 0. Alerta: más del 10% de los clientes activos."
+			},
+			"en": {
+				"short": "Customers with overdue debt",
+				"name": "Customers with overdue debt",
+				"what": "Number of customers with at least one overdue invoice with an unpaid balance.",
+				"formula": "Count of distinct customers with overdue invoices and balance above zero.",
+				"interpretation": "Signals collection risk. Review these customers before approving new credit orders.",
+				"decision": "Hold credit orders, negotiate payment plans or suspend the credit line.",
+				"example": "5 customers have unpaid overdue invoices → 5.",
+				"evaluation": "Good: 0. Warning: more than 10% of active customers."
+			}
+		},
+		"avg_sales_per_customer": {
+			"id": "avg_sales_per_customer",
+			"category": "customers",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"customers"
+			],
+			"es": {
+				"short": "Venta promedio por cliente",
+				"name": "Venta promedio por cliente",
+				"what": "Cuánto factura en promedio cada cliente que compró en el período.",
+				"formula": "Ventas netas facturadas / Clientes con compras en el período.",
+				"interpretation": "Si sube, cada cliente compra más; si baja, la venta depende de más clientes pequeños.",
+				"decision": "Definir metas de venta por cliente y detectar cuentas con potencial de crecimiento.",
+				"example": "$39.000 facturados a 11 clientes → $3.545 por cliente.",
+				"evaluation": "Favorable: estable o en aumento."
+			},
+			"en": {
+				"short": "Average sales per customer",
+				"name": "Average sales per customer",
+				"what": "How much each buying customer is invoiced on average in the period.",
+				"formula": "Net invoiced sales / Customers with purchases in the period.",
+				"interpretation": "If it rises, each customer buys more; if it falls, sales rely on more small customers.",
+				"decision": "Set per-customer sales targets and spot accounts with growth potential.",
+				"example": "$39,000 invoiced to 11 customers → $3,545 per customer.",
+				"evaluation": "Good: stable or rising."
+			}
+		},
+		"customer_lifetime_value": {
+			"id": "customer_lifetime_value",
+			"category": "customers",
+			"unit": "currency",
+			"period": "year",
+			"source": [
+				"invoices",
+				"customers"
+			],
+			"es": {
+				"short": "Valor estimado del cliente",
+				"name": "Valor estimado del cliente a 12 meses",
+				"what": "Estimación de lo que un cliente promedio facturará en un año, considerando su frecuencia de compra y la retención.",
+				"formula": "Venta promedio por cliente × Pedidos estimados al año × (Retención / 100).",
+				"interpretation": "Ayuda a decidir cuánto invertir en captar o conservar un cliente.",
+				"decision": "Priorizar descuentos y atención a los segmentos de mayor valor.",
+				"example": "$3.500 por cliente × 4 compras × 85% → $11.900.",
+				"evaluation": "Favorable: en aumento trimestre a trimestre."
+			},
+			"en": {
+				"short": "Estimated customer value",
+				"name": "Estimated 12-month customer value",
+				"what": "Estimate of what an average customer will be invoiced in a year, considering purchase frequency and retention.",
+				"formula": "Average sales per customer × Estimated orders per year × (Retention / 100).",
+				"interpretation": "Helps decide how much to invest in winning or keeping a customer.",
+				"decision": "Prioritize discounts and service for the highest-value segments.",
+				"example": "$3,500 per customer × 4 purchases × 85% → $11,900.",
+				"evaluation": "Good: rising quarter over quarter."
+			}
+		},
+		"active_products": {
+			"id": "active_products",
+			"category": "products",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"products"
+			],
+			"es": {
+				"short": "Productos activos",
+				"name": "Productos activos (código interno SKU)",
+				"what": "Cantidad de productos habilitados para la venta. Cada producto se identifica con un código interno (SKU).",
+				"formula": "Conteo de productos con estado activo en el catálogo.",
+				"interpretation": "Un catálogo muy amplio con pocas ventas por producto encarece el inventario.",
+				"decision": "Revisar qué productos mantener, incorporar o retirar del catálogo.",
+				"example": "14 productos habilitados → 14.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Active products",
+				"name": "Active products (internal code / SKU)",
+				"what": "Number of products enabled for sale. Each product is identified by an internal code (SKU).",
+				"formula": "Count of products with active status in the catalog.",
+				"interpretation": "A very wide catalog with few sales per product makes inventory more expensive.",
+				"decision": "Review which products to keep, add or remove from the catalog.",
+				"example": "14 enabled products → 14.",
+				"evaluation": ""
+			}
+		},
+		"products_with_sales": {
+			"id": "products_with_sales",
+			"category": "products",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"products",
+				"invoices"
+			],
+			"es": {
+				"short": "Productos con ventas",
+				"name": "Productos con ventas en el período",
+				"what": "Porcentaje de productos activos que se vendieron al menos una vez en el período.",
+				"formula": "(Productos activos con ventas en el período / Total de productos activos) × 100.",
+				"interpretation": "Un porcentaje bajo indica productos que no rotan y ocupan inventario.",
+				"decision": "Promocionar o retirar los productos que no se venden.",
+				"example": "12 de 14 productos con ventas → 85,7%.",
+				"evaluation": "Favorable: ≥ 80%."
+			},
+			"en": {
+				"short": "Products with sales",
+				"name": "Products with sales in the period",
+				"what": "Percentage of active products sold at least once in the period.",
+				"formula": "(Active products with sales in the period / Total active products) × 100.",
+				"interpretation": "A low percentage means products that do not move and tie up inventory.",
+				"decision": "Promote or discontinue products that do not sell.",
+				"example": "12 of 14 products sold → 85.7%.",
+				"evaluation": "Good: ≥ 80%."
+			}
+		},
+		"gross_margin_pct": {
+			"id": "gross_margin_pct",
+			"category": "profitability",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"products"
+			],
+			"es": {
+				"short": "Margen bruto %",
+				"name": "Margen bruto (%)",
+				"what": "Qué porcentaje de cada dólar vendido queda como ganancia bruta, después de pagar el costo de los productos vendidos. No incluye gastos operativos, por eso no es ganancia neta.",
+				"formula": "((Ventas netas − Costo de los productos vendidos) / Ventas netas) × 100.",
+				"interpretation": "Si baja, se está vendiendo más barato o comprando más caro. No confundir con el crecimiento de ventas.",
+				"decision": "Revisar precios, descuentos y costos de compra de los productos con menor margen.",
+				"example": "Ventas $100.000 y costo $75.000 → margen bruto del 25%.",
+				"evaluation": "Favorable: ≥ 25%. Alerta: 18–25%. Crítico: < 18%."
+			},
+			"en": {
+				"short": "Gross margin %",
+				"name": "Gross margin (%)",
+				"what": "The share of each dollar sold that remains as gross profit after paying the cost of goods sold. It excludes operating expenses, so it is not net profit.",
+				"formula": "((Net sales − Cost of goods sold) / Net sales) × 100.",
+				"interpretation": "If it falls, you are selling cheaper or buying more expensively. Do not confuse it with sales growth.",
+				"decision": "Review prices, discounts and purchase costs of the lowest-margin products.",
+				"example": "Sales $100,000 and cost $75,000 → 25% gross margin.",
+				"evaluation": "Good: ≥ 25%. Warning: 18–25%. Critical: < 18%."
+			}
+		},
+		"catalog_net_sales": {
+			"id": "catalog_net_sales",
+			"category": "products",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"products"
+			],
+			"es": {
+				"short": "Ventas del catálogo",
+				"name": "Ventas netas por productos",
+				"what": "El importe facturado por las líneas de producto en facturas válidas, sin impuestos.",
+				"formula": "Suma de (cantidad × precio unitario) de las líneas de facturas válidas.",
+				"interpretation": "Permite ver cuánto aporta el catálogo y compararlo por categoría o producto.",
+				"decision": "Decidir qué categorías impulsar y cuáles revisar.",
+				"example": "100 cajas × $25 + 40 cajas × $50 → $4.500.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Catalog sales",
+				"name": "Net sales by product",
+				"what": "Amount invoiced for product lines on valid invoices, excluding taxes.",
+				"formula": "Sum of (quantity × unit price) of valid invoice lines.",
+				"interpretation": "Shows how much the catalog contributes and allows comparison by category or product.",
+				"decision": "Decide which categories to push and which to review.",
+				"example": "100 cases × $25 + 40 cases × $50 → $4,500.",
+				"evaluation": ""
+			}
+		},
+		"gross_profit": {
+			"id": "gross_profit",
+			"category": "profitability",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"products"
+			],
+			"es": {
+				"short": "Ganancia bruta",
+				"name": "Ganancia bruta",
+				"what": "El dinero que queda de las ventas netas después de restar el costo de los productos vendidos. Todavía no descuenta gastos operativos, por eso no es la ganancia neta.",
+				"formula": "Ventas netas − Costo de los productos vendidos.",
+				"interpretation": "Es la base con la que se pagan los gastos de la empresa. Si cae, aunque las ventas suban, el negocio gana menos.",
+				"decision": "Priorizar los productos, clientes y vendedores que más ganancia bruta generan.",
+				"example": "Ventas $100.000 − costo $75.000 → ganancia bruta de $25.000.",
+				"evaluation": "Favorable: crece al mismo ritmo o más que las ventas."
+			},
+			"en": {
+				"short": "Gross profit",
+				"name": "Gross profit",
+				"what": "Money left from net sales after subtracting the cost of goods sold. It does not yet deduct operating expenses, so it is not net profit.",
+				"formula": "Net sales − Cost of goods sold.",
+				"interpretation": "It is what pays company expenses. If it falls while sales rise, the business earns less.",
+				"decision": "Prioritize products, customers and reps that generate the most gross profit.",
+				"example": "Sales $100,000 − cost $75,000 → gross profit of $25,000.",
+				"evaluation": "Good: grows at the same pace as sales or faster."
+			}
+		},
+		"price_variation": {
+			"id": "price_variation",
+			"category": "products",
+			"unit": "percent",
+			"period": "compare",
+			"source": [
+				"products"
+			],
+			"es": {
+				"short": "Variación de precios",
+				"name": "Variación promedio de precios de lista",
+				"what": "Cuánto cambiaron en promedio los precios base del catálogo respecto del período anterior.",
+				"formula": "Promedio de ((Precio base actual − Precio base anterior) / Precio base anterior) × 100.",
+				"interpretation": "Ayuda a explicar si el crecimiento de ventas viene de mayor volumen o de aumentos de precio.",
+				"decision": "Evaluar si los aumentos de precio acompañan a los aumentos de costo.",
+				"example": "Un producto sube de $10 a $10,50 y otro se mantiene → +2,5% promedio.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Price variation",
+				"name": "Average list price variation",
+				"what": "Average change in catalog base prices versus the previous period.",
+				"formula": "Average of ((Current base price − Previous base price) / Previous base price) × 100.",
+				"interpretation": "Helps explain whether sales growth comes from volume or price increases.",
+				"decision": "Check whether price increases keep pace with cost increases.",
+				"example": "One product goes from $10 to $10.50 and another stays → +2.5% average.",
+				"evaluation": ""
+			}
+		},
+		"products_no_movement": {
+			"id": "products_no_movement",
+			"category": "products",
+			"unit": "percent",
+			"period": "last60",
+			"source": [
+				"products",
+				"invoices"
+			],
+			"es": {
+				"short": "Productos sin ventas",
+				"name": "Productos sin ventas en 60 días",
+				"what": "Porcentaje de productos activos que no registran ninguna venta en los últimos 60 días.",
+				"formula": "(Productos activos sin ventas en 60 días / Total de productos activos) × 100.",
+				"interpretation": "Un valor alto indica inventario que no rota y riesgo de vencimiento o pérdida de valor.",
+				"decision": "Liquidar, promocionar o dejar de comprar esos productos.",
+				"example": "2 de 14 productos sin ventas → 14,3%.",
+				"evaluation": "Favorable: ≤ 10%."
+			},
+			"en": {
+				"short": "Products without sales",
+				"name": "Products without sales in 60 days",
+				"what": "Percentage of active products with no sales in the last 60 days.",
+				"formula": "(Active products without sales in 60 days / Total active products) × 100.",
+				"interpretation": "A high value means stock that does not move and risk of expiry or loss of value.",
+				"decision": "Clear out, promote or stop buying those products.",
+				"example": "2 of 14 products without sales → 14.3%.",
+				"evaluation": "Good: ≤ 10%."
+			}
+		},
+		"margin_target_compliance": {
+			"id": "margin_target_compliance",
+			"category": "products",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"products",
+				"invoices"
+			],
+			"es": {
+				"short": "Productos en margen meta",
+				"name": "Productos que cumplen el margen meta",
+				"what": "Porcentaje de productos vendidos cuyo margen bruto alcanza el objetivo definido (25%).",
+				"formula": "(Productos con margen bruto ≥ 25% / Total de productos vendidos) × 100.",
+				"interpretation": "Si baja, hay productos vendiéndose con poco margen por descuentos o costos altos.",
+				"decision": "Revisar precios o costos de los productos por debajo de la meta.",
+				"example": "9 de 12 productos vendidos con margen ≥ 25% → 75%.",
+				"evaluation": "Favorable: ≥ 80%."
+			},
+			"en": {
+				"short": "Products at target margin",
+				"name": "Products meeting the target margin",
+				"what": "Percentage of sold products whose gross margin reaches the defined target (25%).",
+				"formula": "(Products with gross margin ≥ 25% / Total products sold) × 100.",
+				"interpretation": "If it falls, some products are sold with thin margins due to discounts or high costs.",
+				"decision": "Review prices or costs of products below target.",
+				"example": "9 of 12 products sold with margin ≥ 25% → 75%.",
+				"evaluation": "Good: ≥ 80%."
+			}
+		},
+		"quotes_issued": {
+			"id": "quotes_issued",
+			"category": "orders",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"quotes"
+			],
+			"es": {
+				"short": "Cotizaciones emitidas",
+				"name": "Cotizaciones emitidas",
+				"what": "Cantidad de cotizaciones creadas y enviadas a clientes.",
+				"formula": "Conteo de cotizaciones registradas.",
+				"interpretation": "Mide la actividad comercial previa a la venta.",
+				"decision": "Evaluar si el equipo genera suficientes oportunidades para alcanzar la meta.",
+				"example": "40 cotizaciones creadas en noviembre → 40.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Quotes issued",
+				"name": "Quotes issued",
+				"what": "Number of quotes created and sent to customers.",
+				"formula": "Count of recorded quotes.",
+				"interpretation": "Measures pre-sale commercial activity.",
+				"decision": "Check whether the team generates enough opportunities to reach the target.",
+				"example": "40 quotes created in November → 40.",
+				"evaluation": ""
+			}
+		},
+		"quoted_value": {
+			"id": "quoted_value",
+			"category": "orders",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"quotes"
+			],
+			"es": {
+				"short": "Valor cotizado",
+				"name": "Valor total cotizado",
+				"what": "La suma de los importes de todas las cotizaciones creadas. Son oportunidades, no ventas.",
+				"formula": "Suma del importe total de las cotizaciones registradas.",
+				"interpretation": "Indica el potencial de venta en curso. Solo una parte se convertirá en pedidos.",
+				"decision": "Priorizar el seguimiento de las cotizaciones de mayor importe.",
+				"example": "40 cotizaciones con un promedio de $1.000 → $40.000.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Quoted value",
+				"name": "Total quoted value",
+				"what": "Sum of the amounts of all quotes created. These are opportunities, not sales.",
+				"formula": "Sum of total amount of recorded quotes.",
+				"interpretation": "Shows sales potential in progress. Only part of it will become orders.",
+				"decision": "Prioritize follow-up of the largest quotes.",
+				"example": "40 quotes averaging $1,000 → $40,000.",
+				"evaluation": ""
+			}
+		},
+		"quote_conversion": {
+			"id": "quote_conversion",
+			"category": "orders",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"quotes",
+				"orders"
+			],
+			"es": {
+				"short": "Conversión de cotizaciones",
+				"name": "Conversión de cotizaciones en pedidos",
+				"what": "Porcentaje de cotizaciones que terminaron en un pedido confirmado.",
+				"formula": "(Cotizaciones convertidas en pedido / Total de cotizaciones) × 100.",
+				"interpretation": "Un valor bajo puede indicar precios poco competitivos o falta de seguimiento.",
+				"decision": "Revisar condiciones comerciales y reforzar el seguimiento de cotizaciones abiertas.",
+				"example": "40 cotizaciones y 14 pedidos → 35%.",
+				"evaluation": "Favorable: ≥ 35%. Alerta: 20–35%. Crítico: < 20%."
+			},
+			"en": {
+				"short": "Quote conversion",
+				"name": "Quote-to-order conversion",
+				"what": "Percentage of quotes that ended in a confirmed order.",
+				"formula": "(Quotes converted into orders / Total quotes) × 100.",
+				"interpretation": "A low value may point to uncompetitive pricing or lack of follow-up.",
+				"decision": "Review commercial terms and strengthen follow-up of open quotes.",
+				"example": "40 quotes and 14 orders → 35%.",
+				"evaluation": "Good: ≥ 35%. Warning: 20–35%. Critical: < 20%."
+			}
+		},
+		"confirmed_orders": {
+			"id": "confirmed_orders",
+			"category": "orders",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"orders"
+			],
+			"es": {
+				"short": "Pedidos confirmados",
+				"name": "Pedidos confirmados",
+				"what": "Cantidad de pedidos aprobados por el cliente en el período. Un pedido confirmado todavía puede no estar entregado ni facturado.",
+				"formula": "Conteo de pedidos en estado confirmado dentro del período.",
+				"interpretation": "Anticipa la facturación de los próximos días. No equivale a pedidos entregados.",
+				"decision": "Planificar preparación, despacho y facturación.",
+				"example": "27 pedidos aprobados en noviembre → 27.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Confirmed orders",
+				"name": "Confirmed orders",
+				"what": "Number of orders approved by the customer in the period. A confirmed order may not yet be delivered or invoiced.",
+				"formula": "Count of orders in confirmed status within the period.",
+				"interpretation": "Anticipates invoicing for the coming days. It is not the same as delivered orders.",
+				"decision": "Plan picking, dispatch and invoicing.",
+				"example": "27 orders approved in November → 27.",
+				"evaluation": ""
+			}
+		},
+		"orders_value": {
+			"id": "orders_value",
+			"category": "orders",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"orders"
+			],
+			"es": {
+				"short": "Valor de pedidos",
+				"name": "Valor de pedidos recibidos",
+				"what": "La suma de los importes de todos los pedidos registrados, en cualquier estado, antes de facturar.",
+				"formula": "Suma del importe total de los pedidos registrados.",
+				"interpretation": "Muestra el volumen comprometido por los clientes. Incluye pedidos en borrador o pendientes que todavía pueden cambiar.",
+				"decision": "Asegurar la capacidad de despacho y facturar los pedidos pendientes.",
+				"example": "27 pedidos con un promedio de $1.450 → $39.150.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Order value",
+				"name": "Value of orders received",
+				"what": "Sum of the amounts of all recorded orders, in any status, before invoicing.",
+				"formula": "Sum of total amount of recorded orders.",
+				"interpretation": "Shows the volume committed by customers. Includes draft or pending orders that may still change.",
+				"decision": "Secure dispatch capacity and invoice pending orders.",
+				"example": "27 orders averaging $1,450 → $39,150.",
+				"evaluation": ""
+			}
+		},
+		"avg_order_value": {
+			"id": "avg_order_value",
+			"category": "orders",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"orders"
+			],
+			"es": {
+				"short": "Valor promedio por pedido",
+				"name": "Valor promedio por pedido",
+				"what": "El importe medio de cada pedido registrado. Se calcula sobre pedidos, no sobre facturas.",
+				"formula": "Valor de pedidos recibidos / Cantidad de pedidos recibidos.",
+				"interpretation": "Si sube, los clientes hacen pedidos más grandes; puede compararse con el pedido mínimo requerido.",
+				"decision": "Promover pedidos de mayor tamaño con precios según cantidad comprada.",
+				"example": "$39.150 en 27 pedidos → $1.450 por pedido.",
+				"evaluation": "Favorable: superior al pedido mínimo requerido."
+			},
+			"en": {
+				"short": "Average order value",
+				"name": "Average order value",
+				"what": "The average amount of each recorded order. Calculated on orders, not invoices.",
+				"formula": "Value of orders received / Number of orders received.",
+				"interpretation": "If it rises, customers place larger orders; compare it with the minimum order required.",
+				"decision": "Encourage larger orders with quantity-based pricing.",
+				"example": "$39,150 over 27 orders → $1,450 per order.",
+				"evaluation": "Good: above the minimum order required."
+			}
+		},
+		"pending_orders_pct": {
+			"id": "pending_orders_pct",
+			"category": "orders",
+			"unit": "percent",
+			"period": "snapshot",
+			"source": [
+				"orders",
+				"deliveries"
+			],
+			"es": {
+				"short": "Pedidos pendientes",
+				"name": "Pedidos pendientes (%)",
+				"what": "Porcentaje de pedidos que siguen pendientes, en borrador o en preparación.",
+				"formula": "(Pedidos pendientes, en borrador o en preparación / Total de pedidos) × 100.",
+				"interpretation": "Un valor alto indica atraso en la preparación o el reparto.",
+				"decision": "Reforzar el despacho o reprogramar rutas de entrega.",
+				"example": "6 de 27 pedidos sin entregar → 22%.",
+				"evaluation": "Favorable: ≤ 15%."
+			},
+			"en": {
+				"short": "Pending orders",
+				"name": "Pending orders (%)",
+				"what": "Percentage of orders still pending, in draft or being prepared.",
+				"formula": "(Pending, draft or in-preparation orders / Total orders) × 100.",
+				"interpretation": "A high value indicates delays in picking or delivery.",
+				"decision": "Strengthen dispatch or reschedule delivery routes.",
+				"example": "6 of 27 orders not delivered → 22%.",
+				"evaluation": "Good: ≤ 15%."
+			}
+		},
+		"on_time_orders": {
+			"id": "on_time_orders",
+			"category": "orders",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"orders",
+				"deliveries"
+			],
+			"es": {
+				"short": "Pedidos a tiempo",
+				"name": "Pedidos entregados a tiempo",
+				"what": "Porcentaje de pedidos cerrados que llegaron en la fecha comprometida.",
+				"formula": "(Pedidos entregados en la fecha comprometida / Total de pedidos cerrados) × 100.",
+				"interpretation": "Mide la puntualidad. Para medir además que el pedido llegara completo, vea \"Entregas completas y a tiempo\".",
+				"decision": "Revisar rutas y tiempos de preparación de los pedidos atrasados.",
+				"example": "24 de 25 pedidos llegaron a tiempo → 96%.",
+				"evaluation": "Favorable: ≥ 95%."
+			},
+			"en": {
+				"short": "On-time orders",
+				"name": "Orders delivered on time",
+				"what": "Percentage of closed orders that arrived on the committed date.",
+				"formula": "(Orders delivered on the committed date / Total closed orders) × 100.",
+				"interpretation": "Measures punctuality. To also check that the order arrived complete, see \"On-time, in-full deliveries\".",
+				"decision": "Review routes and picking times for late orders.",
+				"example": "24 of 25 orders arrived on time → 96%.",
+				"evaluation": "Good: ≥ 95%."
+			}
+		},
+		"otif": {
+			"id": "otif",
+			"category": "orders",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"orders",
+				"deliveries"
+			],
+			"es": {
+				"short": "Entregas completas y a tiempo",
+				"name": "Entregas completas y a tiempo",
+				"what": "Porcentaje de pedidos que llegaron en la fecha comprometida y con todos los productos y cantidades solicitadas.",
+				"formula": "(Pedidos entregados a tiempo y completos / Total de pedidos despachados) × 100.",
+				"interpretation": "Es el principal indicador de servicio al cliente mayorista. Las cadenas suelen penalizar a los proveedores que no lo cumplen.",
+				"decision": "Corregir faltantes de inventario, errores de preparación o atrasos de reparto.",
+				"example": "De 100 pedidos, 96 llegaron a tiempo y completos → 96%.",
+				"evaluation": "Favorable: ≥ 95%. Alerta: 90–95%. Crítico: < 90%."
+			},
+			"en": {
+				"short": "On-time, in-full deliveries",
+				"name": "On-time, in-full deliveries",
+				"what": "Percentage of orders that arrived on the committed date with all requested products and quantities.",
+				"formula": "(Orders delivered on time and complete / Total dispatched orders) × 100.",
+				"interpretation": "The main wholesale customer service indicator. Retail chains often penalize suppliers who miss it.",
+				"decision": "Fix stock shortages, picking errors or delivery delays.",
+				"example": "Of 100 orders, 96 arrived on time and complete → 96%.",
+				"evaluation": "Good: ≥ 95%. Warning: 90–95%. Critical: < 90%."
+			}
+		},
+		"min_order": {
+			"id": "min_order",
+			"category": "orders",
+			"unit": "currency",
+			"period": "snapshot",
+			"source": [
+				"products",
+				"customers"
+			],
+			"es": {
+				"short": "Pedido mínimo requerido",
+				"name": "Pedido mínimo requerido",
+				"what": "El importe o la cantidad mínima que debe tener un pedido para ser aceptado.",
+				"formula": "Valor configurado por la empresa (por cliente o general).",
+				"interpretation": "Evita despachos poco rentables por pedidos demasiado pequeños.",
+				"decision": "Ajustar el mínimo según el costo de reparto de cada zona.",
+				"example": "Con un mínimo de $500, un pedido de $420 no se acepta.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Minimum order required",
+				"name": "Minimum order required",
+				"what": "The minimum amount or quantity an order must reach to be accepted.",
+				"formula": "Value configured by the company (per customer or general).",
+				"interpretation": "Prevents unprofitable deliveries of very small orders.",
+				"decision": "Adjust the minimum according to delivery cost by area.",
+				"example": "With a $500 minimum, a $420 order is not accepted.",
+				"evaluation": ""
+			}
+		},
+		"orders_received": {
+			"id": "orders_received",
+			"category": "orders",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"orders"
+			],
+			"es": {
+				"short": "Pedidos recibidos",
+				"name": "Pedidos recibidos (cualquier estado)",
+				"what": "Cantidad total de pedidos registrados, sin importar su estado (borrador, pendiente, confirmado, entregado, facturado o cancelado).",
+				"formula": "Conteo de todos los pedidos registrados.",
+				"interpretation": "Mide el volumen de pedidos que llega. Para ver cuántos están firmes, revise los pedidos en firme.",
+				"decision": "Dimensionar la carga de preparación y despacho.",
+				"example": "36 pedidos registrados, 27 confirmados → 36 pedidos recibidos.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Orders received",
+				"name": "Orders received (any status)",
+				"what": "Total number of recorded orders, regardless of status (draft, pending, confirmed, delivered, invoiced or cancelled).",
+				"formula": "Count of all recorded orders.",
+				"interpretation": "Measures incoming order volume. To see how many are firm, check firm orders.",
+				"decision": "Size the picking and dispatch workload.",
+				"example": "36 recorded orders, 27 confirmed → 36 orders received.",
+				"evaluation": ""
+			}
+		},
+		"orders_confirmed_pct": {
+			"id": "orders_confirmed_pct",
+			"category": "orders",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"orders"
+			],
+			"es": {
+				"short": "Pedidos en firme",
+				"name": "Pedidos confirmados, entregados o facturados (%)",
+				"what": "Porcentaje de los pedidos registrados que ya están confirmados, entregados o facturados. No mide puntualidad.",
+				"formula": "(Pedidos confirmados, entregados o facturados / Total de pedidos) × 100.",
+				"interpretation": "Un valor bajo indica muchos pedidos en borrador, pendientes o cancelados.",
+				"decision": "Dar seguimiento a los pedidos sin confirmar para que no se pierdan.",
+				"example": "27 de 36 pedidos en firme → 75%.",
+				"evaluation": "Favorable: ≥ 85%."
+			},
+			"en": {
+				"short": "Firm orders",
+				"name": "Confirmed, delivered or invoiced orders (%)",
+				"what": "Share of recorded orders that are already confirmed, delivered or invoiced. It does not measure punctuality.",
+				"formula": "(Confirmed, delivered or invoiced orders / Total orders) × 100.",
+				"interpretation": "A low value means many draft, pending or cancelled orders.",
+				"decision": "Follow up on unconfirmed orders so they are not lost.",
+				"example": "27 of 36 orders firm → 75%.",
+				"evaluation": "Good: ≥ 85%."
+			}
+		},
+		"invoices_issued": {
+			"id": "invoices_issued",
+			"category": "billing",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"invoices"
+			],
+			"es": {
+				"short": "Facturas emitidas",
+				"name": "Facturas emitidas",
+				"what": "Cantidad de facturas válidas emitidas en el período (excluye anuladas).",
+				"formula": "Conteo de facturas válidas del período.",
+				"interpretation": "Junto con las ventas netas permite calcular el valor promedio por factura.",
+				"decision": "Detectar pedidos entregados que aún no se facturaron.",
+				"example": "26 facturas válidas en noviembre → 26.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Invoices issued",
+				"name": "Invoices issued",
+				"what": "Number of valid invoices issued in the period (excludes voided ones).",
+				"formula": "Count of valid invoices in the period.",
+				"interpretation": "Together with net sales, it gives the average invoice value.",
+				"decision": "Detect delivered orders not yet invoiced.",
+				"example": "26 valid invoices in November → 26.",
+				"evaluation": ""
+			}
+		},
+		"collected": {
+			"id": "collected",
+			"category": "billing",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"payments"
+			],
+			"es": {
+				"short": "Dinero cobrado",
+				"name": "Dinero efectivamente cobrado",
+				"what": "El dinero realmente recibido de los clientes por pagos registrados en las facturas del período. No es lo mismo que lo facturado.",
+				"formula": "Suma de los pagos registrados en las facturas del período.",
+				"interpretation": "La diferencia entre lo facturado y lo cobrado es lo que queda pendiente de cobro.",
+				"decision": "Planificar la caja y acelerar el cobro de las facturas pendientes.",
+				"example": "Facturado $40.000, cobrado $31.000 → faltan $9.000 por cobrar.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Cash collected",
+				"name": "Cash actually collected",
+				"what": "Money actually received from customers for payments recorded on the period invoices. It is not the same as invoiced.",
+				"formula": "Sum of payments recorded on the period invoices.",
+				"interpretation": "The gap between invoiced and collected is what remains pending collection.",
+				"decision": "Plan cash flow and speed up collection of pending invoices.",
+				"example": "Invoiced $40,000, collected $31,000 → $9,000 still to collect.",
+				"evaluation": ""
+			}
+		},
+		"collection_rate": {
+			"id": "collection_rate",
+			"category": "billing",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"payments"
+			],
+			"es": {
+				"short": "Tasa de cobro",
+				"name": "Tasa de cobro",
+				"what": "Qué porcentaje de las ventas netas facturadas ya fue cobrado.",
+				"formula": "(Dinero cobrado / Ventas netas facturadas) × 100.",
+				"interpretation": "Un valor bajo indica que la empresa financia a sus clientes más de lo previsto.",
+				"decision": "Reforzar la gestión de cobro y revisar los plazos de crédito.",
+				"example": "$31.000 cobrados de $40.000 facturados → 77,5%.",
+				"evaluation": "Favorable: ≥ 85%. Alerta: 70–85%. Crítico: < 70%."
+			},
+			"en": {
+				"short": "Collection rate",
+				"name": "Collection rate",
+				"what": "Share of net invoiced sales already collected.",
+				"formula": "(Cash collected / Net invoiced sales) × 100.",
+				"interpretation": "A low value means the company is financing customers more than planned.",
+				"decision": "Strengthen collection work and review credit terms.",
+				"example": "$31,000 collected of $40,000 invoiced → 77.5%.",
+				"evaluation": "Good: ≥ 85%. Warning: 70–85%. Critical: < 70%."
+			}
+		},
+		"overdue_balance": {
+			"id": "overdue_balance",
+			"category": "billing",
+			"unit": "currency",
+			"period": "snapshot",
+			"source": [
+				"invoices",
+				"payments"
+			],
+			"es": {
+				"short": "Deuda vencida",
+				"name": "Deuda vencida",
+				"what": "El saldo pendiente de pago de las facturas cuya fecha de vencimiento ya pasó.",
+				"formula": "Suma del saldo pendiente de las facturas vencidas a la fecha.",
+				"interpretation": "Es la parte más riesgosa de las cuentas por cobrar.",
+				"decision": "Iniciar gestión de cobranza y bloquear crédito a clientes con deuda vencida.",
+				"example": "2 facturas vencidas con saldo de $1.200 y $800 → $2.000.",
+				"evaluation": "Favorable: menos del 10% de las cuentas por cobrar."
+			},
+			"en": {
+				"short": "Overdue debt",
+				"name": "Overdue debt",
+				"what": "Unpaid balance of invoices whose due date has passed.",
+				"formula": "Sum of unpaid balance of invoices overdue as of today.",
+				"interpretation": "It is the riskiest part of accounts receivable.",
+				"decision": "Start collection actions and block credit for customers with overdue debt.",
+				"example": "2 overdue invoices with balances of $1,200 and $800 → $2,000.",
+				"evaluation": "Good: under 10% of accounts receivable."
+			}
+		},
+		"overdue_invoices_pct": {
+			"id": "overdue_invoices_pct",
+			"category": "billing",
+			"unit": "percent",
+			"period": "snapshot",
+			"source": [
+				"invoices"
+			],
+			"es": {
+				"short": "Facturas vencidas",
+				"name": "Facturas vencidas (%)",
+				"what": "Porcentaje de facturas emitidas que están vencidas y sin pagar.",
+				"formula": "(Facturas vencidas / Total de facturas emitidas) × 100.",
+				"interpretation": "Si crece, la cartera de clientes se está atrasando en los pagos.",
+				"decision": "Revisar condiciones de crédito y contactar a los clientes atrasados.",
+				"example": "3 de 26 facturas vencidas → 11,5%.",
+				"evaluation": "Favorable: ≤ 10%."
+			},
+			"en": {
+				"short": "Overdue invoices",
+				"name": "Overdue invoices (%)",
+				"what": "Percentage of issued invoices that are overdue and unpaid.",
+				"formula": "(Overdue invoices / Total invoices issued) × 100.",
+				"interpretation": "If it grows, customers are falling behind on payments.",
+				"decision": "Review credit terms and contact late-paying customers.",
+				"example": "3 of 26 invoices overdue → 11.5%.",
+				"evaluation": "Good: ≤ 10%."
+			}
+		},
+		"dso": {
+			"id": "dso",
+			"category": "billing",
+			"unit": "days",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"payments"
+			],
+			"es": {
+				"short": "Días promedio de cobro",
+				"name": "Días promedio de cobro",
+				"what": "Cuántos días tarda en promedio la empresa en cobrar lo que vende.",
+				"formula": "(Cuentas por cobrar / Ventas netas del período) × Días del período.",
+				"interpretation": "Menos días significa que el dinero entra antes. Compárelo con el plazo de crédito otorgado.",
+				"decision": "Ajustar plazos de crédito y priorizar el cobro de clientes que pagan tarde.",
+				"example": "$9.000 por cobrar, $40.000 vendidos en 30 días → 6,8 días.",
+				"evaluation": "Favorable: ≤ plazo de crédito (p. ej. 30 días)."
+			},
+			"en": {
+				"short": "Average days to collect",
+				"name": "Average days to collect",
+				"what": "How many days on average the company takes to collect what it sells.",
+				"formula": "(Accounts receivable / Net sales in the period) × Days in the period.",
+				"interpretation": "Fewer days means cash comes in sooner. Compare it with granted credit terms.",
+				"decision": "Adjust credit terms and prioritize collection from late payers.",
+				"example": "$9,000 receivable, $40,000 sold in 30 days → 6.8 days.",
+				"evaluation": "Good: ≤ credit term (e.g. 30 days)."
+			}
+		},
+		"credit_notes": {
+			"id": "credit_notes",
+			"category": "billing",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices"
+			],
+			"es": {
+				"short": "Notas de crédito",
+				"name": "Notas de crédito emitidas",
+				"what": "El importe de las notas de crédito emitidas por devoluciones, descuentos posteriores o errores de facturación.",
+				"formula": "Suma de las notas de crédito válidas del período.",
+				"interpretation": "Un monto alto puede indicar problemas de calidad, entregas o precios mal cargados.",
+				"decision": "Revisar las causas de las devoluciones y corregir procesos.",
+				"example": "Una devolución de 20 cajas a $25 → nota de crédito de $500.",
+				"evaluation": "Favorable: menos del 2% de lo facturado."
+			},
+			"en": {
+				"short": "Credit notes",
+				"name": "Credit notes issued",
+				"what": "Amount of credit notes issued for returns, later discounts or invoicing errors.",
+				"formula": "Sum of valid credit notes in the period.",
+				"interpretation": "A high amount may point to quality, delivery or pricing issues.",
+				"decision": "Review causes of returns and fix processes.",
+				"example": "A return of 20 cases at $25 → $500 credit note.",
+				"evaluation": "Good: under 2% of invoiced amount."
+			}
+		},
+		"active_reps": {
+			"id": "active_reps",
+			"category": "team",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"reps"
+			],
+			"es": {
+				"short": "Vendedores activos",
+				"name": "Vendedores activos",
+				"what": "Cantidad de vendedores habilitados con cartera o territorio asignado.",
+				"formula": "Conteo de vendedores con estado activo.",
+				"interpretation": "Permite dimensionar la carga de clientes por vendedor.",
+				"decision": "Redistribuir carteras o contratar según la cobertura necesaria.",
+				"example": "6 vendedores habilitados → 6.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Active sales reps",
+				"name": "Active sales reps",
+				"what": "Number of enabled sales reps with an assigned portfolio or territory.",
+				"formula": "Count of reps with active status.",
+				"interpretation": "Helps size the customer load per rep.",
+				"decision": "Rebalance portfolios or hire according to required coverage.",
+				"example": "6 enabled reps → 6.",
+				"evaluation": ""
+			}
+		},
+		"team_sales": {
+			"id": "team_sales",
+			"category": "team",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"reps"
+			],
+			"es": {
+				"short": "Ventas del equipo",
+				"name": "Ventas netas del equipo comercial",
+				"what": "La suma de las ventas netas facturadas atribuidas a todos los vendedores.",
+				"formula": "Suma de las ventas netas de cada vendedor en el período.",
+				"interpretation": "Debe coincidir aproximadamente con las ventas netas de la empresa; la diferencia son ventas sin vendedor asignado.",
+				"decision": "Comparar con la meta del equipo y redistribuir esfuerzos.",
+				"example": "6 vendedores con $6.500 cada uno → $39.000.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Team sales",
+				"name": "Sales team net sales",
+				"what": "Sum of net invoiced sales attributed to all sales reps.",
+				"formula": "Sum of each rep's net sales in the period.",
+				"interpretation": "Should roughly match company net sales; the gap is sales with no assigned rep.",
+				"decision": "Compare with the team target and rebalance effort.",
+				"example": "6 reps with $6,500 each → $39,000.",
+				"evaluation": ""
+			}
+		},
+		"avg_sales_per_rep": {
+			"id": "avg_sales_per_rep",
+			"category": "team",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"reps"
+			],
+			"es": {
+				"short": "Venta promedio por vendedor",
+				"name": "Venta promedio por vendedor",
+				"what": "Cuánto vende en promedio cada vendedor activo.",
+				"formula": "Ventas del equipo / Vendedores activos.",
+				"interpretation": "Sirve de referencia para comparar a cada vendedor con el promedio.",
+				"decision": "Identificar vendedores que necesitan apoyo o capacitación.",
+				"example": "$39.000 entre 6 vendedores → $6.500.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Average sales per rep",
+				"name": "Average sales per rep",
+				"what": "How much each active rep sells on average.",
+				"formula": "Team sales / Active reps.",
+				"interpretation": "A benchmark to compare each rep with the average.",
+				"decision": "Identify reps who need support or training.",
+				"example": "$39,000 across 6 reps → $6,500.",
+				"evaluation": ""
+			}
+		},
+		"sales_per_hour": {
+			"id": "sales_per_hour",
+			"category": "team",
+			"unit": "currency_per_hour",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"attendance"
+			],
+			"es": {
+				"short": "Venta por hora trabajada",
+				"name": "Venta por hora trabajada",
+				"what": "Cuántos dólares de venta neta se generan por cada hora trabajada por el personal.",
+				"formula": "Ventas netas / Horas trabajadas registradas.",
+				"interpretation": "Mide la productividad comercial. Si baja, hay más horas que ventas.",
+				"decision": "Ajustar turnos, rutas o dotación según la demanda.",
+				"example": "$39.000 en 600 horas → $65 por hora.",
+				"evaluation": "Favorable: en aumento o sobre la meta definida."
+			},
+			"en": {
+				"short": "Sales per hour worked",
+				"name": "Sales per hour worked",
+				"what": "Net sales dollars generated per hour worked by staff.",
+				"formula": "Net sales / Recorded hours worked.",
+				"interpretation": "Measures commercial productivity. If it falls, hours grow faster than sales.",
+				"decision": "Adjust shifts, routes or staffing to demand.",
+				"example": "$39,000 over 600 hours → $65 per hour.",
+				"evaluation": "Good: rising or above the defined target."
+			}
+		},
+		"quota_attainment": {
+			"id": "quota_attainment",
+			"category": "team",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"reps"
+			],
+			"es": {
+				"short": "Cumplimiento de meta",
+				"name": "Cumplimiento de la meta de ventas",
+				"what": "Qué porcentaje de la meta de ventas asignada ya se alcanzó. La meta es el objetivo fijado; no es una proyección.",
+				"formula": "(Ventas netas / Meta de ventas del período) × 100.",
+				"interpretation": "100% o más significa meta cumplida. Compárelo con el avance del mes para saber si se llegará a tiempo.",
+				"decision": "Reforzar el esfuerzo en territorios atrasados o revisar metas poco realistas.",
+				"example": "Meta $50.000, ventas $39.000 → 78%.",
+				"evaluation": "Favorable: ≥ 100%. Alerta: 80–100%. Crítico: < 80% al cierre."
+			},
+			"en": {
+				"short": "Target attainment",
+				"name": "Sales target attainment",
+				"what": "Share of the assigned sales target already achieved. The target is the set goal; it is not a projection.",
+				"formula": "(Net sales / Period sales target) × 100.",
+				"interpretation": "100% or more means target met. Compare with month progress to see whether it will be reached in time.",
+				"decision": "Push lagging territories or review unrealistic targets.",
+				"example": "Target $50,000, sales $39,000 → 78%.",
+				"evaluation": "Good: ≥ 100%. Warning: 80–100%. Critical: < 80% at close."
+			}
+		},
+		"team_gross_profit": {
+			"id": "team_gross_profit",
+			"category": "team",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"products",
+				"reps"
+			],
+			"es": {
+				"short": "Ganancia bruta del equipo",
+				"name": "Ganancia bruta generada por el equipo",
+				"what": "La ganancia bruta de las ventas atribuidas a los vendedores.",
+				"formula": "Ventas del equipo − Costo de los productos vendidos por el equipo.",
+				"interpretation": "Un vendedor con muchas ventas pero poca ganancia puede estar dando demasiados descuentos.",
+				"decision": "Premiar la ganancia generada y no solo el volumen vendido.",
+				"example": "Ventas $39.000 − costo $29.000 → $10.000.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Team gross profit",
+				"name": "Gross profit generated by the team",
+				"what": "Gross profit from sales attributed to sales reps.",
+				"formula": "Team sales − Cost of goods sold by the team.",
+				"interpretation": "A rep with high sales but low profit may be giving too many discounts.",
+				"decision": "Reward profit generated, not just volume sold.",
+				"example": "Sales $39,000 − cost $29,000 → $10,000.",
+				"evaluation": ""
+			}
+		},
+		"cogs": {
+			"id": "cogs",
+			"category": "profitability",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"products"
+			],
+			"es": {
+				"short": "Costo de los productos vendidos",
+				"name": "Costo de los productos vendidos",
+				"what": "Lo que le costó a la empresa adquirir los productos que vendió en el período. Se toma el costo vigente al momento de facturar cada línea.",
+				"formula": "Suma de (cantidad vendida × costo unitario al facturar).",
+				"interpretation": "Si crece más rápido que las ventas, el margen bruto se reduce.",
+				"decision": "Negociar con proveedores o ajustar precios de venta.",
+				"example": "1.000 cajas vendidas con costo de $30 → $30.000.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Cost of goods sold",
+				"name": "Cost of goods sold",
+				"what": "What it cost the company to acquire the products it sold in the period. The cost in effect when each line was invoiced is used.",
+				"formula": "Sum of (quantity sold × unit cost at invoicing).",
+				"interpretation": "If it grows faster than sales, gross margin shrinks.",
+				"decision": "Negotiate with suppliers or adjust selling prices.",
+				"example": "1,000 cases sold at a $30 cost → $30,000.",
+				"evaluation": ""
+			}
+		},
+		"cogs_ratio": {
+			"id": "cogs_ratio",
+			"category": "profitability",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"products"
+			],
+			"es": {
+				"short": "Costo sobre ventas",
+				"name": "Costo de los productos vendidos sobre ventas (%)",
+				"what": "Qué parte de cada dólar vendido corresponde al costo de los productos.",
+				"formula": "(Costo de los productos vendidos / Ventas netas) × 100.",
+				"interpretation": "Es el complemento del margen bruto: 75% de costo equivale a 25% de margen.",
+				"decision": "Revisar precios y costos cuando supera el objetivo.",
+				"example": "Costo $75.000 sobre ventas de $100.000 → 75%.",
+				"evaluation": "Favorable: ≤ 75%."
+			},
+			"en": {
+				"short": "Cost-to-sales ratio",
+				"name": "Cost of goods sold to sales (%)",
+				"what": "The share of each dollar sold that corresponds to product cost.",
+				"formula": "(Cost of goods sold / Net sales) × 100.",
+				"interpretation": "It complements gross margin: 75% cost equals 25% margin.",
+				"decision": "Review prices and costs when it exceeds the target.",
+				"example": "$75,000 cost on $100,000 sales → 75%.",
+				"evaluation": "Good: ≤ 75%."
+			}
+		},
+		"commercial_discounts": {
+			"id": "commercial_discounts",
+			"category": "profitability",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"orders",
+				"invoices"
+			],
+			"es": {
+				"short": "Descuentos comerciales",
+				"name": "Descuentos comerciales otorgados",
+				"what": "La suma de los descuentos concedidos en pedidos y facturas del período.",
+				"formula": "Suma de los descuentos aplicados en pedidos y facturas.",
+				"interpretation": "Los descuentos reducen directamente la ganancia. Revise si generaron más volumen.",
+				"decision": "Limitar o condicionar los descuentos que no aumentan las ventas.",
+				"example": "10 pedidos con $150 de descuento → $1.500.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Commercial discounts",
+				"name": "Commercial discounts granted",
+				"what": "Sum of discounts granted on orders and invoices in the period.",
+				"formula": "Sum of discounts applied on orders and invoices.",
+				"interpretation": "Discounts reduce profit directly. Check whether they generated more volume.",
+				"decision": "Limit or condition discounts that do not increase sales.",
+				"example": "10 orders with a $150 discount → $1,500.",
+				"evaluation": ""
+			}
+		},
+		"net_contribution": {
+			"id": "net_contribution",
+			"category": "profitability",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"orders",
+				"products"
+			],
+			"es": {
+				"short": "Contribución comercial",
+				"name": "Contribución comercial",
+				"what": "La ganancia bruta que queda después de restar los descuentos y gastos comerciales directos. Todavía no es la ganancia neta de la empresa (no descuenta gastos fijos ni impuestos).",
+				"formula": "Ganancia bruta − Descuentos y gastos comerciales directos.",
+				"interpretation": "Muestra cuánto aporta realmente la venta para cubrir los gastos fijos.",
+				"decision": "Revisar clientes o productos con contribución baja o negativa.",
+				"example": "Ganancia bruta $25.000 − descuentos $1.500 → $23.500.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Commercial contribution",
+				"name": "Commercial contribution",
+				"what": "Gross profit left after subtracting discounts and direct commercial expenses. It is not yet company net profit (fixed costs and taxes are not deducted).",
+				"formula": "Gross profit − Discounts and direct commercial expenses.",
+				"interpretation": "Shows how much sales really contribute to cover fixed costs.",
+				"decision": "Review customers or products with low or negative contribution.",
+				"example": "Gross profit $25,000 − discounts $1,500 → $23,500.",
+				"evaluation": ""
+			}
+		},
+		"contribution_margin_pct": {
+			"id": "contribution_margin_pct",
+			"category": "profitability",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"orders",
+				"products"
+			],
+			"es": {
+				"short": "Margen de contribución %",
+				"name": "Margen de contribución (%)",
+				"what": "Qué porcentaje de las ventas netas queda como contribución comercial.",
+				"formula": "(Contribución comercial / Ventas netas) × 100.",
+				"interpretation": "Es más exigente que el margen bruto porque incluye los descuentos.",
+				"decision": "Fijar políticas de descuento que protejan este margen.",
+				"example": "$23.500 sobre $100.000 → 23,5%.",
+				"evaluation": "Favorable: ≥ 20%."
+			},
+			"en": {
+				"short": "Contribution margin %",
+				"name": "Contribution margin (%)",
+				"what": "Share of net sales that remains as commercial contribution.",
+				"formula": "(Commercial contribution / Net sales) × 100.",
+				"interpretation": "Stricter than gross margin because it includes discounts.",
+				"decision": "Set discount policies that protect this margin.",
+				"example": "$23,500 on $100,000 → 23.5%.",
+				"evaluation": "Good: ≥ 20%."
+			}
+		},
+		"profit_growth": {
+			"id": "profit_growth",
+			"category": "profitability",
+			"unit": "percent",
+			"period": "compare",
+			"source": [
+				"invoices",
+				"products"
+			],
+			"es": {
+				"short": "Crecimiento de la ganancia",
+				"name": "Crecimiento de la ganancia bruta",
+				"what": "Cuánto cambió la ganancia bruta respecto del período anterior. No es el margen.",
+				"formula": "((Ganancia bruta actual − Ganancia bruta anterior) / Ganancia bruta anterior) × 100.",
+				"interpretation": "Si las ventas crecen pero la ganancia no, se está vendiendo con menos margen.",
+				"decision": "Revisar precios, descuentos y mezcla de productos.",
+				"example": "De $20.000 a $22.000 → +10%.",
+				"evaluation": "Favorable: > 0%."
+			},
+			"en": {
+				"short": "Profit growth",
+				"name": "Gross profit growth",
+				"what": "How much gross profit changed versus the previous period. It is not the margin.",
+				"formula": "((Current gross profit − Previous gross profit) / Previous gross profit) × 100.",
+				"interpretation": "If sales grow but profit does not, you are selling with less margin.",
+				"decision": "Review prices, discounts and product mix.",
+				"example": "From $20,000 to $22,000 → +10%.",
+				"evaluation": "Good: > 0%."
+			}
+		},
+		"required_hours": {
+			"id": "required_hours",
+			"category": "workforce",
+			"unit": "hours",
+			"period": "week",
+			"source": [
+				"schedules",
+				"invoices"
+			],
+			"es": {
+				"short": "Horas requeridas",
+				"name": "Horas de trabajo requeridas",
+				"what": "Las horas de personal necesarias para atender la demanda prevista de la semana.",
+				"formula": "Ventas previstas / Meta de venta por hora, respetando la cobertura mínima de cada local.",
+				"interpretation": "Es la referencia para comparar con las horas programadas.",
+				"decision": "Decidir si agregar o reducir turnos.",
+				"example": "$26.000 previstos / $65 por hora → 400 horas.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Required hours",
+				"name": "Required work hours",
+				"what": "Staff hours needed to meet the week's expected demand.",
+				"formula": "Expected sales / Sales-per-hour target, respecting each location's minimum coverage.",
+				"interpretation": "The benchmark to compare with scheduled hours.",
+				"decision": "Decide whether to add or cut shifts.",
+				"example": "$26,000 expected / $65 per hour → 400 hours.",
+				"evaluation": ""
+			}
+		},
+		"scheduled_hours": {
+			"id": "scheduled_hours",
+			"category": "workforce",
+			"unit": "hours",
+			"period": "week",
+			"source": [
+				"schedules"
+			],
+			"es": {
+				"short": "Horas programadas",
+				"name": "Horas programadas",
+				"what": "La suma de horas netas de los turnos asignados, descontando descansos.",
+				"formula": "Suma de horas de turnos asignados − Descansos.",
+				"interpretation": "Si supera mucho a las horas requeridas, hay exceso de personal.",
+				"decision": "Ajustar la planificación antes de publicarla.",
+				"example": "10 personas × 40 horas → 400 horas.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Scheduled hours",
+				"name": "Scheduled hours",
+				"what": "Sum of net hours of assigned shifts, minus breaks.",
+				"formula": "Sum of assigned shift hours − Breaks.",
+				"interpretation": "If much higher than required hours, there is overstaffing.",
+				"decision": "Adjust the schedule before publishing it.",
+				"example": "10 people × 40 hours → 400 hours.",
+				"evaluation": ""
+			}
+		},
+		"staff_coverage": {
+			"id": "staff_coverage",
+			"category": "workforce",
+			"unit": "percent",
+			"period": "week",
+			"source": [
+				"schedules"
+			],
+			"es": {
+				"short": "Cobertura de personal",
+				"name": "Cobertura de personal",
+				"what": "Qué porcentaje de las horas requeridas está cubierto por turnos programados.",
+				"formula": "(Horas programadas / Horas requeridas) × 100.",
+				"interpretation": "Menos de 100% indica falta de personal; muy por encima, exceso de costo.",
+				"decision": "Completar turnos faltantes o reducir horas sobrantes.",
+				"example": "380 programadas / 400 requeridas → 95%.",
+				"evaluation": "Favorable: 95–105%."
+			},
+			"en": {
+				"short": "Staff coverage",
+				"name": "Staff coverage",
+				"what": "Share of required hours covered by scheduled shifts.",
+				"formula": "(Scheduled hours / Required hours) × 100.",
+				"interpretation": "Below 100% means understaffing; far above means excess cost.",
+				"decision": "Fill missing shifts or cut surplus hours.",
+				"example": "380 scheduled / 400 required → 95%.",
+				"evaluation": "Good: 95–105%."
+			}
+		},
+		"labor_cost": {
+			"id": "labor_cost",
+			"category": "workforce",
+			"unit": "currency",
+			"period": "week",
+			"source": [
+				"schedules",
+				"staff"
+			],
+			"es": {
+				"short": "Costo laboral estimado",
+				"name": "Costo laboral estimado",
+				"what": "El costo previsto de las horas programadas, según la tarifa por hora de cada persona.",
+				"formula": "Suma de (horas programadas × tarifa por hora) de cada persona.",
+				"interpretation": "Permite controlar el gasto en personal antes de que ocurra.",
+				"decision": "Ajustar turnos para mantenerse dentro del presupuesto.",
+				"example": "400 horas × $18 → $7.200.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Estimated labor cost",
+				"name": "Estimated labor cost",
+				"what": "Expected cost of scheduled hours, based on each person's hourly rate.",
+				"formula": "Sum of (scheduled hours × hourly rate) per person.",
+				"interpretation": "Lets you control staff spending before it happens.",
+				"decision": "Adjust shifts to stay within budget.",
+				"example": "400 hours × $18 → $7,200.",
+				"evaluation": ""
+			}
+		},
+		"labor_productivity": {
+			"id": "labor_productivity",
+			"category": "workforce",
+			"unit": "currency_per_hour",
+			"period": "week",
+			"source": [
+				"schedules",
+				"invoices"
+			],
+			"es": {
+				"short": "Productividad laboral",
+				"name": "Venta prevista por hora programada",
+				"what": "Cuántos dólares de venta prevista corresponden a cada hora programada.",
+				"formula": "Ventas previstas / Horas programadas.",
+				"interpretation": "Si baja, se programaron más horas de las que la demanda justifica.",
+				"decision": "Reducir horas en franjas de baja demanda.",
+				"example": "$26.000 / 400 horas → $65 por hora.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Labor productivity",
+				"name": "Expected sales per scheduled hour",
+				"what": "Expected sales dollars per scheduled hour.",
+				"formula": "Expected sales / Scheduled hours.",
+				"interpretation": "If it falls, more hours were scheduled than demand justifies.",
+				"decision": "Cut hours in low-demand time slots.",
+				"example": "$26,000 / 400 hours → $65 per hour.",
+				"evaluation": ""
+			}
+		},
+		"hours_deficit": {
+			"id": "hours_deficit",
+			"category": "workforce",
+			"unit": "hours",
+			"period": "week",
+			"source": [
+				"schedules"
+			],
+			"es": {
+				"short": "Horas sin cubrir",
+				"name": "Horas sin cubrir",
+				"what": "Las horas requeridas que no tienen un turno asignado.",
+				"formula": "Horas requeridas − Horas programadas (si el resultado es negativo, se muestra 0).",
+				"interpretation": "Cualquier valor mayor a cero indica riesgo de atención o despacho.",
+				"decision": "Asignar turnos adicionales o reasignar personal.",
+				"example": "400 requeridas − 380 programadas → 20 horas.",
+				"evaluation": "Favorable: 0."
+			},
+			"en": {
+				"short": "Uncovered hours",
+				"name": "Uncovered hours",
+				"what": "Required hours with no assigned shift.",
+				"formula": "Required hours − Scheduled hours (negative results show as 0).",
+				"interpretation": "Any value above zero means service or dispatch risk.",
+				"decision": "Assign extra shifts or reassign staff.",
+				"example": "400 required − 380 scheduled → 20 hours.",
+				"evaluation": "Good: 0."
+			}
+		},
+		"overtime_hours": {
+			"id": "overtime_hours",
+			"category": "workforce",
+			"unit": "hours",
+			"period": "week",
+			"source": [
+				"schedules",
+				"attendance"
+			],
+			"es": {
+				"short": "Horas extras",
+				"name": "Horas extras",
+				"what": "Horas por encima de la jornada semanal máxima (48 horas por persona).",
+				"formula": "Suma por persona de (horas programadas o trabajadas − 48), cuando es positivo.",
+				"interpretation": "Las horas extras encarecen el costo laboral y cansan al equipo.",
+				"decision": "Redistribuir turnos para evitarlas.",
+				"example": "Una persona con 52 horas → 4 horas extras.",
+				"evaluation": "Favorable: 0."
+			},
+			"en": {
+				"short": "Overtime hours",
+				"name": "Overtime hours",
+				"what": "Hours above the maximum weekly workload (48 hours per person).",
+				"formula": "Per person sum of (scheduled or worked hours − 48), when positive.",
+				"interpretation": "Overtime raises labor cost and tires the team.",
+				"decision": "Redistribute shifts to avoid it.",
+				"example": "A person with 52 hours → 4 overtime hours.",
+				"evaluation": "Good: 0."
+			}
+		},
+		"budget_used": {
+			"id": "budget_used",
+			"category": "workforce",
+			"unit": "percent",
+			"period": "week",
+			"source": [
+				"schedules"
+			],
+			"es": {
+				"short": "Presupuesto utilizado",
+				"name": "Presupuesto laboral utilizado",
+				"what": "Qué porcentaje del presupuesto semanal de personal consumen los turnos programados.",
+				"formula": "(Costo laboral estimado / Presupuesto semanal asignado) × 100.",
+				"interpretation": "Más de 100% significa que la planificación excede el presupuesto.",
+				"decision": "Recortar o reasignar horas antes de publicar.",
+				"example": "$7.200 / $8.000 → 90%.",
+				"evaluation": "Favorable: ≤ 100%."
+			},
+			"en": {
+				"short": "Budget used",
+				"name": "Labor budget used",
+				"what": "Share of the weekly staff budget consumed by scheduled shifts.",
+				"formula": "(Estimated labor cost / Assigned weekly budget) × 100.",
+				"interpretation": "Over 100% means the schedule exceeds the budget.",
+				"decision": "Cut or reassign hours before publishing.",
+				"example": "$7,200 / $8,000 → 90%.",
+				"evaluation": "Good: ≤ 100%."
+			}
+		},
+		"scheduled_staff": {
+			"id": "scheduled_staff",
+			"category": "workforce",
+			"unit": "count",
+			"period": "week",
+			"source": [
+				"schedules"
+			],
+			"es": {
+				"short": "Personal programado",
+				"name": "Personal programado",
+				"what": "Cantidad de personas con al menos un turno asignado en la semana.",
+				"formula": "Conteo de personas con turnos en la semana.",
+				"interpretation": "Muestra cuántas personas participan de la planificación.",
+				"decision": "Detectar personas sin turnos o sobrecargadas.",
+				"example": "12 personas con turnos → 12.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Scheduled staff",
+				"name": "Scheduled staff",
+				"what": "Number of people with at least one assigned shift in the week.",
+				"formula": "Count of people with shifts in the week.",
+				"interpretation": "Shows how many people take part in the schedule.",
+				"decision": "Spot people without shifts or overloaded.",
+				"example": "12 people with shifts → 12.",
+				"evaluation": ""
+			}
+		},
+		"uncovered_shifts": {
+			"id": "uncovered_shifts",
+			"category": "workforce",
+			"unit": "count",
+			"period": "week",
+			"source": [
+				"schedules"
+			],
+			"es": {
+				"short": "Turnos sin cubrir",
+				"name": "Turnos sin cubrir",
+				"what": "Turnos necesarios que todavía no tienen una persona asignada.",
+				"formula": "Conteo de turnos requeridos sin asignar.",
+				"interpretation": "Cada turno sin cubrir es un riesgo de atención.",
+				"decision": "Asignar personal disponible o publicar el turno.",
+				"example": "3 turnos del sábado sin asignar → 3.",
+				"evaluation": "Favorable: 0."
+			},
+			"en": {
+				"short": "Uncovered shifts",
+				"name": "Uncovered shifts",
+				"what": "Required shifts with no person assigned yet.",
+				"formula": "Count of required unassigned shifts.",
+				"interpretation": "Each uncovered shift is a service risk.",
+				"decision": "Assign available staff or post the shift.",
+				"example": "3 Saturday shifts unassigned → 3.",
+				"evaluation": "Good: 0."
+			}
+		},
+		"pending_requests": {
+			"id": "pending_requests",
+			"category": "workforce",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"requests"
+			],
+			"es": {
+				"short": "Solicitudes pendientes",
+				"name": "Solicitudes pendientes de respuesta",
+				"what": "Solicitudes de permisos, vacaciones o cambios de turno que esperan aprobación.",
+				"formula": "Conteo de solicitudes en estado pendiente.",
+				"interpretation": "Las solicitudes sin responder afectan la planificación y el clima laboral.",
+				"decision": "Responderlas antes de publicar los turnos.",
+				"example": "4 solicitudes sin respuesta → 4.",
+				"evaluation": "Favorable: 0 con más de 24 horas."
+			},
+			"en": {
+				"short": "Pending requests",
+				"name": "Requests awaiting response",
+				"what": "Leave, vacation or shift-swap requests awaiting approval.",
+				"formula": "Count of requests in pending status.",
+				"interpretation": "Unanswered requests affect scheduling and team morale.",
+				"decision": "Answer them before publishing shifts.",
+				"example": "4 unanswered requests → 4.",
+				"evaluation": "Good: 0 older than 24 hours."
+			}
+		},
+		"pending_tasks": {
+			"id": "pending_tasks",
+			"category": "operations",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"tasks"
+			],
+			"es": {
+				"short": "Tareas pendientes",
+				"name": "Tareas pendientes",
+				"what": "Tareas de reposición o control asignadas que todavía no se completaron.",
+				"formula": "Conteo de tareas en estado pendiente o en curso.",
+				"interpretation": "Una acumulación indica falta de personal o mala priorización.",
+				"decision": "Reasignar tareas o reforzar el turno.",
+				"example": "15 tareas abiertas → 15.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Pending tasks",
+				"name": "Pending tasks",
+				"what": "Assigned restocking or control tasks not yet completed.",
+				"formula": "Count of tasks pending or in progress.",
+				"interpretation": "A backlog points to understaffing or poor prioritization.",
+				"decision": "Reassign tasks or reinforce the shift.",
+				"example": "15 open tasks → 15.",
+				"evaluation": ""
+			}
+		},
+		"completed_tasks": {
+			"id": "completed_tasks",
+			"category": "operations",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"tasks"
+			],
+			"es": {
+				"short": "Tareas completadas",
+				"name": "Tareas completadas",
+				"what": "Tareas terminadas y registradas en el período.",
+				"formula": "Conteo de tareas en estado completado.",
+				"interpretation": "Mide el volumen de trabajo realizado.",
+				"decision": "Reconocer al personal y ajustar cargas de trabajo.",
+				"example": "42 tareas terminadas hoy → 42.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Completed tasks",
+				"name": "Completed tasks",
+				"what": "Tasks finished and recorded in the period.",
+				"formula": "Count of tasks in completed status.",
+				"interpretation": "Measures the volume of work done.",
+				"decision": "Recognize staff and adjust workloads.",
+				"example": "42 tasks finished today → 42.",
+				"evaluation": ""
+			}
+		},
+		"overdue_tasks": {
+			"id": "overdue_tasks",
+			"category": "operations",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"tasks"
+			],
+			"es": {
+				"short": "Tareas vencidas",
+				"name": "Tareas vencidas",
+				"what": "Tareas que superaron su hora límite sin completarse.",
+				"formula": "Conteo de tareas no completadas con hora límite vencida.",
+				"interpretation": "Cada tarea vencida puede significar góndolas vacías o productos vencidos.",
+				"decision": "Atenderlas de inmediato y revisar su causa.",
+				"example": "2 tareas pasadas de hora → 2.",
+				"evaluation": "Favorable: 0."
+			},
+			"en": {
+				"short": "Overdue tasks",
+				"name": "Overdue tasks",
+				"what": "Tasks past their deadline without being completed.",
+				"formula": "Count of uncompleted tasks past their deadline.",
+				"interpretation": "Each overdue task can mean empty shelves or expired products.",
+				"decision": "Handle them immediately and review the cause.",
+				"example": "2 tasks past due → 2.",
+				"evaluation": "Good: 0."
+			}
+		},
+		"task_compliance": {
+			"id": "task_compliance",
+			"category": "operations",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"tasks"
+			],
+			"es": {
+				"short": "Cumplimiento de tareas",
+				"name": "Cumplimiento de tareas a tiempo",
+				"what": "Porcentaje de tareas completadas antes de su hora límite.",
+				"formula": "(Tareas completadas a tiempo / Total de tareas) × 100.",
+				"interpretation": "Un valor bajo indica sobrecarga o problemas de organización.",
+				"decision": "Ajustar cargas y horarios de las tareas.",
+				"example": "45 de 50 tareas a tiempo → 90%.",
+				"evaluation": "Favorable: ≥ 90%."
+			},
+			"en": {
+				"short": "Task compliance",
+				"name": "On-time task completion",
+				"what": "Percentage of tasks completed before their deadline.",
+				"formula": "(Tasks completed on time / Total tasks) × 100.",
+				"interpretation": "A low value signals overload or organization issues.",
+				"decision": "Adjust task loads and schedules.",
+				"example": "45 of 50 tasks on time → 90%.",
+				"evaluation": "Good: ≥ 90%."
+			}
+		},
+		"task_productivity": {
+			"id": "task_productivity",
+			"category": "operations",
+			"unit": "ratio",
+			"period": "filter",
+			"source": [
+				"tasks",
+				"attendance"
+			],
+			"es": {
+				"short": "Productividad operativa",
+				"name": "Tareas completadas por hora",
+				"what": "Cuántas tareas se completan en promedio por cada hora trabajada.",
+				"formula": "Tareas completadas / Horas trabajadas del personal operativo.",
+				"interpretation": "Permite comparar turnos y locales.",
+				"decision": "Replicar las prácticas de los turnos más productivos.",
+				"example": "42 tareas en 28 horas → 1,5 por hora.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Operational productivity",
+				"name": "Tasks completed per hour",
+				"what": "Average tasks completed per hour worked.",
+				"formula": "Completed tasks / Hours worked by operations staff.",
+				"interpretation": "Allows comparing shifts and locations.",
+				"decision": "Replicate practices of the most productive shifts.",
+				"example": "42 tasks in 28 hours → 1.5 per hour.",
+				"evaluation": ""
+			}
+		},
+		"shelf_alerts": {
+			"id": "shelf_alerts",
+			"category": "operations",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"tasks",
+				"inventory"
+			],
+			"es": {
+				"short": "Alertas de góndola",
+				"name": "Alertas de góndola",
+				"what": "Productos con existencia en estantería por debajo del mínimo definido.",
+				"formula": "Conteo de productos en tienda con existencia menor al punto de reposición.",
+				"interpretation": "Cada alerta es una posible venta perdida por falta de producto visible.",
+				"decision": "Priorizar la reposición de esos productos.",
+				"example": "6 productos bajo el mínimo → 6.",
+				"evaluation": "Favorable: 0."
+			},
+			"en": {
+				"short": "Shelf alerts",
+				"name": "Shelf alerts",
+				"what": "Products with shelf stock below the defined minimum.",
+				"formula": "Count of store products with stock below the reorder point.",
+				"interpretation": "Each alert is a potential lost sale due to missing product.",
+				"decision": "Prioritize restocking those products.",
+				"example": "6 products below minimum → 6.",
+				"evaluation": "Good: 0."
+			}
+		},
+		"incidents": {
+			"id": "incidents",
+			"category": "operations",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"tasks"
+			],
+			"es": {
+				"short": "Incidencias",
+				"name": "Incidencias reportadas",
+				"what": "Problemas informados por el personal durante la manipulación, reposición o despacho (roturas, faltantes, vencimientos).",
+				"formula": "Conteo de incidencias registradas en el período.",
+				"interpretation": "Un aumento puede indicar problemas de calidad, transporte o procesos.",
+				"decision": "Investigar las causas más frecuentes y corregirlas.",
+				"example": "3 cajas dañadas reportadas → 3.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Incidents",
+				"name": "Reported incidents",
+				"what": "Problems reported by staff during handling, restocking or dispatch (breakage, shortages, expiry).",
+				"formula": "Count of incidents recorded in the period.",
+				"interpretation": "An increase may signal quality, transport or process problems.",
+				"decision": "Investigate the most frequent causes and fix them.",
+				"example": "3 damaged cases reported → 3.",
+				"evaluation": ""
+			}
+		},
+		"fefo_compliance": {
+			"id": "fefo_compliance",
+			"category": "operations",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"tasks",
+				"inventory"
+			],
+			"es": {
+				"short": "Rotación por vencimiento",
+				"name": "Rotación por fecha de vencimiento (primero en vencer, primero en salir)",
+				"what": "Porcentaje de reposiciones en las que se colocó adelante el producto con fecha de vencimiento más próxima.",
+				"formula": "(Reposiciones que respetaron el orden de vencimiento / Total de reposiciones auditadas) × 100.",
+				"interpretation": "Si baja, aumenta el riesgo de productos vencidos y mermas.",
+				"decision": "Capacitar al personal y reforzar las auditorías en góndola.",
+				"example": "48 de 50 reposiciones correctas → 96%.",
+				"evaluation": "Favorable: ≥ 95%."
+			},
+			"en": {
+				"short": "Expiry-based rotation",
+				"name": "Expiry-date rotation (first to expire, first out)",
+				"what": "Percentage of restocks where the product with the nearest expiry date was placed in front.",
+				"formula": "(Restocks that followed expiry order / Total audited restocks) × 100.",
+				"interpretation": "If it falls, the risk of expired products and shrinkage rises.",
+				"decision": "Train staff and step up shelf audits.",
+				"example": "48 of 50 correct restocks → 96%.",
+				"evaluation": "Good: ≥ 95%."
+			}
+		},
+		"active_staff": {
+			"id": "active_staff",
+			"category": "workforce",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"staff"
+			],
+			"es": {
+				"short": "Personal activo",
+				"name": "Personal activo",
+				"what": "Cantidad de colaboradores con contrato vigente.",
+				"formula": "Conteo de colaboradores con estado activo.",
+				"interpretation": "Base para calcular costos y cobertura.",
+				"decision": "Planificar contrataciones o reasignaciones.",
+				"example": "24 colaboradores vigentes → 24.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Active staff",
+				"name": "Active staff",
+				"what": "Number of employees with a current contract.",
+				"formula": "Count of employees with active status.",
+				"interpretation": "Basis for cost and coverage calculations.",
+				"decision": "Plan hiring or reassignments.",
+				"example": "24 current employees → 24.",
+				"evaluation": ""
+			}
+		},
+		"absenteeism": {
+			"id": "absenteeism",
+			"category": "workforce",
+			"unit": "percent",
+			"period": "month",
+			"source": [
+				"attendance",
+				"schedules"
+			],
+			"es": {
+				"short": "Ausentismo",
+				"name": "Ausentismo",
+				"what": "Porcentaje de horas programadas que se perdieron por ausencias.",
+				"formula": "(Horas de ausencia / Horas programadas) × 100.",
+				"interpretation": "Un valor alto afecta la atención y obliga a pagar horas extras.",
+				"decision": "Investigar causas y ajustar la planificación.",
+				"example": "30 horas de ausencia sobre 1.000 programadas → 3%.",
+				"evaluation": "Favorable: ≤ 3%."
+			},
+			"en": {
+				"short": "Absenteeism",
+				"name": "Absenteeism",
+				"what": "Share of scheduled hours lost to absences.",
+				"formula": "(Absence hours / Scheduled hours) × 100.",
+				"interpretation": "A high value hurts service and forces overtime.",
+				"decision": "Investigate causes and adjust scheduling.",
+				"example": "30 absence hours over 1,000 scheduled → 3%.",
+				"evaluation": "Good: ≤ 3%."
+			}
+		},
+		"staff_turnover": {
+			"id": "staff_turnover",
+			"category": "workforce",
+			"unit": "percent",
+			"period": "year",
+			"source": [
+				"staff"
+			],
+			"es": {
+				"short": "Rotación de personal",
+				"name": "Rotación anual de personal",
+				"what": "Porcentaje de colaboradores que dejaron la empresa en los últimos 12 meses.",
+				"formula": "(Bajas de los últimos 12 meses / Promedio de personal activo) × 100.",
+				"interpretation": "Una rotación alta eleva costos de selección y capacitación.",
+				"decision": "Revisar condiciones laborales y planes de retención.",
+				"example": "4 bajas sobre 24 personas → 16,7%.",
+				"evaluation": "Favorable: ≤ 15%."
+			},
+			"en": {
+				"short": "Staff turnover",
+				"name": "Annual staff turnover",
+				"what": "Percentage of employees who left the company in the last 12 months.",
+				"formula": "(Leavers in last 12 months / Average active staff) × 100.",
+				"interpretation": "High turnover raises hiring and training costs.",
+				"decision": "Review working conditions and retention plans.",
+				"example": "4 leavers over 24 people → 16.7%.",
+				"evaluation": "Good: ≤ 15%."
+			}
+		},
+		"contracted_hours": {
+			"id": "contracted_hours",
+			"category": "workforce",
+			"unit": "hours",
+			"period": "week",
+			"source": [
+				"staff"
+			],
+			"es": {
+				"short": "Horas contratadas",
+				"name": "Horas contratadas por semana",
+				"what": "La suma de horas semanales pactadas en los contratos vigentes.",
+				"formula": "Suma de horas semanales de todos los contratos activos.",
+				"interpretation": "Indica la capacidad máxima de trabajo sin horas extras.",
+				"decision": "Comparar con las horas requeridas para decidir contrataciones.",
+				"example": "24 personas × 40 horas → 960 horas.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Contracted hours",
+				"name": "Contracted hours per week",
+				"what": "Sum of weekly hours agreed in current contracts.",
+				"formula": "Sum of weekly hours of all active contracts.",
+				"interpretation": "Shows the maximum work capacity without overtime.",
+				"decision": "Compare with required hours to decide on hiring.",
+				"example": "24 people × 40 hours → 960 hours.",
+				"evaluation": ""
+			}
+		},
+		"avg_hourly_cost": {
+			"id": "avg_hourly_cost",
+			"category": "workforce",
+			"unit": "currency_per_hour",
+			"period": "snapshot",
+			"source": [
+				"staff"
+			],
+			"es": {
+				"short": "Costo promedio por hora",
+				"name": "Costo laboral promedio por hora",
+				"what": "El costo medio de una hora de trabajo del personal.",
+				"formula": "Costo laboral total / Horas contratadas.",
+				"interpretation": "Permite estimar el costo de cada turno adicional.",
+				"decision": "Evaluar el costo de ampliar horarios o contratar.",
+				"example": "$17.280 por 960 horas → $18 por hora.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Average hourly cost",
+				"name": "Average labor cost per hour",
+				"what": "The average cost of one hour of staff work.",
+				"formula": "Total labor cost / Contracted hours.",
+				"interpretation": "Helps estimate the cost of each extra shift.",
+				"decision": "Evaluate the cost of extending hours or hiring.",
+				"example": "$17,280 for 960 hours → $18 per hour.",
+				"evaluation": ""
+			}
+		},
+		"staff_productivity": {
+			"id": "staff_productivity",
+			"category": "workforce",
+			"unit": "currency_per_hour",
+			"period": "month",
+			"source": [
+				"staff",
+				"invoices",
+				"attendance"
+			],
+			"es": {
+				"short": "Productividad del personal",
+				"name": "Venta por hora trabajada del personal",
+				"what": "Ventas netas generadas por cada hora trabajada del personal.",
+				"formula": "Ventas netas / Horas trabajadas.",
+				"interpretation": "Compara la productividad entre locales o equipos.",
+				"decision": "Ajustar dotación donde la productividad es baja.",
+				"example": "$39.000 / 600 horas → $65 por hora.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Staff productivity",
+				"name": "Sales per hour worked by staff",
+				"what": "Net sales generated per hour worked by staff.",
+				"formula": "Net sales / Hours worked.",
+				"interpretation": "Compares productivity across locations or teams.",
+				"decision": "Adjust staffing where productivity is low.",
+				"example": "$39,000 / 600 hours → $65 per hour.",
+				"evaluation": ""
+			}
+		},
+		"key_positions": {
+			"id": "key_positions",
+			"category": "workforce",
+			"unit": "percent",
+			"period": "snapshot",
+			"source": [
+				"staff"
+			],
+			"es": {
+				"short": "Puestos clave cubiertos",
+				"name": "Puestos clave cubiertos",
+				"what": "Porcentaje de puestos críticos (supervisión, despacho, cobranza) con una persona asignada.",
+				"formula": "(Puestos clave cubiertos / Total de puestos clave) × 100.",
+				"interpretation": "Un puesto clave vacío pone en riesgo la operación.",
+				"decision": "Priorizar la contratación o el reemplazo.",
+				"example": "9 de 10 puestos cubiertos → 90%.",
+				"evaluation": "Favorable: 100%."
+			},
+			"en": {
+				"short": "Key positions filled",
+				"name": "Key positions filled",
+				"what": "Percentage of critical positions (supervision, dispatch, collections) with a person assigned.",
+				"formula": "(Key positions filled / Total key positions) × 100.",
+				"interpretation": "An empty key position puts operations at risk.",
+				"decision": "Prioritize hiring or replacement.",
+				"example": "9 of 10 positions filled → 90%.",
+				"evaluation": "Good: 100%."
+			}
+		},
+		"vacancies": {
+			"id": "vacancies",
+			"category": "workforce",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"staff"
+			],
+			"es": {
+				"short": "Vacantes",
+				"name": "Vacantes abiertas",
+				"what": "Puestos aprobados que todavía no tienen una persona contratada.",
+				"formula": "Conteo de puestos sin cubrir.",
+				"interpretation": "Las vacantes prolongadas generan sobrecarga en el equipo.",
+				"decision": "Acelerar los procesos de selección.",
+				"example": "2 puestos sin cubrir → 2.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Vacancies",
+				"name": "Open vacancies",
+				"what": "Approved positions with no person hired yet.",
+				"formula": "Count of unfilled positions.",
+				"interpretation": "Long-open vacancies overload the team.",
+				"decision": "Speed up hiring processes.",
+				"example": "2 unfilled positions → 2.",
+				"evaluation": ""
+			}
+		},
+		"attendance_rate": {
+			"id": "attendance_rate",
+			"category": "workforce",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"attendance",
+				"schedules"
+			],
+			"es": {
+				"short": "Asistencia",
+				"name": "Asistencia",
+				"what": "Porcentaje de turnos programados a los que el personal se presentó.",
+				"formula": "(Turnos con asistencia / Turnos programados) × 100.",
+				"interpretation": "Una asistencia baja obliga a cubrir turnos a último momento.",
+				"decision": "Revisar casos repetidos y su causa.",
+				"example": "95 de 100 turnos con asistencia → 95%.",
+				"evaluation": "Favorable: ≥ 97%."
+			},
+			"en": {
+				"short": "Attendance",
+				"name": "Attendance",
+				"what": "Percentage of scheduled shifts that staff showed up for.",
+				"formula": "(Shifts attended / Scheduled shifts) × 100.",
+				"interpretation": "Low attendance forces last-minute shift coverage.",
+				"decision": "Review repeated cases and their cause.",
+				"example": "95 of 100 shifts attended → 95%.",
+				"evaluation": "Good: ≥ 97%."
+			}
+		},
+		"punctuality": {
+			"id": "punctuality",
+			"category": "workforce",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"attendance"
+			],
+			"es": {
+				"short": "Puntualidad",
+				"name": "Puntualidad",
+				"what": "Porcentaje de entradas registradas a la hora programada o antes.",
+				"formula": "(Entradas a tiempo / Total de entradas) × 100.",
+				"interpretation": "Los atrasos afectan la apertura y la preparación de pedidos.",
+				"decision": "Conversar con quienes llegan tarde de forma repetida.",
+				"example": "92 de 95 entradas a tiempo → 96,8%.",
+				"evaluation": "Favorable: ≥ 95%."
+			},
+			"en": {
+				"short": "Punctuality",
+				"name": "Punctuality",
+				"what": "Percentage of clock-ins at or before the scheduled time.",
+				"formula": "(On-time clock-ins / Total clock-ins) × 100.",
+				"interpretation": "Lateness affects opening and order picking.",
+				"decision": "Talk to people who are repeatedly late.",
+				"example": "92 of 95 clock-ins on time → 96.8%.",
+				"evaluation": "Good: ≥ 95%."
+			}
+		},
+		"worked_hours": {
+			"id": "worked_hours",
+			"category": "workforce",
+			"unit": "hours",
+			"period": "filter",
+			"source": [
+				"attendance"
+			],
+			"es": {
+				"short": "Horas trabajadas",
+				"name": "Horas trabajadas",
+				"what": "Horas registradas entre la entrada y la salida del personal, descontando descansos.",
+				"formula": "Suma de (salida − entrada − descansos).",
+				"interpretation": "Compárelas con las horas programadas para detectar desvíos.",
+				"decision": "Corregir planificaciones que no se cumplen.",
+				"example": "10 personas × 38 horas → 380 horas.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Hours worked",
+				"name": "Hours worked",
+				"what": "Hours recorded between staff clock-in and clock-out, minus breaks.",
+				"formula": "Sum of (clock-out − clock-in − breaks).",
+				"interpretation": "Compare with scheduled hours to detect deviations.",
+				"decision": "Fix schedules that are not followed.",
+				"example": "10 people × 38 hours → 380 hours.",
+				"evaluation": ""
+			}
+		},
+		"productive_hours": {
+			"id": "productive_hours",
+			"category": "workforce",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"attendance",
+				"tasks"
+			],
+			"es": {
+				"short": "Horas productivas",
+				"name": "Horas productivas",
+				"what": "Porcentaje de las horas trabajadas dedicadas a tareas registradas (reposición, preparación, atención).",
+				"formula": "(Horas en tareas registradas / Horas trabajadas) × 100.",
+				"interpretation": "Un valor bajo indica tiempos muertos o tareas sin registrar.",
+				"decision": "Reorganizar tareas en las franjas con más tiempo libre.",
+				"example": "320 de 380 horas en tareas → 84%.",
+				"evaluation": "Favorable: ≥ 85%."
+			},
+			"en": {
+				"short": "Productive hours",
+				"name": "Productive hours",
+				"what": "Share of hours worked spent on recorded tasks (restocking, picking, service).",
+				"formula": "(Hours on recorded tasks / Hours worked) × 100.",
+				"interpretation": "A low value indicates idle time or unrecorded tasks.",
+				"decision": "Reorganize tasks in slots with more idle time.",
+				"example": "320 of 380 hours on tasks → 84%.",
+				"evaluation": "Good: ≥ 85%."
+			}
+		},
+		"absences": {
+			"id": "absences",
+			"category": "workforce",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"attendance"
+			],
+			"es": {
+				"short": "Ausencias",
+				"name": "Ausencias",
+				"what": "Cantidad de turnos programados a los que la persona no se presentó.",
+				"formula": "Conteo de turnos sin registro de entrada.",
+				"interpretation": "Cada ausencia obliga a reasignar personal.",
+				"decision": "Revisar justificaciones y reforzar la planificación.",
+				"example": "5 turnos sin asistencia → 5.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Absences",
+				"name": "Absences",
+				"what": "Number of scheduled shifts the person did not show up for.",
+				"formula": "Count of shifts without a clock-in record.",
+				"interpretation": "Each absence forces staff reassignment.",
+				"decision": "Review justifications and strengthen scheduling.",
+				"example": "5 shifts not attended → 5.",
+				"evaluation": ""
+			}
+		},
+		"late_arrivals": {
+			"id": "late_arrivals",
+			"category": "workforce",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"attendance"
+			],
+			"es": {
+				"short": "Llegadas tarde",
+				"name": "Llegadas tarde",
+				"what": "Cantidad de entradas registradas después de la hora programada.",
+				"formula": "Conteo de entradas con atraso mayor a 5 minutos.",
+				"interpretation": "Los atrasos repetidos afectan la apertura y el despacho.",
+				"decision": "Conversar con el colaborador o ajustar su horario.",
+				"example": "3 entradas con atraso → 3.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Late arrivals",
+				"name": "Late arrivals",
+				"what": "Number of clock-ins after the scheduled time.",
+				"formula": "Count of clock-ins more than 5 minutes late.",
+				"interpretation": "Repeated lateness affects opening and dispatch.",
+				"decision": "Talk to the employee or adjust their schedule.",
+				"example": "3 late clock-ins → 3.",
+				"evaluation": ""
+			}
+		},
+		"requests_received": {
+			"id": "requests_received",
+			"category": "workforce",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"requests"
+			],
+			"es": {
+				"short": "Solicitudes recibidas",
+				"name": "Solicitudes recibidas",
+				"what": "Total de solicitudes de permisos, vacaciones y cambios de turno recibidas en el período.",
+				"formula": "Conteo de solicitudes creadas en el período.",
+				"interpretation": "Permite anticipar la disponibilidad de personal.",
+				"decision": "Planificar reemplazos con anticipación.",
+				"example": "12 solicitudes en el mes → 12.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Requests received",
+				"name": "Requests received",
+				"what": "Total leave, vacation and shift-swap requests received in the period.",
+				"formula": "Count of requests created in the period.",
+				"interpretation": "Helps anticipate staff availability.",
+				"decision": "Plan replacements in advance.",
+				"example": "12 requests in the month → 12.",
+				"evaluation": ""
+			}
+		},
+		"requests_approved": {
+			"id": "requests_approved",
+			"category": "workforce",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"requests"
+			],
+			"es": {
+				"short": "Solicitudes aprobadas",
+				"name": "Solicitudes aprobadas",
+				"what": "Solicitudes aceptadas por un supervisor en el período.",
+				"formula": "Conteo de solicitudes en estado aprobado.",
+				"interpretation": "Cada aprobación modifica la disponibilidad del equipo.",
+				"decision": "Actualizar la planificación de turnos.",
+				"example": "9 solicitudes aprobadas → 9.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Approved requests",
+				"name": "Approved requests",
+				"what": "Requests accepted by a supervisor in the period.",
+				"formula": "Count of requests in approved status.",
+				"interpretation": "Each approval changes team availability.",
+				"decision": "Update the shift schedule.",
+				"example": "9 approved requests → 9.",
+				"evaluation": ""
+			}
+		},
+		"requests_rejected": {
+			"id": "requests_rejected",
+			"category": "workforce",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"requests"
+			],
+			"es": {
+				"short": "Solicitudes rechazadas",
+				"name": "Solicitudes rechazadas",
+				"what": "Solicitudes no aceptadas en el período.",
+				"formula": "Conteo de solicitudes en estado rechazado.",
+				"interpretation": "Muchos rechazos pueden indicar falta de personal de reemplazo.",
+				"decision": "Evaluar si se necesita más personal disponible.",
+				"example": "1 solicitud rechazada → 1.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Rejected requests",
+				"name": "Rejected requests",
+				"what": "Requests not accepted in the period.",
+				"formula": "Count of requests in rejected status.",
+				"interpretation": "Many rejections may signal a lack of backup staff.",
+				"decision": "Assess whether more available staff is needed.",
+				"example": "1 rejected request → 1.",
+				"evaluation": ""
+			}
+		},
+		"resolution_time": {
+			"id": "resolution_time",
+			"category": "workforce",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"requests"
+			],
+			"es": {
+				"short": "Respuesta en 24 horas",
+				"name": "Solicitudes respondidas en menos de 24 horas",
+				"what": "Porcentaje de solicitudes respondidas dentro de las 24 horas comprometidas.",
+				"formula": "(Solicitudes respondidas en menos de 24 h / Solicitudes respondidas) × 100.",
+				"interpretation": "Responder rápido mejora la planificación y el clima laboral.",
+				"decision": "Recordar a los supervisores las solicitudes por vencer.",
+				"example": "10 de 10 respondidas a tiempo → 100%.",
+				"evaluation": "Favorable: ≥ 95%."
+			},
+			"en": {
+				"short": "Answered within 24 hours",
+				"name": "Requests answered within 24 hours",
+				"what": "Percentage of requests answered within the committed 24 hours.",
+				"formula": "(Requests answered in under 24 h / Requests answered) × 100.",
+				"interpretation": "Fast answers improve scheduling and team morale.",
+				"decision": "Remind supervisors of requests about to expire.",
+				"example": "10 of 10 answered on time → 100%.",
+				"evaluation": "Good: ≥ 95%."
+			}
+		},
+		"active_permissions": {
+			"id": "active_permissions",
+			"category": "workforce",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"requests"
+			],
+			"es": {
+				"short": "Permisos vigentes",
+				"name": "Permisos y licencias vigentes",
+				"what": "Personas con un permiso, vacaciones o licencia en curso hoy.",
+				"formula": "Conteo de permisos aprobados cuya fecha incluye hoy.",
+				"interpretation": "Reduce la disponibilidad del equipo en los próximos días.",
+				"decision": "Confirmar que los turnos afectados estén cubiertos.",
+				"example": "2 personas de vacaciones hoy → 2.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Active leave",
+				"name": "Leave and permissions in effect",
+				"what": "People with a leave, vacation or permission in effect today.",
+				"formula": "Count of approved leave whose dates include today.",
+				"interpretation": "Reduces team availability in the coming days.",
+				"decision": "Confirm affected shifts are covered.",
+				"example": "2 people on vacation today → 2.",
+				"evaluation": ""
+			}
+		},
+		"shift_swaps": {
+			"id": "shift_swaps",
+			"category": "workforce",
+			"unit": "count",
+			"period": "filter",
+			"source": [
+				"requests"
+			],
+			"es": {
+				"short": "Cambios de turno",
+				"name": "Cambios de turno solicitados",
+				"what": "Solicitudes de intercambio de turno entre colaboradores en el período.",
+				"formula": "Conteo de solicitudes de tipo cambio de turno.",
+				"interpretation": "Muchos cambios pueden indicar que la planificación no se ajusta a las necesidades del equipo.",
+				"decision": "Revisar la planificación base.",
+				"example": "4 cambios solicitados → 4.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Shift swaps",
+				"name": "Shift swaps requested",
+				"what": "Shift-swap requests between employees in the period.",
+				"formula": "Count of shift-swap requests.",
+				"interpretation": "Many swaps may mean the schedule does not fit team needs.",
+				"decision": "Review the base schedule.",
+				"example": "4 swaps requested → 4.",
+				"evaluation": ""
+			}
+		},
+		"requests_overdue": {
+			"id": "requests_overdue",
+			"category": "workforce",
+			"unit": "count",
+			"period": "snapshot",
+			"source": [
+				"requests"
+			],
+			"es": {
+				"short": "Solicitudes vencidas",
+				"name": "Solicitudes sin respuesta a tiempo",
+				"what": "Solicitudes pendientes que superaron las 24 horas sin respuesta.",
+				"formula": "Conteo de solicitudes pendientes con más de 24 horas.",
+				"interpretation": "Generan incertidumbre en el equipo y en la planificación.",
+				"decision": "Responderlas de inmediato.",
+				"example": "1 solicitud con 30 horas sin respuesta → 1.",
+				"evaluation": "Favorable: 0."
+			},
+			"en": {
+				"short": "Overdue requests",
+				"name": "Requests not answered in time",
+				"what": "Pending requests older than 24 hours without an answer.",
+				"formula": "Count of pending requests older than 24 hours.",
+				"interpretation": "They create uncertainty for the team and scheduling.",
+				"decision": "Answer them immediately.",
+				"example": "1 request unanswered for 30 hours → 1.",
+				"evaluation": "Good: 0."
+			}
+		},
+		"sell_through": {
+			"id": "sell_through",
+			"category": "inventory",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"inventory"
+			],
+			"es": {
+				"short": "Porcentaje vendido del inventario",
+				"name": "Porcentaje vendido del inventario disponible",
+				"what": "Qué parte de las unidades disponibles en el período se vendió.",
+				"formula": "(Unidades vendidas / Unidades disponibles en el período) × 100.",
+				"interpretation": "Un valor alto indica buena salida; uno bajo, exceso de inventario.",
+				"decision": "Ajustar compras y promociones según la velocidad de venta.",
+				"example": "584 vendidas de 1.000 disponibles → 58,4%.",
+				"evaluation": "Favorable: ≥ 50%."
+			},
+			"en": {
+				"short": "Share of stock sold",
+				"name": "Share of available stock sold",
+				"what": "The share of units available in the period that was sold.",
+				"formula": "(Units sold / Units available in the period) × 100.",
+				"interpretation": "High means products move well; low means excess stock.",
+				"decision": "Adjust purchasing and promotions to sales speed.",
+				"example": "584 sold of 1,000 available → 58.4%.",
+				"evaluation": "Good: ≥ 50%."
+			}
+		},
+		"turnover": {
+			"id": "turnover",
+			"category": "inventory",
+			"unit": "ratio",
+			"period": "filter",
+			"source": [
+				"inventory",
+				"products"
+			],
+			"es": {
+				"short": "Rotación de inventario",
+				"name": "Rotación de inventario",
+				"what": "Cuántas veces se renovó el inventario en el período.",
+				"formula": "Costo de los productos vendidos / Inventario promedio valorizado al costo.",
+				"interpretation": "Más rotación significa menos dinero inmovilizado.",
+				"decision": "Reducir compras de productos de baja rotación.",
+				"example": "Costo vendido $13.800 / inventario promedio $10.000 → 1,38 veces.",
+				"evaluation": "Favorable: ≥ 1,2 veces al mes."
+			},
+			"en": {
+				"short": "Inventory turnover",
+				"name": "Inventory turnover",
+				"what": "How many times inventory was renewed in the period.",
+				"formula": "Cost of goods sold / Average inventory at cost.",
+				"interpretation": "More turnover means less cash tied up.",
+				"decision": "Cut purchases of slow-moving products.",
+				"example": "$13,800 cost sold / $10,000 average inventory → 1.38 times.",
+				"evaluation": "Good: ≥ 1.2 times per month."
+			}
+		},
+		"coverage_dio": {
+			"id": "coverage_dio",
+			"category": "inventory",
+			"unit": "days",
+			"period": "snapshot",
+			"source": [
+				"inventory"
+			],
+			"es": {
+				"short": "Días de inventario",
+				"name": "Días de inventario disponible",
+				"what": "Cuántos días alcanzaría el inventario actual al ritmo de venta reciente.",
+				"formula": "Inventario actual valorizado / Costo de venta diario promedio.",
+				"interpretation": "Pocos días anticipan faltantes; demasiados, dinero inmovilizado.",
+				"decision": "Programar compras para mantenerse dentro del rango objetivo.",
+				"example": "$12.100 de inventario / $500 por día → 24,2 días.",
+				"evaluation": "Favorable: 15–30 días."
+			},
+			"en": {
+				"short": "Days of inventory",
+				"name": "Days of inventory on hand",
+				"what": "How many days current stock would last at the recent sales pace.",
+				"formula": "Current inventory value / Average daily cost of sales.",
+				"interpretation": "Few days anticipate stockouts; too many means tied-up cash.",
+				"decision": "Schedule purchases to stay within the target range.",
+				"example": "$12,100 inventory / $500 per day → 24.2 days.",
+				"evaluation": "Good: 15–30 days."
+			}
+		},
+		"gmroi": {
+			"id": "gmroi",
+			"category": "inventory",
+			"unit": "currency",
+			"period": "filter",
+			"source": [
+				"inventory",
+				"products"
+			],
+			"es": {
+				"short": "Ganancia por dólar en inventario",
+				"name": "Ganancia bruta por cada dólar invertido en inventario",
+				"what": "Cuántos dólares de ganancia bruta genera cada dólar invertido en inventario.",
+				"formula": "Ganancia bruta / Inventario promedio valorizado al costo.",
+				"interpretation": "Por encima de $1 el inventario genera más de lo que cuesta mantenerlo.",
+				"decision": "Priorizar espacio y compras para los productos con mayor retorno.",
+				"example": "$31.500 de ganancia / $10.000 de inventario → $3,15.",
+				"evaluation": "Favorable: ≥ $2,50. Crítico: < $1,00."
+			},
+			"en": {
+				"short": "Profit per inventory dollar",
+				"name": "Gross profit per dollar invested in inventory",
+				"what": "How many dollars of gross profit each dollar invested in stock generates.",
+				"formula": "Gross profit / Average inventory at cost.",
+				"interpretation": "Above $1, inventory earns more than it costs to hold.",
+				"decision": "Prioritize space and purchasing for the highest-return products.",
+				"example": "$31,500 profit / $10,000 inventory → $3.15.",
+				"evaluation": "Good: ≥ $2.50. Critical: < $1.00."
+			}
+		},
+		"gmros": {
+			"id": "gmros",
+			"category": "inventory",
+			"unit": "currency_per_m2",
+			"period": "filter",
+			"source": [
+				"inventory",
+				"products"
+			],
+			"es": {
+				"short": "Ganancia por metro cuadrado",
+				"name": "Ganancia bruta por metro cuadrado de exhibición",
+				"what": "Cuánta ganancia bruta genera cada metro cuadrado de espacio de exhibición o almacenamiento.",
+				"formula": "Ganancia bruta / Metros cuadrados asignados.",
+				"interpretation": "Ayuda a decidir qué productos merecen más espacio.",
+				"decision": "Reasignar espacio hacia las líneas más rentables.",
+				"example": "$41.500 de ganancia en 100 m² → $415 por m².",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Profit per square meter",
+				"name": "Gross profit per square meter of display",
+				"what": "How much gross profit each square meter of display or storage space generates.",
+				"formula": "Gross profit / Assigned square meters.",
+				"interpretation": "Helps decide which products deserve more space.",
+				"decision": "Reassign space to the most profitable lines.",
+				"example": "$41,500 profit over 100 m² → $415 per m².",
+				"evaluation": ""
+			}
+		},
+		"growth_skus": {
+			"id": "growth_skus",
+			"category": "inventory",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"inventory"
+			],
+			"es": {
+				"short": "Productos en crecimiento",
+				"name": "Productos en etapa de crecimiento",
+				"what": "Porcentaje de productos cuyas ventas crecen más de 10% de forma sostenida.",
+				"formula": "(Productos con tendencia de ventas > +10% / Total de productos) × 100.",
+				"interpretation": "Son los productos que conviene asegurar en inventario.",
+				"decision": "Aumentar compras y exhibición de estos productos.",
+				"example": "3 de 14 productos crecen → 21,4%.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Growing products",
+				"name": "Products in growth stage",
+				"what": "Percentage of products whose sales grow steadily by more than 10%.",
+				"formula": "(Products with sales trend > +10% / Total products) × 100.",
+				"interpretation": "These are the products to keep well stocked.",
+				"decision": "Increase purchasing and display of these products.",
+				"example": "3 of 14 products growing → 21.4%.",
+				"evaluation": ""
+			}
+		},
+		"maturity_skus": {
+			"id": "maturity_skus",
+			"category": "inventory",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"inventory"
+			],
+			"es": {
+				"short": "Productos estables",
+				"name": "Productos en etapa de madurez (ventas estables)",
+				"what": "Porcentaje de productos con ventas estables (variación entre −8% y +8%).",
+				"formula": "(Productos con ventas estables / Total de productos) × 100.",
+				"interpretation": "Generan ingresos previsibles; conviene cuidar su margen.",
+				"decision": "Optimizar costos y evitar descuentos innecesarios.",
+				"example": "4 de 14 productos estables → 28,6%.",
+				"evaluation": ""
+			},
+			"en": {
+				"short": "Stable products",
+				"name": "Products in maturity stage (stable sales)",
+				"what": "Percentage of products with stable sales (change between −8% and +8%).",
+				"formula": "(Products with stable sales / Total products) × 100.",
+				"interpretation": "They bring predictable revenue; protect their margin.",
+				"decision": "Optimize costs and avoid unnecessary discounts.",
+				"example": "4 of 14 products stable → 28.6%.",
+				"evaluation": ""
+			}
+		},
+		"decline_skus": {
+			"id": "decline_skus",
+			"category": "inventory",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"inventory"
+			],
+			"es": {
+				"short": "Productos en declive",
+				"name": "Productos en etapa de declive",
+				"what": "Porcentaje de productos cuyas ventas caen más de 10% de forma sostenida.",
+				"formula": "(Productos con tendencia de ventas < −10% / Total de productos) × 100.",
+				"interpretation": "Pueden quedar sin salida y generar inventario detenido.",
+				"decision": "Reducir compras, promocionar o reemplazar estos productos.",
+				"example": "2 de 14 productos en caída → 14,3%.",
+				"evaluation": "Alerta: > 15%."
+			},
+			"en": {
+				"short": "Declining products",
+				"name": "Products in decline stage",
+				"what": "Percentage of products whose sales fall steadily by more than 10%.",
+				"formula": "(Products with sales trend < −10% / Total products) × 100.",
+				"interpretation": "They may stop selling and create idle stock.",
+				"decision": "Cut purchases, promote or replace these products.",
+				"example": "2 of 14 products declining → 14.3%.",
+				"evaluation": "Warning: > 15%."
+			}
+		},
+		"immobilized_capital": {
+			"id": "immobilized_capital",
+			"category": "inventory",
+			"unit": "currency",
+			"period": "snapshot",
+			"source": [
+				"inventory"
+			],
+			"es": {
+				"short": "Dinero detenido en inventario",
+				"name": "Dinero detenido en inventario sin venta",
+				"what": "El valor al costo del inventario que no registra ventas recientes (más de 60 días).",
+				"formula": "Suma de (existencia × costo unitario) de productos sin ventas en 60 días.",
+				"interpretation": "Es dinero de la empresa que no genera ingresos y puede perder valor.",
+				"decision": "Liquidar con descuento, devolver al proveedor o dejar de comprar.",
+				"example": "1.200 unidades a $14,35 sin ventas → $17.215.",
+				"evaluation": "Favorable: en disminución."
+			},
+			"en": {
+				"short": "Idle inventory value",
+				"name": "Money tied up in unsold inventory",
+				"what": "The cost value of stock with no recent sales (over 60 days).",
+				"formula": "Sum of (stock × unit cost) of products without sales in 60 days.",
+				"interpretation": "It is company money that earns nothing and may lose value.",
+				"decision": "Clear out at a discount, return to supplier or stop buying.",
+				"example": "1,200 units at $14.35 without sales → $17,215.",
+				"evaluation": "Good: decreasing."
+			}
+		},
+		"stockout_risk": {
+			"id": "stockout_risk",
+			"category": "inventory",
+			"unit": "percent",
+			"period": "snapshot",
+			"source": [
+				"inventory"
+			],
+			"es": {
+				"short": "Riesgo de quedarse sin inventario",
+				"name": "Productos en riesgo de agotarse",
+				"what": "Porcentaje de productos cuyo inventario alcanza para menos días que el tiempo de reposición del proveedor.",
+				"formula": "(Productos con días de inventario < tiempo de reposición / Total de productos) × 100.",
+				"interpretation": "Anticipa ventas perdidas por falta de producto.",
+				"decision": "Emitir órdenes de compra urgentes para esos productos.",
+				"example": "2 de 14 productos en riesgo → 14,3%.",
+				"evaluation": "Favorable: ≤ 5%."
+			},
+			"en": {
+				"short": "Stockout risk",
+				"name": "Products at risk of running out",
+				"what": "Percentage of products whose stock lasts fewer days than the supplier replenishment time.",
+				"formula": "(Products with days of stock < replenishment time / Total products) × 100.",
+				"interpretation": "Anticipates lost sales due to missing product.",
+				"decision": "Issue urgent purchase orders for those products.",
+				"example": "2 of 14 products at risk → 14.3%.",
+				"evaluation": "Good: ≤ 5%."
+			}
+		},
+		"net_margin_post_discounts": {
+			"id": "net_margin_post_discounts",
+			"category": "inventory",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"invoices",
+				"products"
+			],
+			"es": {
+				"short": "Margen después de descuentos",
+				"name": "Margen bruto después de descuentos",
+				"what": "Qué porcentaje de las ventas queda como ganancia después de descontar el costo de los productos y los descuentos comerciales. No es la ganancia neta de la empresa.",
+				"formula": "((Ventas brutas − Descuentos − Costo de los productos vendidos) / Ventas netas) × 100.",
+				"interpretation": "Muestra el margen real que dejan las ventas una vez aplicadas las promociones.",
+				"decision": "Ajustar promociones que reducen demasiado el margen.",
+				"example": "Ventas $100.000, descuentos $3.000, costo $72.800 → 24,2%.",
+				"evaluation": "Favorable: ≥ 22%."
+			},
+			"en": {
+				"short": "Margin after discounts",
+				"name": "Gross margin after discounts",
+				"what": "Share of sales left as profit after deducting product cost and commercial discounts. It is not company net profit.",
+				"formula": "((Gross sales − Discounts − Cost of goods sold) / Net sales) × 100.",
+				"interpretation": "Shows the real margin sales leave once promotions are applied.",
+				"decision": "Adjust promotions that cut margin too much.",
+				"example": "Sales $100,000, discounts $3,000, cost $72,800 → 24.2%.",
+				"evaluation": "Good: ≥ 22%."
+			}
+		},
+		"forecast_accuracy": {
+			"id": "forecast_accuracy",
+			"category": "inventory",
+			"unit": "percent",
+			"period": "filter",
+			"source": [
+				"inventory"
+			],
+			"es": {
+				"short": "Precisión de la proyección",
+				"name": "Precisión de la proyección de ventas",
+				"what": "Qué tan cerca estuvo la proyección de ventas de las ventas reales. Una proyección es una estimación; no es la meta comercial.",
+				"formula": "100% − (|Ventas reales − Ventas proyectadas| / Ventas reales × 100).",
+				"interpretation": "Una precisión alta permite comprar la cantidad justa.",
+				"decision": "Confiar en la proyección para planificar compras o revisarla si falla.",
+				"example": "Proyectadas 1.000 unidades, vendidas 924 → 91,8%.",
+				"evaluation": "Favorable: ≥ 90%."
+			},
+			"en": {
+				"short": "Projection accuracy",
+				"name": "Sales projection accuracy",
+				"what": "How close the sales projection was to actual sales. A projection is an estimate; it is not the commercial target.",
+				"formula": "100% − (|Actual sales − Projected sales| / Actual sales × 100).",
+				"interpretation": "High accuracy lets you buy the right quantity.",
+				"decision": "Rely on the projection to plan purchases, or revise it if it misses.",
+				"example": "Projected 1,000 units, sold 924 → 91.8%.",
+				"evaluation": "Good: ≥ 90%."
+			}
+		}
+	}
+}

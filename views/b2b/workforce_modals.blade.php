@@ -122,7 +122,7 @@
 
 				<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700 space-y-2">
 					<div class="flex items-center justify-between text-xs py-1 border-b border-slate-200 dark:border-slate-700">
-						<span class="font-medium text-slate-700 dark:text-slate-300">Reposición & Merchandising:</span>
+						<span class="font-medium text-slate-700 dark:text-slate-300">Reposición y exhibición:</span>
 						<span class="font-bold text-emerald-600">4 Colaboradores (168h asignadas)</span>
 					</div>
 					<div class="flex items-center justify-between text-xs py-1 border-b border-slate-200 dark:border-slate-700">
@@ -180,9 +180,12 @@
 <div id="modal-wfm-shift-edit" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
 	<div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
 		<div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/60 dark:bg-slate-900/40">
-			<h3 class="text-sm font-bold text-slate-900 dark:text-white" id="wfm-shift-modal-title">
-				Asignar Turno de Trabajo
-			</h3>
+			<div class="flex items-center gap-2">
+				<i data-lucide="calendar-plus" class="w-5 h-5 text-brand-700"></i>
+				<h3 class="text-sm font-bold text-slate-900 dark:text-white" id="wfm-shift-modal-title">
+					Asignar Turno de Trabajo
+				</h3>
+			</div>
 			<button onclick="closeWfmModal('modal-wfm-shift-edit')" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg">
 				<i data-lucide="x" class="w-5 h-5"></i>
 			</button>
@@ -192,16 +195,25 @@
 			<input type="hidden" id="shift-edit-id" value="" />
 			<input type="hidden" id="shift-edit-emp-id" value="" />
 			<input type="hidden" id="shift-edit-dow" value="" />
+			<input type="hidden" id="shift-edit-date" value="" />
 
-			<!-- Empleado y Día Info -->
-			<div class="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-slate-200 dark:border-slate-700 text-xs">
+			<!-- Selector de Colaborador (Habilitado para nuevo turno general) -->
+			<div id="shift-modal-emp-select-wrap" class="hidden">
+				<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Colaborador</label>
+				<select id="shift-edit-emp-select" onchange="handleModalEmployeeSelect(this.value)" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 font-medium">
+					<!-- Poblado dinámicamente -->
+				</select>
+			</div>
+
+			<!-- Empleado y Día Info Fijo -->
+			<div id="shift-modal-emp-info-wrap" class="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-slate-200 dark:border-slate-700 text-xs">
 				<div class="flex justify-between">
 					<span class="text-slate-500">Colaborador:</span>
 					<span class="font-bold text-slate-800 dark:text-white" id="shift-modal-emp-name">Jorge Luis Quispe</span>
 				</div>
 				<div class="flex justify-between mt-1">
-					<span class="text-slate-500">Día de la Semana:</span>
-					<span class="font-semibold text-brand-700" id="shift-modal-dow-name">Lunes</span>
+					<span class="text-slate-500">Día / Fecha:</span>
+					<span class="font-semibold text-brand-700" id="shift-modal-dow-name">Lunes, 16 Nov 2026</span>
 				</div>
 			</div>
 
@@ -215,59 +227,244 @@
 					<option value="TMPL-CIE">Cierre y Despacho (13:30 - 22:00 • 8.0h)</option>
 					<option value="TMPL-RUT">Ruta Preventa (08:00 - 17:00 • 8.0h)</option>
 					<option value="TMPL-PAR">Medio Tiempo (08:00 - 12:00 • 4.0h)</option>
-					<option value="REST">Descanso Semanal (0.0h)</option>
+					<option value="REST">Descanso Semanal / Libre (0.0h)</option>
 				</select>
 			</div>
 
 			<div class="grid grid-cols-2 gap-3">
 				<div>
 					<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Hora Inicio</label>
-					<input type="time" id="shift-edit-start" value="08:00" required class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 font-medium" />
+					<input type="time" id="shift-edit-start" value="08:00" required onchange="triggerLiveShiftValidation()" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 font-medium" />
 				</div>
 				<div>
 					<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Hora Fin</label>
-					<input type="time" id="shift-edit-end" value="16:30" required class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 font-medium" />
+					<input type="time" id="shift-edit-end" value="16:30" required onchange="triggerLiveShiftValidation()" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 font-medium" />
 				</div>
 			</div>
 
 			<div class="grid grid-cols-2 gap-3">
 				<div>
 					<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Descanso (Minutos)</label>
-					<input type="number" id="shift-edit-break" value="30" step="15" min="0" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 font-medium" />
+					<input type="number" id="shift-edit-break" value="30" step="15" min="0" onchange="triggerLiveShiftValidation()" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 font-medium" />
 				</div>
 				<div>
 					<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tipo de Turno</label>
-					<select id="shift-edit-type" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 font-medium">
+					<select id="shift-edit-type" onchange="triggerLiveShiftValidation()" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 font-medium">
 						<option value="opening">Apertura</option>
 						<option value="mid" selected>Intermedio</option>
 						<option value="closing">Cierre</option>
 						<option value="standard">Ruta Preventa</option>
-						<option value="rest">Descanso</option>
-						<option value="vacation">Vacaciones</option>
+						<option value="rest">Descanso / Día Libre</option>
+						<option value="vacation">Vacaciones Autorizadas</option>
 						<option value="absence">Ausencia / Permiso</option>
 					</select>
 				</div>
 			</div>
 
+			<!-- Asignación de Turnos Repetitivos -->
+			<div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/80 space-y-2">
+				<div class="flex items-center justify-between">
+					<label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-800 dark:text-slate-200">
+						<input type="checkbox" id="shift-edit-repeat-toggle" onchange="toggleRepeatDaysSection(this.checked)" class="rounded text-brand-700 focus:ring-brand-500 w-4 h-4" />
+						<span>Asignar turno repetitivo en múltiples días</span>
+					</label>
+					<span class="text-[10px] text-slate-400">Jornada continua</span>
+				</div>
+				<div id="shift-repeat-days-container" class="hidden pt-1 flex items-center justify-between gap-1 text-xs">
+					<label class="flex items-center gap-1 cursor-pointer px-2 py-1 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-semibold">
+						<input type="checkbox" name="repeat-day" value="1" class="repeat-dow-checkbox rounded text-brand-700"> Lun
+					</label>
+					<label class="flex items-center gap-1 cursor-pointer px-2 py-1 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-semibold">
+						<input type="checkbox" name="repeat-day" value="2" class="repeat-dow-checkbox rounded text-brand-700"> Mar
+					</label>
+					<label class="flex items-center gap-1 cursor-pointer px-2 py-1 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-semibold">
+						<input type="checkbox" name="repeat-day" value="3" class="repeat-dow-checkbox rounded text-brand-700"> Mié
+					</label>
+					<label class="flex items-center gap-1 cursor-pointer px-2 py-1 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-semibold">
+						<input type="checkbox" name="repeat-day" value="4" class="repeat-dow-checkbox rounded text-brand-700"> Jue
+					</label>
+					<label class="flex items-center gap-1 cursor-pointer px-2 py-1 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-semibold">
+						<input type="checkbox" name="repeat-day" value="5" class="repeat-dow-checkbox rounded text-brand-700"> Vie
+					</label>
+					<label class="flex items-center gap-1 cursor-pointer px-2 py-1 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-semibold">
+						<input type="checkbox" name="repeat-day" value="6" class="repeat-dow-checkbox rounded text-brand-700"> Sáb
+					</label>
+					<label class="flex items-center gap-1 cursor-pointer px-2 py-1 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-semibold">
+						<input type="checkbox" name="repeat-day" value="7" class="repeat-dow-checkbox rounded text-brand-700"> Dom
+					</label>
+				</div>
+			</div>
+
 			<div>
 				<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tareas / Nota Operativa (Opcional)</label>
-				<input type="text" id="shift-edit-notes" placeholder="Ej. Reposición pasillos 2 y 3, conteo de vencimientos" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2" />
+				<input type="text" id="shift-edit-notes" placeholder="Ej. Reposición pasillos 2 y 3, conteo FEFO de vencimientos" class="w-full text-xs rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2" />
+			</div>
+
+			<!-- Contenedor de Alertas y Validaciones en Tiempo Real -->
+			<div id="shift-validation-alerts" class="hidden space-y-1 text-xs">
+				<!-- Inyectado dinámicamente con advertencias o bloqueos -->
 			</div>
 
 			<div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-				<button type="button" onclick="handleDeleteShiftFromModal()" class="px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors">
-					Quitar Turno
+				<button type="button" onclick="confirmDeleteShiftFromModal()" class="px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors flex items-center gap-1.5">
+					<i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+					<span>Quitar Turno</span>
 				</button>
 				<div class="flex items-center gap-2">
 					<button type="button" onclick="closeWfmModal('modal-wfm-shift-edit')" class="px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
 						Cancelar
 					</button>
-					<button type="submit" class="px-4 py-2 text-xs font-semibold bg-brand-700 hover:bg-brand-800 text-white rounded-lg transition-colors">
+					<button type="submit" id="shift-submit-btn" class="px-4 py-2 text-xs font-semibold bg-brand-700 hover:bg-brand-800 text-white rounded-lg transition-colors shadow-2xs">
 						Guardar Turno
 					</button>
 				</div>
 			</div>
 		</form>
+	</div>
+</div>
+
+{{-- MODAL DE CONFIRMACIÓN PARA ELIMINAR TURNO CON AUDITORÍA --}}
+<div id="modal-wfm-delete-confirm" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+	<div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+		<div class="p-6 text-center space-y-3">
+			<div class="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto">
+				<i data-lucide="alert-triangle" class="w-6 h-6"></i>
+			</div>
+			<h3 class="text-base font-bold text-slate-900 dark:text-white">
+				¿Eliminar este turno de trabajo?
+			</h3>
+			<p class="text-xs text-slate-500 dark:text-slate-400" id="wfm-delete-confirm-text">
+				Esta acción eliminará la jornada asignada y convertirá el día en descanso semanal para el colaborador. Se registrará en la auditoría inmutable de WFM.
+			</p>
+			<input type="hidden" id="delete-confirm-shift-id" value="" />
+		</div>
+		<div class="px-6 py-3 bg-slate-50 dark:bg-slate-900/40 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2">
+			<button onclick="closeWfmModal('modal-wfm-delete-confirm')" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+				Cancelar
+			</button>
+			<button onclick="executeConfirmedShiftDelete()" class="px-4 py-2 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors shadow-2xs">
+				Confirmar Eliminación
+			</button>
+		</div>
+	</div>
+</div>
+
+{{-- MODAL EDUCATIVO: GUÍA Y SIGNIFICADO DE LOS 8 KPIS SUPERIORES --}}
+<div id="modal-wfm-kpi-info" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+	<div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
+		<div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/60 dark:bg-slate-900/40">
+			<div class="flex items-center gap-2">
+				<i data-lucide="help-circle" class="w-5 h-5 text-brand-700"></i>
+				<h3 class="text-sm font-bold text-slate-900 dark:text-white">
+					Indicadores Clave de Gestión de Horarios (KPIs)
+				</h3>
+			</div>
+			<button onclick="closeWfmModal('modal-wfm-kpi-info')" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg">
+				<i data-lucide="x" class="w-5 h-5"></i>
+			</button>
+		</div>
+
+		<div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto text-xs">
+			<p class="text-slate-600 dark:text-slate-400 text-xs">
+				Los 8 indicadores superiores se recalculan en tiempo real según la fecha, sucursal, departamento y vista seleccionadas (Día, Semana o Mes). A continuación se detalla su significado, fórmula y utilidad:
+			</p>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+				<!-- KPI 1 -->
+				<div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 space-y-1">
+					<div class="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white">
+						<i data-lucide="users" class="w-4 h-4 text-brand-700"></i>
+						<span>1. Personal Programado</span>
+					</div>
+					<p class="text-slate-600 dark:text-slate-300"><strong>Qué es:</strong> Cantidad de colaboradores con turnos activos en el periodo seleccionado.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Cálculo:</strong> Conteo único de colaboradores con jornada laboral asignada (excluyendo descansos y ausencias).</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Utilidad:</strong> Verificar la plantilla activa disponible para cubrir la operación de almacén y ventas.</p>
+				</div>
+
+				<!-- KPI 2 -->
+				<div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 space-y-1">
+					<div class="flex items-center gap-1.5 font-bold text-emerald-700 dark:text-emerald-400">
+						<i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+						<span>2. Cobertura de Turnos (%)</span>
+					</div>
+					<p class="text-slate-600 dark:text-slate-300"><strong>Qué es:</strong> Nivel porcentual de cumplimiento de horas programadas respecto a la demanda óptima.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Cálculo:</strong> <code class="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800">(Horas Programadas / Horas Requeridas) × 100</code>.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Utilidad:</strong> Prevenir tanto el subdimensionamiento (pérdida de ventas) como el sobredimensionamiento (costo excesivo).</p>
+				</div>
+
+				<!-- KPI 3 -->
+				<div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 space-y-1">
+					<div class="flex items-center gap-1.5 font-bold text-amber-700 dark:text-amber-400">
+						<i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>
+						<span>3. Turnos Sin Cubrir</span>
+					</div>
+					<p class="text-slate-600 dark:text-slate-300"><strong>Qué es:</strong> Puestos o jornadas faltantes para satisfacer los picos de despacho y venta.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Cálculo:</strong> <code class="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800">MAX(0, (Horas Requeridas − Horas Asignadas) / 8.0)</code>.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Utilidad:</strong> Identificar brechas operativas antes de que afecten la entrega a clientes mayoristas.</p>
+				</div>
+
+				<!-- KPI 4 -->
+				<div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 space-y-1">
+					<div class="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white">
+						<i data-lucide="clock" class="w-4 h-4 text-indigo-600"></i>
+						<span>4. Horas Programadas</span>
+					</div>
+					<p class="text-slate-600 dark:text-slate-300"><strong>Qué es:</strong> Suma de horas netas de trabajo efectivo planificadas.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Cálculo:</strong> Suma de horas brutas de todos los turnos descontando los minutos de descanso/almuerzo.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Utilidad:</strong> Base para el control de jornada laboral y comparación con el presupuesto.</p>
+				</div>
+
+				<!-- KPI 5 -->
+				<div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 space-y-1">
+					<div class="flex items-center gap-1.5 font-bold text-blue-700 dark:text-blue-400">
+						<i data-lucide="plus-circle" class="w-4 h-4 text-blue-600"></i>
+						<span>5. Horas Adicionales Previstas</span>
+					</div>
+					<p class="text-slate-600 dark:text-slate-300"><strong>Qué es:</strong> Horas programadas por encima de la jornada ordinaria legal o contractual.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Cálculo:</strong> Excedente de horas por encima de 48h semanales (o 40h según contrato individual).</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Utilidad:</strong> Anticipar sobrecostos de horas extraordinarias y evitar sanciones laborales.</p>
+				</div>
+
+				<!-- KPI 6 -->
+				<div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 space-y-1">
+					<div class="flex items-center gap-1.5 font-bold text-rose-700 dark:text-rose-400">
+						<i data-lucide="user-x" class="w-4 h-4 text-rose-600"></i>
+						<span>6. Ausencias Registradas</span>
+					</div>
+					<p class="text-slate-600 dark:text-slate-300"><strong>Qué es:</strong> Colaboradores en descanso médico, vacaciones autorizadas o permiso.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Cálculo:</strong> Suma de turnos marcados como 'vacation' o 'absence' en el rango de fechas.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Utilidad:</strong> Conocer de antemano el personal no disponible para redistribuir la carga.</p>
+				</div>
+
+				<!-- KPI 7 -->
+				<div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 space-y-1">
+					<div class="flex items-center gap-1.5 font-bold text-purple-700 dark:text-purple-400">
+						<i data-lucide="arrow-left-right" class="w-4 h-4 text-purple-600"></i>
+						<span>7. Solicitudes Pendientes</span>
+					</div>
+					<p class="text-slate-600 dark:text-slate-300"><strong>Qué es:</strong> Peticiones de cambio de turno o descanso ingresadas por colaboradores.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Cálculo:</strong> Conteo de registros en la tabla de solicitudes con estado 'pending'.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Utilidad:</strong> Resolver a tiempo las necesidades del personal antes de la publicación definitiva.</p>
+				</div>
+
+				<!-- KPI 8 -->
+				<div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 space-y-1">
+					<div class="flex items-center gap-1.5 font-bold text-emerald-800 dark:text-emerald-300">
+						<i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-600"></i>
+						<span>8. Costo Estimado de Personal</span>
+					</div>
+					<p class="text-slate-600 dark:text-slate-300"><strong>Qué es:</strong> Inversión proyectada en nómina directa para los turnos asignados.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Cálculo:</strong> <code class="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800">Σ (Horas netas del turno × Tarifa horaria contractual del colaborador)</code>.</p>
+					<p class="text-slate-500 dark:text-slate-400"><strong>Utilidad:</strong> Asegurar que la planificación se mantenga dentro del presupuesto aprobado.</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-slate-50/60 dark:bg-slate-900/40">
+			<button onclick="closeWfmModal('modal-wfm-kpi-info')" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-800 text-white hover:bg-slate-900 transition-colors">
+				Entendido
+			</button>
+		</div>
 	</div>
 </div>
 
@@ -422,7 +619,7 @@
 		<div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/60 dark:bg-slate-900/40">
 			<div class="flex items-center gap-2">
 				<i data-lucide="bell" class="w-5 h-5 text-amber-500"></i>
-				<h3 class="text-sm font-bold text-slate-900 dark:text-white">Centro de Notificaciones Internas Demo</h3>
+				<h3 class="text-sm font-bold text-slate-900 dark:text-white">Centro de Notificaciones Internas</h3>
 			</div>
 			<button onclick="closeWfmModal('modal-wfm-notifications')" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg">
 				<i data-lucide="x" class="w-5 h-5"></i>
@@ -450,7 +647,7 @@
 		<div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/60 dark:bg-slate-900/40">
 			<div class="flex items-center gap-2">
 				<i data-lucide="settings-2" class="w-5 h-5 text-brand-700"></i>
-				<h3 class="text-sm font-bold text-slate-900 dark:text-white">Herramientas & Estado del Modo Demo</h3>
+				<h3 class="text-sm font-bold text-slate-900 dark:text-white">Herramientas de datos</h3>
 			</div>
 			<button onclick="closeWfmModal('modal-wfm-demo-settings')" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg">
 				<i data-lucide="x" class="w-5 h-5"></i>
@@ -468,11 +665,11 @@
 			<div class="space-y-2">
 				<button onclick="exportDemoDatasetJson()" class="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors">
 					<i data-lucide="download" class="w-4 h-4"></i>
-					<span>Exportar Dataset Demo Completo (JSON)</span>
+					<span>Exportar dataset completo (JSON)</span>
 				</button>
 				<button onclick="confirmResetDemoData()" class="w-full py-2.5 px-3 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 rounded-lg font-semibold border border-rose-200 dark:border-rose-800 flex items-center justify-center gap-2 transition-colors">
 					<i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-					<span>Restablecer Datos Demo a Valores de Fábrica</span>
+					<span>Restablecer datos a valores de fábrica</span>
 				</button>
 			</div>
 		</div>

@@ -14,6 +14,11 @@
 	<script src="{{ $U('/packages/chart.js/dist/Chart.bundle.min.js') }}"></script>
 	<!-- Lucide Icons -->
 	<script src="https://unpkg.com/lucide@latest"></script>
+	<!-- Explicaciones de indicadores (diccionario centralizado public/data/b2b-kpi-dictionary.json) -->
+	<script src="{{ $U('/js/b2b-kpi-help.js') }}?v=3" data-dictionary="{{ $U('/data/b2b-kpi-dictionary.json') }}?v=3" defer></script>
+	<!-- Driver.js (Recorrido Interactivo Guiado) -->
+	<link rel="stylesheet" href="{{ $U('/packages/driver.js/dist/driver.css') }}">
+	<script src="{{ $U('/packages/driver.js/dist/driver.js.iife.js') }}"></script>
 	
 	<script>
 		// Configuración de Tailwind para tema Enterprise Minimal
@@ -258,7 +263,7 @@
 							<i data-lucide="check-square" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 shrink-0"></i>
 							<span class="nav-text">Operaciones y Tareas</span>
 						</div>
-						<span class="nav-badge px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300">FEFO</span>
+						<span class="nav-badge px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300" title="Control de fechas de vencimiento: primero en vencer, primero en salir">Vencimientos</span>
 						<span class="nav-tooltip">Operaciones y Tareas</span>
 					</a>
 
@@ -338,7 +343,7 @@
 				<!-- Search Input -->
 				<div class="relative hidden sm:block w-52 lg:w-72">
 					<i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-					<input type="text" id="global-search-input" placeholder="Buscar SKU, Cliente, Factura, Pedido..." class="w-full pl-9 pr-8 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all">
+					<input type="text" id="global-search-input" placeholder="Buscar código de producto, cliente, factura o pedido..." class="w-full pl-9 pr-8 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all">
 					<kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600 font-mono">⌘K</kbd>
 				</div>
 
@@ -355,7 +360,7 @@
 				</button>
 
 				<!-- Action CTA -->
-				<button onclick="handleHeaderNewAction()" class="inline-flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-semibold rounded-lg bg-brand-800 hover:bg-brand-700 text-white shadow-xs active:scale-[0.98] transition-all shrink-0">
+				<button onclick="handleHeaderNewAction()" data-tour="sales-btn-new-order" class="inline-flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-semibold rounded-lg bg-brand-800 hover:bg-brand-700 text-white shadow-xs active:scale-[0.98] transition-all shrink-0">
 					<i data-lucide="plus" class="w-4 h-4"></i>
 					<span id="header-action-text" class="hidden sm:inline" data-i18n="btn_new_order">Nueva Orden B2B</span>
 				</button>
@@ -372,20 +377,19 @@
 					<div>
 						<h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
 							<span data-i18n="sales_summary_title">Tablero Ejecutivo de Ventas</span>
-							<span id="dash-period-badge" class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60">Noviembre 2026 a la fecha</span>
-							<span class="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50">DEMO B2B</span>
+							<span id="dash-period-badge" class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60">Noviembre 2026 hasta hoy</span>
 						</h1>
-						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1" data-i18n="sales_summary_desc">Supervisión en tiempo real de facturación mayorista, margen comercial, OTIF y riesgo crediticio.</p>
+						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1" data-i18n="sales_summary_desc">Muestra cuánto se facturó, cuánto se cobró y cuánto queda pendiente, junto con pedidos, clientes y margen. Sirve para detectar caídas de venta o atrasos de cobro y decidir dónde actuar este mes.</p>
 					</div>
 
 					<!-- Filter controls group -->
 					<div class="flex flex-wrap items-center gap-2">
 						<!-- Time presets buttons -->
-						<div class="inline-flex p-0.5 bg-slate-100 dark:bg-slate-800/90 rounded-lg border border-slate-200/80 dark:border-slate-700 text-xs">
-							<button id="dash-btn-7d" onclick="setDashboardPeriod('7D')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">7D</button>
-							<button id="dash-btn-mtd" onclick="setDashboardPeriod('MTD')" class="px-2.5 py-1 font-semibold rounded-md bg-white dark:bg-slate-700 text-brand-800 dark:text-white shadow-xs transition-all">MTD</button>
-							<button id="dash-btn-qtd" onclick="setDashboardPeriod('QTD')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">QTD</button>
-							<button id="dash-btn-ytd" onclick="setDashboardPeriod('YTD')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">YTD</button>
+						<div class="inline-flex p-0.5 bg-slate-100 dark:bg-slate-800/90 rounded-lg border border-slate-200/80 dark:border-slate-700 text-xs" data-tour="sales-period-filters">
+							<button id="dash-btn-7d" onclick="setDashboardPeriod('7D')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all" title="Últimos 7 días" data-i18n="period_btn_7d">7 días</button>
+							<button id="dash-btn-mtd" onclick="setDashboardPeriod('MTD')" class="px-2.5 py-1 font-semibold rounded-md bg-white dark:bg-slate-700 text-brand-800 dark:text-white shadow-xs transition-all" title="Mes actual hasta hoy" data-i18n="period_btn_mtd">Mes actual</button>
+							<button id="dash-btn-qtd" onclick="setDashboardPeriod('QTD')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all" title="Trimestre actual hasta hoy" data-i18n="period_btn_qtd">Trimestre actual</button>
+							<button id="dash-btn-ytd" onclick="setDashboardPeriod('YTD')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all" title="Año actual hasta hoy" data-i18n="period_btn_ytd">Año actual</button>
 							<button id="dash-btn-custom" onclick="toggleCustomDateFilter()" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">Rango</button>
 						</div>
 
@@ -398,7 +402,7 @@
 						</div>
 
 						<!-- Filter 1: Cliente o Cadena -->
-						<select id="dash-filter-customer" onchange="onDashboardCustomerChange()" class="text-xs bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-1 focus:ring-brand-500 max-w-[170px] truncate">
+						<select id="dash-filter-customer" data-tour="sales-filter-customer" onchange="onDashboardCustomerChange()" class="text-xs bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-1 focus:ring-brand-500 max-w-[170px] truncate">
 							<option value="">Todos los Clientes</option>
 						</select>
 
@@ -439,13 +443,10 @@
 				<!-- 6 KPI CARDS SECTION (Enterprise Minimal - Paso 8) -->
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
 					<!-- KPI 1: Ventas Netas Facturadas -->
-					<div id="kpi-net-sales-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Ventas netas = Facturación válida antes de impuestos − Notas de crédito válidas antes de impuestos.">
+					<div id="kpi-net-sales-card" data-tour="sales-kpi-sales" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
 							<div class="flex items-center gap-1.5">
-								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_net_sales">Ventas Netas B2B</span>
-								<button type="button" onclick="openKpiHelp('net_sales')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
-									<i data-lucide="info" class="w-3.5 h-3.5"></i>
-								</button>
+								<span class="text-xs font-semibold uppercase tracking-wider" data-kpi="net_sales">Ventas netas facturadas</span>
 							</div>
 							<div class="w-7 h-7 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center">
 								<i data-lucide="dollar-sign" class="w-4 h-4"></i>
@@ -458,21 +459,18 @@
 							<span id="kpi-net-sales-var" class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center">
 								<i data-lucide="trending-up" class="w-3 h-3 mr-0.5"></i>0%
 							</span>
-							<span id="kpi-net-sales-period" class="text-[10px] text-slate-400">MTD</span>
+							<span id="kpi-net-sales-period" class="text-[10px] text-slate-400 b2b-period-short">Mes actual hasta hoy</span>
 						</div>
-						<div id="kpi-net-sales-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+						<div id="kpi-net-sales-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 leading-snug border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 							Subtotal Facturado sin impuestos
 						</div>
 					</div>
 
 					<!-- KPI 2: Pedidos Confirmados -->
-					<div id="kpi-orders-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Total de pedidos comerciales en estado 'Confirmado' registrados en el período.">
+					<div id="kpi-orders-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
 							<div class="flex items-center gap-1.5">
-								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_confirmed_orders">Pedidos Confirmados</span>
-								<button type="button" onclick="openKpiHelp('orders')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
-									<i data-lucide="info" class="w-3.5 h-3.5"></i>
-								</button>
+								<span class="text-xs font-semibold uppercase tracking-wider" data-kpi="confirmed_orders">Pedidos confirmados</span>
 							</div>
 							<div class="w-7 h-7 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
 								<i data-lucide="package-check" class="w-4 h-4"></i>
@@ -485,21 +483,18 @@
 							<span id="kpi-orders-var" class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center">
 								N/D
 							</span>
-							<span id="kpi-orders-period" class="text-[10px] text-slate-400">MTD</span>
+							<span id="kpi-orders-period" class="text-[10px] text-slate-400 b2b-period-short">Mes actual hasta hoy</span>
 						</div>
-						<div id="kpi-orders-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+						<div id="kpi-orders-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 							Órdenes comerciales cerradas
 						</div>
 					</div>
 
 					<!-- KPI 3: Clientes Activos -->
-					<div id="kpi-customers-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Clientes comerciales con al menos un pedido confirmado o factura emitida en el período.">
+					<div id="kpi-customers-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
 							<div class="flex items-center gap-1.5">
-								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_active_customers">Clientes Activos</span>
-								<button type="button" onclick="openKpiHelp('active_customers')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
-									<i data-lucide="info" class="w-3.5 h-3.5"></i>
-								</button>
+								<span class="text-xs font-semibold uppercase tracking-wider" data-kpi="active_customers">Clientes activos</span>
 							</div>
 							<div class="w-7 h-7 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center">
 								<i data-lucide="users" class="w-4 h-4"></i>
@@ -514,19 +509,16 @@
 							</span>
 							<span id="kpi-customers-period" class="text-[10px] text-slate-400">Registrados</span>
 						</div>
-						<div id="kpi-customers-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+						<div id="kpi-customers-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 							Con transacciones en período
 						</div>
 					</div>
 
 					<!-- KPI 4: Ticket Promedio Facturado -->
-					<div id="kpi-ticket-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Ticket Promedio = Ventas Netas Facturadas / Cantidad de Facturas Válidas.">
+					<div id="kpi-ticket-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
 							<div class="flex items-center gap-1.5">
-								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_average_ticket">Ticket Promedio</span>
-								<button type="button" onclick="openKpiHelp('ticket')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
-									<i data-lucide="info" class="w-3.5 h-3.5"></i>
-								</button>
+								<span class="text-xs font-semibold uppercase tracking-wider" data-kpi="avg_invoice_value">Valor promedio por factura</span>
 							</div>
 							<div class="w-7 h-7 rounded-md bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 flex items-center justify-center">
 								<i data-lucide="receipt" class="w-4 h-4"></i>
@@ -541,19 +533,16 @@
 							</span>
 							<span id="kpi-ticket-period" class="text-[10px] text-slate-400">Por factura</span>
 						</div>
-						<div id="kpi-ticket-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+						<div id="kpi-ticket-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 							0 comprobantes válidos
 						</div>
 					</div>
 
 					<!-- KPI 5: Cuentas por Cobrar -->
-					<div id="kpi-receivable-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Saldo pendiente total exigible de facturas emitidas y parciales, deduciendo pagos y notas de crédito.">
+					<div id="kpi-receivable-card" data-tour="sales-kpi-receivable" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
 							<div class="flex items-center gap-1.5">
-								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_accounts_receivable">Cuentas por Cobrar</span>
-								<button type="button" onclick="openKpiHelp('receivable')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
-									<i data-lucide="info" class="w-3.5 h-3.5"></i>
-								</button>
+								<span class="text-xs font-semibold uppercase tracking-wider" data-kpi="receivable">Cuentas por cobrar</span>
 							</div>
 							<div class="w-7 h-7 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center">
 								<i data-lucide="wallet" class="w-4 h-4"></i>
@@ -566,21 +555,18 @@
 							<span id="kpi-receivable-var" class="text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center">
 								Mora: $0.00
 							</span>
-							<span class="text-[10px] text-slate-400">Saldo vivo</span>
+							<span class="text-[10px] text-slate-400">Saldo pendiente de pago</span>
 						</div>
-						<div id="kpi-receivable-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+						<div id="kpi-receivable-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 							Cartera comercial activa
 						</div>
 					</div>
 
 					<!-- KPI 6: Variación vs. Período Anterior -->
-					<div id="kpi-variation-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40" title="Cálculo porcentual: (Período actual − Período anterior) / Período anterior × 100. Si período anterior es 0, muestra N/D.">
+					<div id="kpi-variation-card" class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40">
 						<div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
 							<div class="flex items-center gap-1.5">
-								<span class="text-xs font-semibold uppercase tracking-wider" data-i18n="kpi_sales_variation">Variación Ventas</span>
-								<button type="button" onclick="openKpiHelp('sales_variation')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="¿Qué significa este indicador? Pulse para ver fórmula, ejemplos y consejos">
-									<i data-lucide="info" class="w-3.5 h-3.5"></i>
-								</button>
+								<span class="text-xs font-semibold uppercase tracking-wider" data-kpi="sales_growth">Crecimiento de ventas</span>
 							</div>
 							<div class="w-7 h-7 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center">
 								<i data-lucide="trending-up" class="w-4 h-4"></i>
@@ -592,8 +578,8 @@
 						<div class="mt-1 flex items-center justify-between">
 							<span id="kpi-variation-period" class="text-[10px] text-slate-400 truncate">vs. Período anterior</span>
 						</div>
-						<div id="kpi-variation-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
-							Comparativa determinista
+						<div id="kpi-variation-sub" class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+							Comparación con el período anterior
 						</div>
 					</div>
 				</div>
@@ -601,7 +587,7 @@
 				<!-- CHARTS ROW 1: EVOLUCIÓN TEMPORAL & CATEGORÍAS -->
 				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 					<!-- Gráfico 1: Evolución de Facturación & Margen B2B -->
-					<div class="lg:col-span-2 bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+					<div class="lg:col-span-2 bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between" data-tour="sales-chart-trend">
 						<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
 							<div>
 								<h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -631,7 +617,7 @@
 					</div>
 
 					<!-- Gráfico 2: Ventas por Categoría -->
-					<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+					<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between" data-tour="sales-chart-category">
 						<div class="mb-3">
 							<h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center justify-between">
 								<span data-i18n="chart_category_sales">Ventas por Categoría</span>
@@ -677,7 +663,7 @@
 								<span data-i18n="chart_order_status">Pedidos por Estado</span>
 								<span id="dash-order-status-total" class="text-[11px] font-semibold text-brand-700 dark:text-brand-300">0 Pedidos</span>
 							</h3>
-							<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pipeline de pedidos: confirmados, borradores y cancelados.</p>
+							<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pedidos según su estado: confirmados, borradores y cancelados.</p>
 						</div>
 						<div class="h-48 w-full relative flex items-center justify-center">
 							<canvas id="orderStatusChart"></canvas>
@@ -733,7 +719,7 @@
 					</div>
 
 					<!-- Tabla Ejecutiva 2: Órdenes de Venta Mayoristas Recientes -->
-					<div class="lg:col-span-2 bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
+					<div class="lg:col-span-2 bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between" data-tour="sales-recent-orders">
 						<div>
 							<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
 								<div>
@@ -774,7 +760,7 @@
 						</div>
 
 						<div id="recent-orders-footer" class="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
-							<span>Mostrando últimas órdenes mayoristas registradas en SQLite</span>
+							<span>Mostrando los últimos pedidos mayoristas registrados</span>
 							<span id="recent-orders-monitored-sum" class="font-mono text-slate-700 dark:text-slate-300">Total monitoreado: $0.00 USD</span>
 						</div>
 					</div>
@@ -790,8 +776,9 @@
 							<h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
 								Clientes y Almacenes
 							</h1>
-							<span id="cust-period-badge" class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 whitespace-nowrap">Noviembre 2026 a la fecha</span>
-							<span class="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 whitespace-nowrap">DIRECTORIO B2B</span>
+							<span id="cust-period-badge" class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 whitespace-nowrap">Noviembre 2026 hasta hoy</span>
+							<span class="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 whitespace-nowrap">CARTERA DE CLIENTES</span>
+							<p class="basis-full text-xs sm:text-sm text-slate-500 dark:text-slate-400" data-i18n="desc_customers">Muestra cuántos clientes compran, cuáles son nuevos, cuáles dejaron de comprar y cuáles tienen deuda vencida. Sirve para decidir a quién visitar, a quién recuperar y a quién limitar el crédito.</p>
 						</div>
 
 						<!-- Nuevo Cliente CTA -->
@@ -806,10 +793,10 @@
 						<!-- Time presets buttons -->
 						<div class="flex flex-wrap items-center gap-2">
 							<div class="inline-flex p-0.5 bg-slate-100 dark:bg-slate-800/90 rounded-lg border border-slate-200/80 dark:border-slate-700 text-xs">
-								<button id="cust-btn-7d" onclick="setCustomerKpiPeriod('7D')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">7D</button>
-								<button id="cust-btn-mtd" onclick="setCustomerKpiPeriod('MTD')" class="px-2.5 py-1 font-semibold rounded-md bg-white dark:bg-slate-700 text-brand-800 dark:text-white shadow-xs transition-all">MTD</button>
-								<button id="cust-btn-qtd" onclick="setCustomerKpiPeriod('QTD')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">QTD</button>
-								<button id="cust-btn-ytd" onclick="setCustomerKpiPeriod('YTD')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">YTD</button>
+								<button id="cust-btn-7d" onclick="setCustomerKpiPeriod('7D')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all" title="Últimos 7 días" data-i18n="period_btn_7d">7 días</button>
+								<button id="cust-btn-mtd" onclick="setCustomerKpiPeriod('MTD')" class="px-2.5 py-1 font-semibold rounded-md bg-white dark:bg-slate-700 text-brand-800 dark:text-white shadow-xs transition-all" title="Mes actual hasta hoy" data-i18n="period_btn_mtd">Mes actual</button>
+								<button id="cust-btn-qtd" onclick="setCustomerKpiPeriod('QTD')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all" title="Trimestre actual hasta hoy" data-i18n="period_btn_qtd">Trimestre actual</button>
+								<button id="cust-btn-ytd" onclick="setCustomerKpiPeriod('YTD')" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all" title="Año actual hasta hoy" data-i18n="period_btn_ytd">Año actual</button>
 								<button id="cust-btn-custom" onclick="toggleCustomerCustomDateFilter()" class="px-2.5 py-1 font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">Rango</button>
 							</div>
 
@@ -883,9 +870,9 @@
 					<!-- 8 Tarjetas KPI: 8 en escritorio (xl:grid-cols-8), 4 en intermedias (md:grid-cols-4), 2 en móvil (grid-cols-2) -->
 					<div id="cust-kpis-grid" class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4 transition-opacity duration-200">
 						<!-- KPI 1: Clientes Activos -->
-						<div id="kpi-cust-card-active" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Clientes Activos&#10;Definición: Cantidad de clientes con compras en el período.&#10;Fórmula: COUNT(DISTINCT clientes con facturas válidas o pedidos confirmados en el período).">
+						<div id="kpi-cust-card-active" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group">
 							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
-								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Clientes Activos">Clientes Activos</span>
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" data-kpi="active_customers">Clientes activos</span>
 								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center shrink-0">
 									<i data-lucide="users" class="w-3.5 h-3.5"></i>
 								</div>
@@ -896,20 +883,20 @@
 								<span id="kpi-cust-active" class="hidden"></span>
 							</div>
 							<div class="mt-1 flex items-center justify-between gap-1">
-								<span id="kpi-cust-active-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+								<span id="kpi-cust-active-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center">
 									N/D
 								</span>
 								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
 							</div>
-							<div id="kpi-cust-active-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+							<div id="kpi-cust-active-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 								Compradores activos
 							</div>
 						</div>
 
 						<!-- KPI 2: Clientes Nuevos -->
-						<div id="kpi-cust-card-new" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Clientes Nuevos&#10;Definición: Clientes con su primera compra en el período.&#10;Fórmula: COUNT(clientes cuya fecha de primera compra histórica está dentro del período).">
+						<div id="kpi-cust-card-new" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group">
 							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
-								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Clientes Nuevos">Clientes Nuevos</span>
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" data-kpi="new_customers">Clientes nuevos</span>
 								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0">
 									<i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
 								</div>
@@ -918,20 +905,20 @@
 								<span id="kpi-cust-new-val" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
 							</div>
 							<div class="mt-1 flex items-center justify-between gap-1">
-								<span id="kpi-cust-new-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+								<span id="kpi-cust-new-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center">
 									N/D
 								</span>
 								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
 							</div>
-							<div id="kpi-cust-new-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+							<div id="kpi-cust-new-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 								Primera compra
 							</div>
 						</div>
 
 						<!-- KPI 3: Clientes Inactivos -->
-						<div id="kpi-cust-card-inactive" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Clientes Inactivos&#10;Definición: Clientes sin compras durante el umbral configurable.&#10;Fórmula: COUNT(clientes registrados activos sin compras en los últimos N días según umbral B2B).">
+						<div id="kpi-cust-card-inactive" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group">
 							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
-								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Clientes Inactivos">Clientes Inactivos</span>
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" data-kpi="inactive_customers">Clientes inactivos</span>
 								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0">
 									<i data-lucide="user-x" class="w-3.5 h-3.5"></i>
 								</div>
@@ -942,20 +929,20 @@
 								<span id="kpi-cust-inactive" class="hidden"></span>
 							</div>
 							<div class="mt-1 flex items-center justify-between gap-1">
-								<span id="kpi-cust-inactive-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+								<span id="kpi-cust-inactive-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center">
 									N/D
 								</span>
 								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
 							</div>
-							<div id="kpi-cust-inactive-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+							<div id="kpi-cust-inactive-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 								Sin compras > 30d
 							</div>
 						</div>
 
 						<!-- KPI 4: Retención de Clientes -->
-						<div id="kpi-cust-card-retention" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Retención de Clientes&#10;Definición: Porcentaje de clientes del período anterior que volvieron a comprar.&#10;Fórmula: (Clientes que compraron en ambos períodos / Clientes compradores del período anterior) × 100.">
+						<div id="kpi-cust-card-retention" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group">
 							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
-								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Retención de Clientes">Retención Clientes</span>
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" data-kpi="customer_retention">Retención de clientes</span>
 								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
 									<i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
 								</div>
@@ -964,20 +951,20 @@
 								<span id="kpi-cust-retention-val" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
 							</div>
 							<div class="mt-1 flex items-center justify-between gap-1">
-								<span id="kpi-cust-retention-var" class="text-[10px] sm:text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 flex items-center truncate">
+								<span id="kpi-cust-retention-var" class="text-[10px] sm:text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 flex items-center">
 									N/D
 								</span>
 								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
 							</div>
-							<div id="kpi-cust-retention-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+							<div id="kpi-cust-retention-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 								Tasa recompra
 							</div>
 						</div>
 
 						<!-- KPI 5: Almacenes Activos -->
-						<div id="kpi-cust-card-est" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Almacenes Activos&#10;Definición: Establecimientos con compras durante el período.&#10;Fórmula: COUNT(DISTINCT establecimientos de entrega con transacciones válidas).">
+						<div id="kpi-cust-card-est" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group">
 							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
-								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Almacenes y Establecimientos Activos">Almacenes Activos</span>
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" data-kpi="active_locations">Locales con compras</span>
 								<div class="w-6 h-6 rounded-md bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 flex items-center justify-center shrink-0">
 									<i data-lucide="store" class="w-3.5 h-3.5"></i>
 								</div>
@@ -989,20 +976,20 @@
 								<span id="kpi-cust-chains" class="hidden"></span>
 							</div>
 							<div class="mt-1 flex items-center justify-between gap-1">
-								<span id="kpi-cust-est-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+								<span id="kpi-cust-est-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center">
 									N/D
 								</span>
 								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
 							</div>
-							<div id="kpi-cust-est-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+							<div id="kpi-cust-est-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 								Puntos de entrega
 							</div>
 						</div>
 
 						<!-- KPI 6: Frecuencia de Compra -->
-						<div id="kpi-cust-card-freq" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Frecuencia de Compra&#10;Definición: Pedidos confirmados por cliente comprador.&#10;Fórmula: Total pedidos confirmados en el período / Clientes compradores en el período.">
+						<div id="kpi-cust-card-freq" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group">
 							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
-								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Frecuencia de Compra">Frecuencia Compra</span>
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" data-kpi="purchase_frequency">Frecuencia de compra</span>
 								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center shrink-0">
 									<i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1011,20 +998,20 @@
 								<span id="kpi-cust-freq-val" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
 							</div>
 							<div class="mt-1 flex items-center justify-between gap-1">
-								<span id="kpi-cust-freq-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+								<span id="kpi-cust-freq-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center">
 									N/D
 								</span>
 								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
 							</div>
-							<div id="kpi-cust-freq-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+							<div id="kpi-cust-freq-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 								Pedidos / cliente
 							</div>
 						</div>
 
 						<!-- KPI 7: Clientes con Deuda Vencida -->
-						<div id="kpi-cust-card-overdue" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Clientes con Deuda Vencida&#10;Definición: Cantidad de clientes con facturas vencidas y saldo pendiente.&#10;Fórmula: COUNT(DISTINCT clientes con facturas en estado Emitida/Parcial y saldo > 0 tras fecha de vencimiento).">
+						<div id="kpi-cust-card-overdue" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group">
 							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
-								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Clientes con Deuda Vencida">Deuda Vencida</span>
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" data-kpi="customers_overdue">Clientes con deuda vencida</span>
 								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center justify-center shrink-0">
 									<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1033,20 +1020,20 @@
 								<span id="kpi-cust-overdue-val" class="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 font-mono tracking-tight">-</span>
 							</div>
 							<div class="mt-1 flex items-center justify-between gap-1">
-								<span id="kpi-cust-overdue-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+								<span id="kpi-cust-overdue-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center">
 									N/D
 								</span>
 								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
 							</div>
-							<div id="kpi-cust-overdue-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+							<div id="kpi-cust-overdue-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 								Con saldo en mora
 							</div>
 						</div>
 
 						<!-- KPI 8: Venta Promedio por Cliente -->
-						<div id="kpi-cust-card-avg-sales" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group" title="Venta Promedio por Cliente&#10;Definición: Ventas netas facturadas divididas entre clientes compradores.&#10;Fórmula: (Facturación válida antes de impuestos − Notas de crédito válidas) / Clientes compradores en el período.">
+						<div id="kpi-cust-card-avg-sales" class="bg-white dark:bg-surface-dark p-3 xl:p-3.5 2xl:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs transition-all hover:border-brand-500/40 relative group">
 							<div class="flex items-start justify-between text-slate-500 dark:text-slate-400 gap-1 min-h-[30px]">
-								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" title="Venta Promedio por Cliente">Venta Promedio</span>
+								<span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight" data-kpi="avg_sales_per_customer">Venta promedio por cliente</span>
 								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 flex items-center justify-center shrink-0">
 									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1055,12 +1042,12 @@
 								<span id="kpi-cust-avg-sales-val" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">-</span>
 							</div>
 							<div class="mt-1 flex items-center justify-between gap-1">
-								<span id="kpi-cust-avg-sales-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center truncate">
+								<span id="kpi-cust-avg-sales-var" class="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center">
 									N/D
 								</span>
 								<span class="text-[9px] sm:text-[10px] text-slate-400 shrink-0">vs. ant.</span>
 							</div>
-							<div id="kpi-cust-avg-sales-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 truncate border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
+							<div id="kpi-cust-avg-sales-sub" class="mt-2 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 leading-tight border-t border-slate-100 dark:border-slate-800/80 pt-1.5">
 								Venta / cliente
 							</div>
 						</div>
@@ -1115,7 +1102,7 @@
 					<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
 						<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
 							<div>
-								<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Tasa de Retención vs Churn</h3>
+								<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Retención vs. pérdida de clientes</h3>
 								<p class="text-[11px] text-slate-400 mt-0.5">Comportamiento de fidelización y tasa de abandono mensual</p>
 							</div>
 							<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">Fidelidad</span>
@@ -1138,7 +1125,7 @@
 					</div>
 					<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
 						<div>
-							<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tasa de Pérdida (Churn)</span>
+							<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-kpi="churn_rate">Tasa de pérdida de clientes</span>
 							<p id="sec-cust-churn-rate" class="text-sm font-bold text-amber-600 dark:text-amber-400 mt-0.5">8.3%</p>
 							<span class="text-[10px] text-slate-400">Meta comercial &lt; 10%</span>
 						</div>
@@ -1264,7 +1251,7 @@
 							<span>Catálogo y Precios B2B</span>
 							<span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60">Tarifario Mayorista</span>
 						</h1>
-						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Gestión de unidades comerciales, factores de conversión, escalas por volumen y acuerdos especiales por cliente.</p>
+						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Catálogo con precios de lista, precios según cantidad comprada, unidades de venta (unidad, caja, palé) y precios acordados por cliente. Sirve para detectar productos sin ventas o con poco margen y decidir precios y surtido.</p>
 					</div>
 
 					<div class="flex items-center gap-2.5">
@@ -1302,9 +1289,9 @@
 					<!-- 8 Tarjetas KPI Principales de Catálogo y Precios -->
 					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
 						<!-- KPI 1: SKU Activos -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="SKU Activos&#10;Fórmula: COUNT(b2b_products WHERE active = 1)">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">SKU Activos</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="active_products">Productos activos</span>
 								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
 									<i data-lucide="package" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1313,13 +1300,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
 								<span id="kpi-prod-active-var">100% activo</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Catálogo B2B</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Catálogo B2B</div>
 						</div>
 
 						<!-- KPI 2: Penetración de Ventas -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Penetración de Ventas&#10;Fórmula: (SKUs con ventas en el período / Total SKUs activos) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">SKU con Venta</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="products_with_sales">Productos con ventas</span>
 								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
 									<i data-lucide="activity" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1328,13 +1315,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
 								<span id="kpi-prod-penetration-var">vs. período ant.</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Movimiento comercial</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Movimiento comercial</div>
 						</div>
 
 						<!-- KPI 3: Margen Promedio Ponderado -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Margen Bruto Promedio&#10;Fórmula: ((Ventas Totales − Costo Total) / Ventas Totales) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Margen Bruto</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="gross_margin_pct">Margen bruto %</span>
 								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
 									<i data-lucide="percent" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1343,13 +1330,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-indigo-600 font-semibold">
 								<span id="kpi-prod-avg-margin-var">Promedio catálogo</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Rentabilidad bruta</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Rentabilidad bruta</div>
 						</div>
 
 						<!-- KPI 4: Facturación Catálogo -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Facturación Neta Catálogo&#10;Fórmula: SUM(quantity × unit_price) de facturas válidas">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas Catálogo</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="catalog_net_sales">Ventas del catálogo</span>
 								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
 									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1358,13 +1345,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
 								<span id="kpi-prod-revenue-var">Ingresos netos</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Facturado en período</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Facturado en período</div>
 						</div>
 
 						<!-- KPI 5: Utilidad Bruta -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Utilidad Bruta Catálogo&#10;Fórmula: Ventas Netas − Costo de Mercancía Vendida (COGS)">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Utilidad Bruta</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="gross_profit">Ganancia bruta</span>
 								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
 									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1373,13 +1360,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
 								<span id="kpi-prod-profit-var">Ganancia bruta</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Ventas − COGS</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Ventas − costo de los productos</div>
 						</div>
 
 						<!-- KPI 6: Variación de Precios -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Variación Promedio de Precios&#10;Fórmula: Promedio de variación de precios base frente al catálogo del período anterior">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Var. Precios</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="price_variation">Variación de precios</span>
 								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
 									<i data-lucide="tag" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1388,13 +1375,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
 								<span id="kpi-prod-price-var-sub">Ajuste tarifario</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Tarifa mayorista</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Tarifa mayorista</div>
 						</div>
 
 						<!-- KPI 7: SKU Sin Movimiento -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="SKU Sin Movimiento&#10;Fórmula: Porcentaje de SKUs activos sin ninguna venta en los últimos 60 días">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Sin Movimiento</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="products_no_movement">Productos sin ventas</span>
 								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
 									<i data-lucide="archive" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1403,13 +1390,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-amber-600 font-semibold">
 								<span id="kpi-prod-deadstock-sub">&gt;60d sin compras</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Riesgo inmovilizado</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Riesgo inmovilizado</div>
 						</div>
 
 						<!-- KPI 8: Cumplimiento Margen Meta -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cumplimiento Margen Meta&#10;Fórmula: (SKUs con margen &gt;= 25% / Total SKUs activos) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cumpl. Meta</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="margin_target_compliance">Productos en margen meta</span>
 								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
 									<i data-lucide="target" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1418,7 +1405,7 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
 								<span id="kpi-prod-compliance-sub">Meta &ge; 25%</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Alineación comercial</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Alineación comercial</div>
 						</div>
 					</div>
 
@@ -1609,14 +1596,14 @@
 					<!-- Table Footer Summary -->
 					<div class="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
 						<span id="prod-table-summary">Mostrando catálogo comercial</span>
-						<span class="font-mono text-slate-600 dark:text-slate-300">Motor determinista de precios activo</span>
+						<span class="font-mono text-slate-600 dark:text-slate-300">Precios calculados automáticamente según las reglas comerciales</span>
 					</div>
 				</div>
 				</div><!-- Fin #prod-view-manage -->
 			</div>
 
 			<!-- SECCIÓN 4: COTIZACIONES Y PEDIDOS B2B (MÓDULO FUNCIONAL PASO 6) -->
-			<div id="section-orders" class="hidden space-y-6">
+			<div id="section-orders" class="hidden space-y-6" data-kpi-period="history">
 				<!-- Header de Cotizaciones y Pedidos -->
 				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80 dark:border-slate-800">
 					<div>
@@ -1624,7 +1611,7 @@
 							<span>Cotizaciones y Pedidos</span>
 							<span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/60">Ciclo Comercial B2B</span>
 						</h1>
-						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Gestión integral de cotizaciones, conversión a órdenes de venta, congelamiento de tarifas mayoristas y trazabilidad de pedidos.</p>
+						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Sigue cada venta desde la cotización hasta la entrega: cuántas cotizaciones se convierten en pedidos, cuántos pedidos están pendientes y cuántos llegan a tiempo. Sirve para detectar cotizaciones sin seguimiento y atrasos de despacho.</p>
 					</div>
 
 					<div class="flex items-center gap-2.5">
@@ -1662,9 +1649,9 @@
 					<!-- 8 Tarjetas KPI Principales de Pedidos y Cotizaciones -->
 					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
 						<!-- KPI 1: Cotizaciones Emitidas -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cotizaciones Emitidas&#10;Fórmula: COUNT(b2b_quotes creadas en el período)">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cotizaciones</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="quotes_issued">Cotizaciones emitidas</span>
 								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
 									<i data-lucide="file-text" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1673,28 +1660,28 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-amber-600 font-semibold">
 								<span id="kpi-ord-quotes-issued-sub">En negociación</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Cotizaciones emitidas</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Cotizaciones emitidas</div>
 						</div>
 
 						<!-- KPI 2: Valor Cotizado -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Valor Cotizado Total&#10;Fórmula: SUM(total_amount) de b2b_quotes en el período">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Valor Cotizado</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="quoted_value">Valor cotizado</span>
 								<div class="w-6 h-6 rounded-md bg-yellow-50 dark:bg-yellow-950/60 text-yellow-600 flex items-center justify-center shrink-0">
 									<i data-lucide="coins" class="w-3.5 h-3.5"></i>
 								</div>
 							</div>
 							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-ord-quotes-val">$0.00</div>
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
-								<span>Pipeline comercial</span>
+								<span>Oportunidades de venta en curso</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Monto en propuesta</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Monto en propuesta</div>
 						</div>
 
 						<!-- KPI 3: Tasa de Conversión -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Tasa de Conversión&#10;Fórmula: (Pedidos Confirmados / Total Cotizaciones) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Conversión</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="quote_conversion">Conversión de cotizaciones</span>
 								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
 									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1703,13 +1690,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-purple-600 font-semibold">
 								<span>Cierre comercial</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Cotiz. a pedido</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Cotiz. a pedido</div>
 						</div>
 
 						<!-- KPI 4: Pedidos Confirmados -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Pedidos Confirmados&#10;Fórmula: COUNT(b2b_orders confirmadas en el período)">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Pedidos Firmes</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="orders_received">Pedidos recibidos</span>
 								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
 									<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1718,13 +1705,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
 								<span>Órdenes cerradas</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Listos para entrega</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Listos para entrega</div>
 						</div>
 
 						<!-- KPI 5: Facturación de Pedidos -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Valor Total Pedidos&#10;Fórmula: SUM(total_amount) de b2b_orders confirmadas">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Valor Pedidos</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="orders_value">Valor de pedidos</span>
 								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
 									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1733,13 +1720,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-blue-600 font-semibold">
 								<span>USD Mayorista</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Monto en órdenes</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Monto en órdenes</div>
 						</div>
 
 						<!-- KPI 6: Ticket Promedio -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ticket Promedio por Pedido&#10;Fórmula: Valor Total Pedidos / Pedidos Confirmados">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ticket Prom.</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="avg_order_value">Valor promedio por pedido</span>
 								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
 									<i data-lucide="receipt" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1748,13 +1735,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
 								<span>Promedio por orden</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Monto medio pedido</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Monto medio pedido</div>
 						</div>
 
 						<!-- KPI 7: Pedidos Pendientes -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Pedidos Pendientes %&#10;Fórmula: (Pedidos pendientes de entrega / Total pedidos) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Pendientes %</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="pending_orders_pct">Pedidos pendientes</span>
 								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
 									<i data-lucide="clock" class="w-3.5 h-3.5"></i>
 								</div>
@@ -1763,22 +1750,22 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-indigo-600 font-semibold">
 								<span>En preparación</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Backlog logístico</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Pendientes de despacho</div>
 						</div>
 
 						<!-- KPI 8: Cumplimiento a Tiempo -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cumplimiento de Pedidos a Tiempo&#10;Fórmula: (Pedidos entregados a tiempo / Total pedidos cerrados) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cumplimiento</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="orders_confirmed_pct">Pedidos en firme</span>
 								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
 									<i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
 								</div>
 							</div>
 							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-ord-completed-pct">--%</div>
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
-								<span>OTIF estándar</span>
+								<span>Sobre el total de pedidos</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Entregas en plazo</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Confirmados, entregados o facturados</div>
 						</div>
 					</div>
 
@@ -1788,7 +1775,7 @@
 						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
 							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
 								<div>
-									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Embudo Comercial B2B (Funnel)</h3>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Etapas del proceso de venta</h3>
 									<p class="text-[11px] text-slate-400 mt-0.5">Conversión de Cotizado &rarr; En Negociación &rarr; Confirmado &rarr; Facturado</p>
 								</div>
 								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">Embudo</span>
@@ -1861,7 +1848,7 @@
 						</div>
 						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
 							<div>
-								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Backlog Logístico</span>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pedidos pendientes de despacho</span>
 								<p id="sec-ord-backlog" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">6 pedidos en cola</p>
 								<span class="text-[10px] text-slate-400">Listos para despacho</span>
 							</div>
@@ -2023,7 +2010,7 @@
 			</div>
 
 			<!-- SECCIÓN 4.1: FACTURACIÓN COMERCIAL Y COBRANZAS B2B (PASO 7) -->
-			<div id="section-invoices" class="hidden space-y-6">
+			<div id="section-invoices" class="hidden space-y-6" data-kpi-period="history">
 				<!-- Header de Facturación Comercial -->
 				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80 dark:border-slate-800">
 					<div>
@@ -2031,7 +2018,7 @@
 							<span>Facturación y Cobranzas</span>
 							<span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60">Cuentas por Cobrar &amp; Créditos</span>
 						</h1>
-						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Generación de facturas desde pedidos confirmados, control de saldos y morosidad, amortizaciones de pago y emisión de notas de crédito.</p>
+						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Muestra lo facturado, lo cobrado y lo pendiente de cobro, con la antigüedad de la deuda. Sirve para priorizar la cobranza, registrar pagos y emitir notas de crédito.</p>
 					</div>
 
 					<div class="flex items-center gap-2">
@@ -2069,9 +2056,9 @@
 					<!-- 8 Tarjetas KPI Principales de Facturación y Cobranzas -->
 					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
 						<!-- KPI 1: Ventas Netas Facturadas -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas Netas B2B&#10;Fórmula: Total facturado antes de impuestos menos notas de crédito válidas">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas Netas</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="net_sales">Ventas netas facturadas</span>
 								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
 									<i data-lucide="receipt" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2080,15 +2067,15 @@
 							<!-- Fallback para id legacy -->
 							<span id="kpi-inv-net-sales" class="hidden"></span>
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
-								<span>Sin impuestos − NC</span>
+								<span>Sin impuestos, menos notas de crédito</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Facturación neta</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Facturación neta</div>
 						</div>
 
 						<!-- KPI 2: Facturas Emitidas -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Facturas Emitidas&#10;Fórmula: COUNT(b2b_invoices con estado válida en el período)">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Facturas</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="invoices_issued">Facturas emitidas</span>
 								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
 									<i data-lucide="files" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2097,13 +2084,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
 								<span>Comprobantes</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Emitidas en período</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Emitidas en período</div>
 						</div>
 
 						<!-- KPI 3: Recaudación Cobrada -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Total Recaudado&#10;Fórmula: SUM(paid_amount) registrado en facturas del período">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Recaudado</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="collected">Dinero cobrado</span>
 								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
 									<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2113,13 +2100,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
 								<span>Cobro liquidado</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Abonos recibidos</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Abonos recibidos</div>
 						</div>
 
 						<!-- KPI 4: Cuentas por Cobrar (Saldos) -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cuentas por Cobrar&#10;Fórmula: SUM(balance_due) de facturas pendientes">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Por Cobrar</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="receivable">Cuentas por cobrar</span>
 								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
 									<i data-lucide="wallet" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2127,15 +2114,15 @@
 							<div class="mt-2 text-xl font-bold font-mono text-amber-600 dark:text-amber-400" id="kpi-inv-receivables-val">$0.00</div>
 							<span id="kpi-inv-receivables" class="hidden"></span>
 							<div class="mt-1 flex items-center justify-between text-[10px] text-amber-600 font-semibold">
-								<span>Cartera viva</span>
+								<span>Cuentas pendientes de cobro</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Saldo pendiente</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Saldo pendiente</div>
 						</div>
 
 						<!-- KPI 5: Tasa de Cobranza (Eficiencia) -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Tasa de Cobranza&#10;Fórmula: (Total Cobrado / Total Facturado) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Tasa Cobranza</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="collection_rate">Tasa de cobro</span>
 								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
 									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2144,13 +2131,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-teal-600 font-semibold">
 								<span>Eficiencia</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">% recuperado</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">% recuperado</div>
 						</div>
 
 						<!-- KPI 6: Cartera Vencida (Mora) -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cartera Vencida&#10;Fórmula: SUM(balance_due) de facturas vencidas a la fecha">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Mora Vencida</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="overdue_balance">Deuda vencida</span>
 								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
 									<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2160,13 +2147,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-rose-600 font-semibold">
 								<span id="kpi-inv-overdue-count">0 facturas</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Plazo expirado</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Plazo expirado</div>
 						</div>
 
 						<!-- KPI 7: Facturas Vencidas % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Porcentaje de Facturas Vencidas&#10;Fórmula: (Facturas vencidas / Total facturas emitidas) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Mora %</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="overdue_invoices_pct">Facturas vencidas</span>
 								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
 									<i data-lucide="percent" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2175,13 +2162,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-amber-600 font-semibold">
 								<span>Incidencia</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Tasa de morosidad</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Tasa de morosidad</div>
 						</div>
 
 						<!-- KPI 8: DSO (Días Promedio de Cobro) -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Days Sales Outstanding (DSO)&#10;Fórmula: (Cuentas por Cobrar / Ventas Totales) × Días del período">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">DSO</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="dso">Días promedio de cobro</span>
 								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
 									<i data-lucide="clock" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2190,7 +2177,7 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
 								<span>Días calle</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Rotación cobros</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Rotación cobros</div>
 						</div>
 					</div>
 
@@ -2228,10 +2215,10 @@
 						<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between">
 							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
 								<div>
-									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Antigüedad de Saldos (Aging)</h3>
+									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Antigüedad de la deuda por días de atraso</h3>
 									<p class="text-[11px] text-slate-400 mt-0.5">Saldos por vencer vs mora 1-30d, 31-60d y &gt;60d</p>
 								</div>
-								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">Aging</span>
+								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">Por días de atraso</span>
 							</div>
 							<div class="relative h-64 mt-3">
 								<canvas id="chart-inv-aging"></canvas>
@@ -2265,7 +2252,7 @@
 						</div>
 						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
 							<div>
-								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">DSO Meta</span>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Meta de días de cobro</span>
 								<p id="sec-inv-dso-target" class="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">Target: 45 días</p>
 								<span class="text-[10px] text-slate-400">Dentro de política</span>
 							</div>
@@ -2447,9 +2434,8 @@
 						<h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
 							<span data-i18n="nav_sales_reps">Vendedores y Territorios</span>
 							<span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60">Fuerza de Ventas</span>
-							<span class="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50">DEMO B2B</span>
 						</h1>
-						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Estructura comercial mayorista, asignación territorial, cumplimiento de metas y cartera de clientes.</p>
+						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Muestra cuánto vende cada vendedor y territorio frente a su meta, y qué clientes tiene asignados. Sirve para detectar vendedores atrasados y redistribuir carteras.</p>
 					</div>
 
 					<!-- Botones de Acción -->
@@ -2492,9 +2478,9 @@
 					<!-- 8 Tarjetas KPI Principales de Vendedores y Territorios -->
 					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
 						<!-- KPI 1: Fuerza de Ventas Activa -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Fuerza de Ventas Activa&#10;Fórmula: COUNT(b2b_sales_reps WHERE active = 1)">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Vendedores</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="active_reps">Vendedores activos</span>
 								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
 									<i data-lucide="users" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2505,13 +2491,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
 								<span>En campo</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Fuerza activa</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Fuerza activa</div>
 						</div>
 
 						<!-- KPI 2: Ventas Netas del Equipo -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas Netas del Equipo&#10;Fórmula: SUM(total_sales) de toda la fuerza comercial">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas Equipo</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="team_sales">Ventas del equipo</span>
 								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
 									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2521,13 +2507,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-blue-600 font-semibold">
 								<span>Ventas netas</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Total acumulado</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Total acumulado</div>
 						</div>
 
 						<!-- KPI 3: Promedio por Vendedor -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas Promedio por Vendedor&#10;Fórmula: Ventas Totales del Equipo / Vendedores Activos">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Venta / Rep</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="avg_sales_per_rep">Venta promedio por vendedor</span>
 								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
 									<i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2536,13 +2522,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
 								<span>Por colaborador</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Productividad media</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Productividad media</div>
 						</div>
 
 						<!-- KPI 4: Productividad por Hora -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas por Hora Trabajada&#10;Fórmula: Ventas Totales / Horas Netas Trabajadas en Campo">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas / Hora</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="sales_per_hour">Venta por hora trabajada</span>
 								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
 									<i data-lucide="zap" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2551,13 +2537,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
 								<span>$/hora ruta</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Rendimiento horario</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Rendimiento horario</div>
 						</div>
 
 						<!-- KPI 5: Cumplimiento de Metas % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cumplimiento Global de Cuota&#10;Fórmula: (Ventas Totales / Meta Global Acumulada) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cumpl. Meta</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="quota_attainment">Cumplimiento de meta</span>
 								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
 									<i data-lucide="target" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2567,13 +2553,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-purple-600 font-semibold">
 								<span>Avance de cuota</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Meta global mes</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Meta global mes</div>
 						</div>
 
 						<!-- KPI 6: Utilidad Bruta Generada -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Utilidad Bruta Generada&#10;Fórmula: Ventas Totales − Costo de Mercancía Vendida (COGS)">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Utilidad Bruta</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="team_gross_profit">Ganancia bruta del equipo</span>
 								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
 									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2582,13 +2568,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
 								<span>Ganancia equipo</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Margen comercial</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Margen comercial</div>
 						</div>
 
 						<!-- KPI 7: Conversión Comercial % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Tasa de Conversión Comercial&#10;Fórmula: (Pedidos Confirmados / Cotizaciones Gestionadas) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Conversión</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="quote_conversion">Conversión de cotizaciones</span>
 								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
 									<i data-lucide="check-check" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2597,13 +2583,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
 								<span>Efectividad</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Cierre en campo</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Cierre en campo</div>
 						</div>
 
 						<!-- KPI 8: Crecimiento Comercial % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Crecimiento de Ventas del Equipo&#10;Fórmula: ((Ventas Período Actual − Ventas Período Anterior) / Ventas Período Anterior) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Crecimiento</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="sales_growth">Crecimiento de ventas</span>
 								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
 									<i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
 								</div>
@@ -2612,7 +2598,7 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
 								<span>vs período ant.</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Variación comercial</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Variación comercial</div>
 						</div>
 					</div>
 
@@ -2770,7 +2756,7 @@
 						</div>
 
 						<div class="text-[11px] text-slate-500 dark:text-slate-400 shrink-0">
-							Período: <span class="font-semibold text-slate-700 dark:text-slate-200">Noviembre 2026 MTD</span>
+							Período: <span class="font-semibold text-slate-700 dark:text-slate-200">Noviembre 2026 (mes actual hasta hoy)</span>
 						</div>
 					</div>
 
@@ -2780,7 +2766,7 @@
 							<table class="w-full text-left text-xs whitespace-nowrap">
 								<thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 font-semibold uppercase text-[10px] tracking-wider border-b border-slate-200/80 dark:border-slate-800">
 									<tr>
-										<th class="py-2.5 px-3 text-center">Rank</th>
+										<th class="py-2.5 px-3 text-center" title="Posición en la clasificación">Posición</th>
 										<th class="py-2.5 px-3">Vendedor</th>
 										<th class="py-2.5 px-3">Territorio Asignado</th>
 										<th class="py-2.5 px-3 text-center">Cartera Asignada</th>
@@ -2863,9 +2849,9 @@
 							<div>
 								<h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
 									<span>Historial de Reasignaciones de Cartera y Territorios</span>
-									<span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">Auditoría Inmutable</span>
+									<span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">Historial protegido</span>
 								</h3>
-								<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Trazabilidad completa de cambios de vendedor en establecimientos comerciales y clientes.</p>
+								<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Historial completo de cambios de vendedor asignado a clientes y locales.</p>
 							</div>
 							<button onclick="fetchReassignmentHistory()" class="p-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-lg border border-slate-200 dark:border-slate-700" title="Refrescar">
 								<i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
@@ -2908,7 +2894,7 @@
 							<span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">Contabilidad de Gestión</span>
 							<span class="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/50">Margen Bruto</span>
 						</h1>
-						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Análisis de utilidad bruta comercial, costos de adquisición (COGS), márgenes por producto, cliente, vendedor y territorio.</p>
+						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Muestra cuánto se gana con lo que se vende: ventas, costo de los productos vendidos, descuentos y margen por producto, cliente, vendedor y territorio. Sirve para detectar ventas con poco margen y corregir precios o descuentos.</p>
 					</div>
 
 					<!-- Botones de Acción -->
@@ -2929,16 +2915,16 @@
 					<div class="flex flex-wrap items-center justify-between gap-3">
 						<!-- Selector de Período -->
 						<div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/70 p-1 rounded-lg text-xs font-medium">
-							<button type="button" onclick="setProfitabilityPeriod('MTD')" id="prof-period-btn-MTD" class="px-2.5 py-1 rounded-md font-semibold bg-white dark:bg-surface-dark text-slate-900 dark:text-white shadow-xs">Mes (MTD)</button>
-							<button type="button" onclick="setProfitabilityPeriod('QTD')" id="prof-period-btn-QTD" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900">Trimestre (QTD)</button>
-							<button type="button" onclick="setProfitabilityPeriod('YTD')" id="prof-period-btn-YTD" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900">Año (YTD)</button>
+							<button type="button" onclick="setProfitabilityPeriod('MTD')" id="prof-period-btn-MTD" class="px-2.5 py-1 rounded-md font-semibold bg-white dark:bg-surface-dark text-slate-900 dark:text-white shadow-xs" title="Mes actual hasta hoy">Mes actual</button>
+							<button type="button" onclick="setProfitabilityPeriod('QTD')" id="prof-period-btn-QTD" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900" title="Trimestre actual hasta hoy">Trimestre actual</button>
+							<button type="button" onclick="setProfitabilityPeriod('YTD')" id="prof-period-btn-YTD" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900" title="Año actual hasta hoy">Año actual</button>
 							<button type="button" onclick="setProfitabilityPeriod('7D')" id="prof-period-btn-7D" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900">7 Días</button>
 							<button type="button" onclick="toggleProfitabilityCustomRange()" id="prof-period-btn-CUSTOM" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900">Personalizado</button>
 						</div>
 
 						<div id="prof-period-badge" class="text-xs font-mono font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
 							<i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-600"></i>
-							<span id="prof-period-label">Mes a la Fecha (Noviembre 2026)</span>
+							<span id="prof-period-label">Mes actual hasta hoy (noviembre 2026)</span>
 						</div>
 					</div>
 
@@ -3018,9 +3004,9 @@
 					<!-- 8 Tarjetas KPI Principales de Rentabilidad Comercial -->
 					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
 						<!-- KPI 1: Ventas Netas Facturadas -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas Netas B2B&#10;Fórmula: Subtotal facturado sin impuestos de comprobantes válidos menos notas de crédito">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas Netas</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="net_sales">Ventas netas facturadas</span>
 								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
 									<i data-lucide="receipt" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3029,28 +3015,28 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-blue-600 font-semibold">
 								<span>Facturación neta</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Ingresos netos</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Ingresos netos</div>
 						</div>
 
 						<!-- KPI 2: Costo de Ventas (COGS) -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Costo de Ventas (COGS)&#10;Fórmula: Costo comercial estándar congelado al momento de facturar cada línea">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Costo Ventas</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="cogs">Costo de los productos vendidos</span>
 								<div class="w-6 h-6 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0">
 									<i data-lucide="package" class="w-3.5 h-3.5"></i>
 								</div>
 							</div>
 							<div class="mt-2 text-xl font-bold font-mono text-slate-700 dark:text-slate-300" id="kpi-prof-cogs">$0.00</div>
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
-								<span>COGS estándar</span>
+								<span>Costo vigente al facturar</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Costo adquisición</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Costo adquisición</div>
 						</div>
 
 						<!-- KPI 3: Utilidad Bruta Comercial -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Utilidad Bruta Comercial&#10;Fórmula: Ventas Netas Facturadas − Costo de Ventas (COGS)">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Utilidad Bruta</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="gross_profit">Ganancia bruta</span>
 								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
 									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3059,13 +3045,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
 								<span>Ganancia neta</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Ventas − COGS</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Ventas − costo de los productos</div>
 						</div>
 
 						<!-- KPI 4: Margen Bruto Comercial % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Margen Bruto Comercial %&#10;Fórmula: (Utilidad Bruta / Ventas Netas) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Margen Bruto</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="gross_margin_pct">Margen bruto %</span>
 								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
 									<i data-lucide="percent" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3074,13 +3060,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-indigo-600 font-semibold">
 								<span>Rentabilidad</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Rentabilidad bruta</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Rentabilidad bruta</div>
 						</div>
 
 						<!-- KPI 5: Descuentos y Gastos Comerciales -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Descuentos y Gastos Comerciales&#10;Fórmula: SUM(descuentos otorgados en pedidos y facturas)">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Descuentos</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="commercial_discounts">Descuentos comerciales</span>
 								<div class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
 									<i data-lucide="tag" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3089,13 +3075,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-amber-600 font-semibold">
 								<span>Rebajas comerciales</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Impacto en margen</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Impacto en margen</div>
 						</div>
 
 						<!-- KPI 6: Contribución Comercial Neta -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Contribución Comercial Neta&#10;Fórmula: Utilidad Bruta − Gastos y Descuentos Comerciales">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Contribución</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="net_contribution">Contribución comercial</span>
 								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
 									<i data-lucide="layers" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3104,13 +3090,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-teal-600 font-semibold">
 								<span>Margen de canal</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Aporte operativo</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Aporte operativo</div>
 						</div>
 
 						<!-- KPI 7: Margen de Contribución % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Margen de Contribución %&#10;Fórmula: (Contribución Comercial / Ventas Netas) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Margen Contr.</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="contribution_margin_pct">Margen de contribución %</span>
 								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
 									<i data-lucide="pie-chart" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3119,13 +3105,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-purple-600 font-semibold">
 								<span>Margen neto</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Aporte neto %</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Aporte neto %</div>
 						</div>
 
 						<!-- KPI 8: Crecimiento de Rentabilidad % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Crecimiento de Rentabilidad %&#10;Fórmula: ((Utilidad Período Actual − Utilidad Período Anterior) / Utilidad Período Anterior) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Var. Margen</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="profit_growth">Crecimiento de la ganancia</span>
 								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
 									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3134,7 +3120,7 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
 								<span>vs período ant.</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Evolución de utilidad</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Evolución de utilidad</div>
 						</div>
 					</div>
 
@@ -3145,7 +3131,7 @@
 							<div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
 								<div>
 									<h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">Evolución de Ingresos, Costos y Utilidad</h3>
-									<p class="text-[11px] text-slate-400 mt-0.5">Comportamiento temporal de facturación neta vs COGS y margen bruto</p>
+									<p class="text-[11px] text-slate-400 mt-0.5">Evolución de las ventas netas frente al costo de los productos vendidos y el margen bruto</p>
 								</div>
 								<span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">P&amp;L Bruto</span>
 							</div>
@@ -3217,7 +3203,7 @@
 						</div>
 						<div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
 							<div>
-								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ratio COGS / Ventas</span>
+								<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-kpi="cogs_ratio">Costo sobre ventas</span>
 								<p id="sec-prof-cogs-ratio" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">72.6% costo directo</p>
 								<span class="text-[10px] text-slate-400">Dentro de proyección</span>
 							</div>
@@ -3241,7 +3227,7 @@
 							</div>
 							<div>
 								<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Matriz Multidimensional de Rentabilidad &amp; Gestión de Costos</h4>
-								<p class="text-[11px] text-slate-500 dark:text-slate-400">Desglose por SKU, cliente comercial, vendedor y territorio. Auditoría de ajustes de costos estándar.</p>
+								<p class="text-[11px] text-slate-500 dark:text-slate-400">Detalle por producto, cliente, vendedor y territorio, con el historial de ajustes de costo.</p>
 							</div>
 						</div>
 						<button onclick="switchProfitabilitySubTabMain('manage')" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-800 text-white hover:bg-brand-700 transition-colors shadow-2xs whitespace-nowrap">
@@ -3346,7 +3332,7 @@
 							<table class="w-full text-left text-xs whitespace-nowrap">
 								<thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 font-semibold uppercase text-[10px] tracking-wider border-b border-slate-200/80 dark:border-slate-800">
 									<tr>
-										<th class="py-2.5 px-3 text-center">Rank</th>
+										<th class="py-2.5 px-3 text-center" title="Posición en la clasificación">Posición</th>
 										<th class="py-2.5 px-3">Cliente Comercial</th>
 										<th class="py-2.5 px-3">Tipo / RUC</th>
 										<th class="py-2.5 px-3 text-center">Sedes / Facturas</th>
@@ -3468,7 +3454,7 @@
 							<h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
 								<i data-lucide="shield-check" class="w-4 h-4 text-brand-600"></i>
 								<span>Historial de Auditoría de Ajustes de Costo</span>
-								<span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">Trazabilidad Inmutable</span>
+								<span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">Historial protegido</span>
 							</h3>
 							<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Control de cambios de costo autorizados. Los comprobantes emitidos antes de la fecha de vigencia conservan su margen congelado original.</p>
 						</div>
@@ -3507,10 +3493,10 @@
 					<div>
 						<h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
 							<span data-i18n="nav_reports">Inteligencia Comercial</span>
-							<span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60">Motor Analítico B2B</span>
+							<span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60">Sistema de análisis comercial</span>
 							<span class="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200/50">Detección de Riesgo</span>
 						</h1>
-						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Detección automática de clientes inactivos, alertas de caída de ventas, oportunidades de recompra y recomendaciones explicables basadas en transacciones reales.</p>
+						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Avisa qué clientes dejaron de comprar, dónde caen las ventas y qué productos ofrecer a cada cliente, con la razón de cada recomendación. Sirve para decidir a quién llamar hoy y qué ofrecerle.</p>
 					</div>
 
 					<!-- Botones de Acción -->
@@ -3521,7 +3507,7 @@
 						</button>
 						<button onclick="openThresholdsModal()" class="inline-flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-semibold rounded-lg bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-xs transition-colors">
 							<i data-lucide="sliders" class="w-4 h-4 text-slate-500"></i>
-							<span>Umbrales</span>
+							<span>Límites de alerta</span>
 						</button>
 						<button onclick="exportIntelligenceData()" class="inline-flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-semibold rounded-lg bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-xs transition-colors">
 							<i data-lucide="download" class="w-4 h-4 text-slate-500"></i>
@@ -3535,7 +3521,7 @@
 					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
 						<!-- Severidad -->
 						<div>
-							<label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Severidad</label>
+							<label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Nivel de gravedad</label>
 							<select id="intel-filter-severity" onchange="applyIntelligenceFilters()" class="w-full px-2.5 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 focus:outline-hidden">
 								<option value="ALL">Todas las severidades</option>
 								<option value="CRITICAL">Solo Críticas</option>
@@ -3595,7 +3581,7 @@
 						</button>
 						<button id="intel-tab-btn-manage" onclick="switchReportsSubTab('manage')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all flex items-center gap-2">
 							<i data-lucide="bell" class="w-4 h-4"></i>
-							<span>Feed Operativo de Alertas &amp; Umbrales</span>
+							<span>Alertas activas y límites configurados</span>
 						</button>
 					</div>
 					<button onclick="switchReportsSubTab('manage')" class="mb-2 text-xs text-brand-700 dark:text-brand-400 hover:underline flex items-center gap-1 font-medium">
@@ -3609,9 +3595,9 @@
 					<!-- 8 Tarjetas KPI Principales de Inteligencia Comercial -->
 					<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
 						<!-- KPI 1: Ventas B2B Consolidadas -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Ventas B2B Consolidadas&#10;Fórmula: Facturación neta consolidada de pedidos y facturas emitidas">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas B2B</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="consolidated_sales">Ventas totales del período</span>
 								<div class="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center shrink-0">
 									<i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3620,13 +3606,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-blue-600 font-semibold">
 								<span>Consolidado</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Facturación neta</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Facturación neta</div>
 						</div>
 
 						<!-- KPI 2: Crecimiento Comercial % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Crecimiento Comercial&#10;Fórmula: ((Ventas Actuales − Ventas Anteriores) / Ventas Anteriores) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Crecimiento</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="sales_growth">Crecimiento de ventas</span>
 								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
 									<i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3635,13 +3621,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
 								<span>vs período ant.</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Tendencia ventas</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Tendencia ventas</div>
 						</div>
 
 						<!-- KPI 3: Margen Bruto Global % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Margen Bruto Global&#10;Fórmula: ((Ventas Netas − Costos Totales) / Ventas Netas) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Margen Bruto</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="gross_margin_pct">Margen bruto %</span>
 								<div class="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center shrink-0">
 									<i data-lucide="percent" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3650,28 +3636,28 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-indigo-600 font-semibold">
 								<span>Ponderado</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Calidad de margen</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Calidad de margen</div>
 						</div>
 
 						<!-- KPI 4: Cartera de Clientes Activos -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cartera Activa Compradora&#10;Fórmula: COUNT(DISTINCT clientes con transacciones válidas en el período)">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Clientes Act.</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="active_customers">Clientes activos</span>
 								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
 									<i data-lucide="users" class="w-3.5 h-3.5"></i>
 								</div>
 							</div>
 							<div class="mt-2 text-xl font-bold font-mono text-slate-900 dark:text-white" id="kpi-intel-customers-exec">--</div>
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
-								<span>En cartera viva</span>
+								<span>Con compras en el período</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Compradores reales</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Compradores reales</div>
 						</div>
 
 						<!-- KPI 5: Conversión de Cotizaciones % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Conversión de Cotizaciones&#10;Fórmula: (Pedidos Confirmados / Cotizaciones Totales) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Conversión</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="quote_conversion">Conversión de cotizaciones</span>
 								<div class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center shrink-0">
 									<i data-lucide="git-pull-request" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3680,28 +3666,28 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-purple-600 font-semibold">
 								<span>Cierre comercial</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Efectividad pipeline</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Efectividad de oportunidades</div>
 						</div>
 
 						<!-- KPI 6: Cumplimiento de Pedidos OTIF % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Cumplimiento de Pedidos OTIF&#10;Fórmula: (Pedidos entregados a tiempo y completos / Total despachos) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Fulfillment</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="otif">Entregas completas y a tiempo</span>
 								<div class="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center shrink-0">
 									<i data-lucide="truck" class="w-3.5 h-3.5"></i>
 								</div>
 							</div>
 							<div class="mt-2 text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400" id="kpi-intel-fulfillment-exec">--%</div>
 							<div class="mt-1 flex items-center justify-between text-[10px] text-emerald-600 font-semibold">
-								<span>OTIF estándar</span>
+								<span>Estándar de servicio</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Entrega a tiempo</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Entrega a tiempo</div>
 						</div>
 
 						<!-- KPI 7: Eficiencia de Cobranza % -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Eficiencia de Cobranza&#10;Fórmula: (Total Cobrado / Facturación Neta Emitida) × 100">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Tasa Cobros</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="collection_rate">Tasa de cobro</span>
 								<div class="w-6 h-6 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center shrink-0">
 									<i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3710,13 +3696,13 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-teal-600 font-semibold">
 								<span>Recuperación</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Efectividad cobro</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Efectividad cobro</div>
 						</div>
 
 						<!-- KPI 8: Productividad Horaria Comercial -->
-						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs" title="Productividad Comercial Horaria&#10;Fórmula: Ventas Consolidadas / Total Horas Trabajadas">
+						<div class="bg-white dark:bg-surface-dark p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
 							<div class="flex items-start justify-between text-slate-500 text-xs">
-								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Ventas / Hora</span>
+								<span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]" data-kpi="sales_per_hour">Venta por hora trabajada</span>
 								<div class="w-6 h-6 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center shrink-0">
 									<i data-lucide="zap" class="w-3.5 h-3.5"></i>
 								</div>
@@ -3725,7 +3711,7 @@
 							<div class="mt-1 flex items-center justify-between text-[10px] text-slate-400">
 								<span>Por hora laboral</span>
 							</div>
-							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 truncate">Eficiencia operativa</div>
+							<div class="mt-2 text-[9px] text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 leading-tight">Eficiencia operativa</div>
 						</div>
 					</div>
 
@@ -3831,8 +3817,8 @@
 								<i data-lucide="bell" class="w-4 h-4"></i>
 							</div>
 							<div>
-								<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Centro Operativo de Alertas, Clientes en Riesgo &amp; Umbrales</h4>
-								<p class="text-[11px] text-slate-500 dark:text-slate-400">Revisar alertas activas, ejecutar acciones comerciales sobre cuentas en riesgo y ajustar umbrales del motor analítico.</p>
+								<h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Alertas, clientes en riesgo y límites de alerta</h4>
+								<p class="text-[11px] text-slate-500 dark:text-slate-400">Revise las alertas activas, actúe sobre los clientes en riesgo y ajuste los límites que generan cada alerta.</p>
 							</div>
 						</div>
 						<button onclick="switchReportsSubTab('manage')" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-brand-800 text-white hover:bg-brand-700 transition-colors shadow-2xs whitespace-nowrap">
@@ -3868,7 +3854,7 @@
 						</button>
 						<button id="tab-intel-thresholds-btn" onclick="switchIntelligenceSubTab('thresholds')" class="px-3.5 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap border-b-2 border-transparent transition-colors flex items-center gap-2">
 							<i data-lucide="sliders" class="w-4 h-4"></i>
-							<span>Configuración de Umbrales</span>
+							<span>Límites para generar alertas</span>
 						</button>
 					</nav>
 				</div>
@@ -3880,7 +3866,7 @@
 							Cargando alertas prioritarias...
 						</div>
 						<div class="flex items-center gap-2">
-							<span class="text-[11px] font-semibold text-slate-500">Filtrar por Severidad:</span>
+							<span class="text-[11px] font-semibold text-slate-500">Filtrar por nivel de gravedad:</span>
 							<button onclick="setAlertsSeverityQuickFilter('ALL')" id="btn-quick-sev-ALL" class="px-2 py-0.5 text-[11px] font-semibold rounded bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200">Todas</button>
 							<button onclick="setAlertsSeverityQuickFilter('CRITICAL')" id="btn-quick-sev-CRITICAL" class="px-2 py-0.5 text-[11px] font-semibold rounded text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/60">Críticas</button>
 							<button onclick="setAlertsSeverityQuickFilter('HIGH')" id="btn-quick-sev-HIGH" class="px-2 py-0.5 text-[11px] font-semibold rounded text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/60">Altas</button>
@@ -3982,7 +3968,7 @@
 									<i data-lucide="layers" class="w-4 h-4"></i>
 								</span>
 								<div>
-									<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Productos de Alta Demanda en Cuentas Similares (Cross-Selling)</h3>
+									<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Venta de productos complementarios: lo que compran clientes similares</h3>
 									<p class="text-[11px] text-slate-500">SKUs con alta penetración en clientes del mismo canal que esta cuenta aún no incorpora.</p>
 								</div>
 							</div>
@@ -4000,7 +3986,7 @@
 									</tr>
 								</thead>
 								<tbody id="intel-cross-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
-									<tr><td colspan="5" class="py-6 text-center text-xs text-slate-400">Cargando oportunidades de cross-selling...</td></tr>
+									<tr><td colspan="5" class="py-6 text-center text-xs text-slate-400">Cargando oportunidades de venta de productos complementarios...</td></tr>
 								</tbody>
 							</table>
 						</div>
@@ -4077,7 +4063,7 @@
 						<div class="border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
 							<h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
 								<i data-lucide="sliders" class="w-4 h-4 text-indigo-600"></i>
-								<span>Parámetros y Umbrales del Motor Analítico</span>
+								<span>Límites para generar alertas</span>
 							</h3>
 							<p class="text-xs text-slate-500 mt-0.5">Ajuste los criterios cuantitativos para la activación automática de alertas y clasificación de riesgos.</p>
 						</div>
@@ -4105,7 +4091,7 @@
 
 							<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 								<div>
-									<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Umbral Mínimo de Margen Bruto</label>
+									<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Límite mínimo de margen bruto para alertar</label>
 									<div class="flex items-center gap-2">
 										<input type="number" id="thresh-low-margin" min="5" max="35" step="0.5" required class="w-full px-3 py-2 text-xs font-mono font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden" />
 										<span class="text-xs text-slate-400 font-semibold shrink-0">%</span>
@@ -4126,7 +4112,7 @@
 							<div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end">
 								<button type="submit" id="btn-save-thresholds" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-colors">
 									<i data-lucide="check" class="w-4 h-4"></i>
-									<span>Guardar Umbrales y Recalcular</span>
+									<span>Guardar límites y recalcular alertas</span>
 								</button>
 							</div>
 						</form>
@@ -4182,7 +4168,7 @@
 							<span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">Parámetros del Sistema</span>
 							<span class="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 border border-brand-200/50">Organización B2B</span>
 						</h1>
-						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Parámetros de la plataforma de distribución mayorista, políticas de crédito, régimen fiscal y reglas de integración comercial.</p>
+						<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Reúne los datos de la empresa, las condiciones de crédito, los impuestos y las reglas comerciales (pedido mínimo, precios y alertas). Lo que se defina aquí se aplica en toda la plataforma.</p>
 					</div>
 
 					<div class="flex flex-wrap items-center gap-2">
@@ -4285,14 +4271,14 @@
 							</span>
 							<div>
 								<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Reglas Comerciales Mayoristas</h3>
-								<p class="text-[11px] text-slate-500">Límites mínimos de pedido (MOQ) y control de empaques.</p>
+								<p class="text-[11px] text-slate-500">Pedido mínimo requerido y control de empaques.</p>
 							</div>
 						</div>
 
 						<div class="space-y-3 text-xs">
 							<div class="grid grid-cols-2 gap-3">
 								<div>
-									<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Pedido Mínimo Mayorista (MOQ $)</label>
+									<label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Pedido mínimo requerido ($)</label>
 									<input type="number" id="set-moq-amount" value="100.00" step="10" class="w-full px-3 py-1.5 text-xs font-mono font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-hidden" />
 								</div>
 								<div>
@@ -4314,27 +4300,27 @@
 								<i data-lucide="lock" class="w-4 h-4"></i>
 							</span>
 							<div>
-								<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Seguridad y Trazabilidad</h3>
-								<p class="text-[11px] text-slate-500">Estado de integridad de la base de datos y registros inmutables.</p>
+								<h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Seguridad e historial de cambios</h3>
+								<p class="text-[11px] text-slate-500">Protección de la información y registro de cada cambio importante.</p>
 							</div>
 						</div>
 
 						<div class="space-y-3 text-xs">
 							<div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800">
-								<span class="text-slate-500">Modo de Base de Datos:</span>
-								<span class="font-mono font-bold text-slate-900 dark:text-white">SQLite 3 (WAL Mode)</span>
+								<span class="text-slate-500">Respaldo de la información:</span>
+								<span class="font-mono font-bold text-slate-900 dark:text-white">Activo y protegido</span>
 							</div>
 							<div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800">
-								<span class="text-slate-500">Aislamiento Transaccional:</span>
-								<span class="font-semibold text-emerald-600">Garantizado (ACID)</span>
+								<span class="text-slate-500">Registro de operaciones:</span>
+								<span class="font-semibold text-emerald-600">Completo, sin pérdidas</span>
 							</div>
 							<div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800">
 								<span class="text-slate-500">Bitácora de Costos y Asignaciones:</span>
-								<span class="font-semibold text-brand-600">Inmutable (Audited Log)</span>
+								<span class="font-semibold text-brand-600">Protegida contra cambios</span>
 							</div>
 							<div class="flex justify-between items-center py-1">
 								<span class="text-slate-500">Seguridad de Acceso:</span>
-								<span class="font-mono text-slate-700 dark:text-slate-300">RBAC / Sesión Segura</span>
+								<span class="font-mono text-slate-700 dark:text-slate-300">Por rol de usuario y sesión segura</span>
 							</div>
 						</div>
 					</div>
@@ -4414,7 +4400,6 @@
 					<div>
 						<div class="flex items-center gap-2">
 							<h3 id="detail-cust-name" class="text-base font-bold text-slate-900 dark:text-white">-</h3>
-							<span id="detail-cust-demo-badge" class="hidden px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-[10px] font-mono font-bold">DEMO</span>
 							<span id="detail-cust-status" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Activo</span>
 						</div>
 						<div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-3">
@@ -4816,7 +4801,7 @@
 			<!-- Pestañas de Gestión -->
 			<div class="px-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 flex items-center gap-4 text-xs font-semibold">
 				<button type="button" id="tab-btn-tiers" onclick="switchProductDetailTab('tiers')" class="py-3 border-b-2 border-brand-800 text-brand-800 dark:text-white">
-					Escalas por Volumen (Tier Pricing)
+					Precios según cantidad comprada
 				</button>
 				<button type="button" id="tab-btn-agreements" onclick="switchProductDetailTab('agreements')" class="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
 					Acuerdos Especiales por Cliente
@@ -4935,7 +4920,7 @@
 				<div id="tab-content-history" class="hidden space-y-4">
 					<div>
 						<h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Historial de Auditoría de Precios</h4>
-						<p class="text-[11px] text-slate-500">Trazabilidad de cambios de precio base de lista y actualizaciones de tarifas.</p>
+						<p class="text-[11px] text-slate-500">Historial de cambios del precio de lista y de las tarifas.</p>
 					</div>
 
 					<div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
@@ -4959,7 +4944,7 @@
 			</div>
 
 			<div class="px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 flex items-center justify-between text-xs text-slate-500">
-				<span>Regla determinista: Acuerdo de Cliente &gt; Escala de Volumen &gt; Precio Base General</span>
+				<span>Orden de aplicación del precio: acuerdo del cliente &gt; precio según cantidad comprada &gt; precio de lista</span>
 				<button type="button" onclick="closeProductDetailModal()" class="px-4 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200">
 					Cerrar
 				</button>
@@ -5132,7 +5117,7 @@
 								<i data-lucide="boxes" class="w-4 h-4 text-brand-700 dark:text-brand-300"></i>
 								<span>Líneas del Documento Comercial</span>
 							</h4>
-							<span class="text-[11px] text-slate-400">Precios resueltos por motor determinista B2B</span>
+							<span class="text-[11px] text-slate-400">Precios calculados automáticamente según las reglas comerciales</span>
 						</div>
 
 						<!-- Mini Formulario de Añadir Línea -->
@@ -5261,7 +5246,7 @@
 					Líneas del Documento
 				</button>
 				<button type="button" id="tab-cdtl-history" onclick="switchCommercialDetailTab('history')" class="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
-					Trazabilidad &amp; Auditoría
+					Historial de cambios
 				</button>
 			</div>
 
@@ -5551,7 +5536,7 @@
 						<span id="cn-calc-tax" class="font-mono font-medium ml-1">$0.00</span>
 					</div>
 					<div>
-						<span class="text-slate-700 dark:text-slate-300 font-bold">Total NC:</span>
+						<span class="text-slate-700 dark:text-slate-300 font-bold">Total notas de crédito:</span>
 						<span id="cn-calc-total" class="font-mono font-bold text-purple-700 dark:text-purple-300 ml-1">$0.00</span>
 					</div>
 				</div>
@@ -5626,7 +5611,7 @@
 					Notas de Crédito (<span id="tab-invdtl-credits-count">0</span>)
 				</button>
 				<button type="button" id="tab-invdtl-history" onclick="switchInvoiceDetailSubTab('history')" class="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
-					Trazabilidad &amp; Auditoría
+					Historial de cambios
 				</button>
 			</div>
 
@@ -6142,7 +6127,6 @@
 		// Diccionario de Traducción ES / EN
 		const b2bTranslations = {
 			es: {
-				demo_mode_active: 'Modo Demo B2B Activo',
 				nav_commercial: 'Gestión Comercial B2B',
 				nav_sales: 'Resumen de Ventas',
 				nav_customers: 'Clientes y Almacenes',
@@ -6155,56 +6139,58 @@
 				nav_settings: 'Configuración',
 				collapse_sidebar: 'Colapsar menú',
 				breadcrumb_root: 'Ventas Mayoristas',
-				erp_sync_status: 'EDI & ERP Sincronizado (Hace 2 min)',
 				btn_new_order: 'Nueva Orden B2B',
 				sales_summary_title: 'Tablero Ejecutivo de Ventas',
 				period_current: 'Noviembre 2026',
-				sales_summary_desc: 'Supervisión en tiempo real de facturación mayorista, margen comercial, OTIF y riesgo crediticio.',
+				sales_summary_desc: 'Muestra cuánto se facturó, cuánto se cobró y cuánto queda pendiente, junto con pedidos, clientes y margen. Sirve para detectar caídas de venta o atrasos de cobro y decidir dónde actuar este mes.',
 				btn_export: 'Exportar',
-				kpi_total_sales: 'Ventas Totales B2B',
-				kpi_net_sales: 'Ventas Netas B2B',
+				kpi_total_sales: 'Ventas totales del período',
+				kpi_net_sales: 'Ventas netas facturadas',
 				kpi_confirmed_orders: 'Pedidos Confirmados',
 				kpi_active_customers: 'Clientes Activos',
-				kpi_average_ticket: 'Ticket Promedio',
+				kpi_average_ticket: 'Valor promedio por factura',
 				kpi_accounts_receivable: 'Cuentas por Cobrar',
-				kpi_sales_variation: 'Variación Ventas',
+				kpi_sales_variation: 'Crecimiento de ventas',
 				kpi_gross_margin: 'Margen Bruto',
-				kpi_orders: 'Órdenes Mayoristas',
-				kpi_otif: 'Nivel de Servicio OTIF',
-				kpi_overdue: 'Cartera en Riesgo (>30D)',
-				chart_sales_trend_title: 'Evolución de Facturación & Margen B2B',
-				chart_sales_trend_desc: 'Desempeño diario en dólares facturados frente al margen bruto alcanzado.',
+				kpi_orders: 'Pedidos mayoristas',
+				kpi_otif: 'Entregas completas y a tiempo',
+				kpi_overdue: 'Deuda con más de 30 días de atraso',
+				chart_sales_trend_title: 'Evolución de ventas netas y margen bruto',
+				chart_sales_trend_desc: 'Ventas netas facturadas por día (en dólares) y porcentaje de margen bruto obtenido.',
 				legend_sales: 'Ventas ($ USD)',
-				legend_margin: 'Margen %',
+				legend_margin: 'Margen bruto %',
 				chart_channel_title: 'Ventas por Canal',
 				chart_channel_desc: 'Distribución porcentual de ingresos B2B.',
 				chart_category_sales: 'Ventas por Categoría',
-				chart_billing_vs_collections: 'Facturación vs. Cobros',
+				chart_billing_vs_collections: 'Facturado vs. cobrado',
 				chart_order_status: 'Pedidos por Estado',
-				chart_top_products: 'Top 5 Productos Facturados',
-				top_clients_title: 'Top 5 Cuentas Corporativas',
-				top_clients_desc: 'Mayor volumen de compra en el periodo.',
+				chart_top_products: 'Los 5 productos más vendidos (en dólares)',
+				top_clients_title: 'Los 5 clientes que más compran',
+				top_clients_desc: 'Clientes con mayor importe facturado en el período.',
 				btn_view_all: 'Ver todos',
 				recent_orders_title: 'Órdenes de Venta Mayoristas Recientes',
 				recent_orders_desc: 'Últimos pedidos despachados o en preparación para cadenas y almacenes.',
 				btn_filter_status: 'Filtrar Estado',
 				btn_view_all_orders: 'Ver Todas (184)',
 				badge_in_development: 'Módulo en desarrollo',
-				module_specs_title: 'Especificaciones de Arquitectura B2B',
+				module_specs_title: 'Qué incluirá este módulo',
 				features_included: 'Funcionalidades en preparación:',
 				btn_back_to_sales: 'Volver al Resumen de Ventas',
 				btn_glossary: 'Glosario',
-				btn_learn_board: 'Aprender a usar este tablero',
 				help_view_as: 'Ver consejos para:',
 				kpi_net_sales_plain: 'Total Facturado Real (sin impuestos)',
 				kpi_orders_plain: 'Pedidos Listos para Despacho',
 				kpi_active_customers_plain: 'Clientes con Compras en el Período',
 				kpi_ticket_plain: 'Venta Promedio por Factura',
 				kpi_receivable_plain: 'Dinero Pendiente de Cobro',
-				kpi_sales_variation_plain: 'Crecimiento vs Período Anterior'
+				kpi_sales_variation_plain: 'Crecimiento vs Período Anterior',
+				period_btn_7d: '7 días',
+				period_btn_mtd: 'Mes actual',
+				period_btn_qtd: 'Trimestre actual',
+				period_btn_ytd: 'Año actual',
+				desc_customers: 'Muestra cuántos clientes compran, cuáles son nuevos, cuáles dejaron de comprar y cuáles tienen deuda vencida. Sirve para decidir a quién visitar, a quién recuperar y a quién limitar el crédito.'
 			},
 			en: {
-				demo_mode_active: 'B2B Demo Mode Active',
 				nav_commercial: 'B2B Commercial Suite',
 				nav_sales: 'Sales Summary',
 				nav_customers: 'Customers & Warehouses',
@@ -6217,72 +6203,75 @@
 				nav_settings: 'Settings',
 				collapse_sidebar: 'Collapse menu',
 				breadcrumb_root: 'Wholesale Sales',
-				erp_sync_status: 'EDI & ERP Synchronized (2m ago)',
 				btn_new_order: 'New B2B Order',
 				sales_summary_title: 'Executive Sales Dashboard',
 				period_current: 'November 2026',
-				sales_summary_desc: 'Real-time monitoring of wholesale billing, commercial margin, OTIF and credit risk.',
+				sales_summary_desc: 'Shows how much was invoiced, collected and still pending, plus orders, customers and margin. Use it to spot sales drops or late payments and decide where to act this month.',
 				btn_export: 'Export',
 				kpi_total_sales: 'Total B2B Sales',
-				kpi_net_sales: 'Net B2B Sales',
+				kpi_net_sales: 'Net invoiced sales',
 				kpi_confirmed_orders: 'Confirmed Orders',
 				kpi_active_customers: 'Active Customers',
-				kpi_average_ticket: 'Average Ticket',
+				kpi_average_ticket: 'Average invoice value',
 				kpi_accounts_receivable: 'Accounts Receivable',
-				kpi_sales_variation: 'Sales Variance',
+				kpi_sales_variation: 'Sales growth',
 				kpi_gross_margin: 'Gross Margin',
 				kpi_orders: 'Wholesale Orders',
-				kpi_otif: 'OTIF Service Level',
-				kpi_overdue: 'At-Risk Debt (>30D)',
+				kpi_otif: 'On-time, in-full deliveries',
+				kpi_overdue: 'Debt more than 30 days overdue',
 				chart_sales_trend_title: 'Revenue & Gross Margin Evolution',
-				chart_sales_trend_desc: 'Daily performance in billed USD versus realized gross margin.',
+				chart_sales_trend_desc: 'Net invoiced sales per day (USD) and gross margin percentage achieved.',
 				legend_sales: 'Sales ($ USD)',
-				legend_margin: 'Margin %',
+				legend_margin: 'Gross margin %',
 				chart_channel_title: 'Sales by Channel',
 				chart_channel_desc: 'Percentage breakdown of B2B revenues.',
 				chart_category_sales: 'Sales by Category',
 				chart_billing_vs_collections: 'Billing vs. Collections',
 				chart_order_status: 'Orders by Status',
-				chart_top_products: 'Top 5 Invoiced Products',
+				chart_top_products: 'Top 5 products by sales (USD)',
 				top_clients_title: 'Top 5 Corporate Accounts',
-				top_clients_desc: 'Highest purchase volume during period.',
+				top_clients_desc: 'Customers with the highest invoiced amount in the period.',
 				btn_view_all: 'View all',
 				recent_orders_title: 'Recent Wholesale Sales Orders',
-				recent_orders_desc: 'Latest dispatched or picking orders for supermarket chains and stores.',
+				recent_orders_desc: 'Latest orders dispatched or being prepared for supermarket chains and stores.',
 				btn_filter_status: 'Filter Status',
 				btn_view_all_orders: 'View All (184)',
 				badge_in_development: 'Module in development',
-				module_specs_title: 'B2B Architecture Specifications',
+				module_specs_title: 'What this module will include',
 				features_included: 'Features under preparation:',
 				btn_back_to_sales: 'Back to Sales Summary',
 				btn_glossary: 'Glossary',
-				btn_learn_board: 'Learn how to use this board',
 				help_view_as: 'View tips for:',
 				kpi_net_sales_plain: 'Actual Billed Sales (excl. Tax)',
 				kpi_orders_plain: 'Orders Ready for Dispatch',
 				kpi_active_customers_plain: 'Purchasing Clients in Period',
 				kpi_ticket_plain: 'Average Invoiced Amount',
 				kpi_receivable_plain: 'Outstanding Collections',
-				kpi_sales_variation_plain: 'Sales Growth vs Prior Period'
+				kpi_sales_variation_plain: 'Sales Growth vs Prior Period',
+				period_btn_7d: '7 days',
+				period_btn_mtd: 'Current month',
+				period_btn_qtd: 'Current quarter',
+				period_btn_ytd: 'Current year',
+				desc_customers: 'Shows how many customers buy, which are new, which stopped buying and which have overdue debt. Use it to decide whom to visit, whom to win back and whose credit to limit.'
 			}
 		};
 
 		const b2bSectionsMeta = {
 			sales: { icon: 'layout-dashboard', title_es: 'Resumen de Ventas', title_en: 'Sales Summary' },
 			customers: { icon: 'building-2', title_es: 'Clientes y Almacenes', title_en: 'Customers & Warehouses' },
-			products: { icon: 'package', title_es: 'Productos y Precios', title_en: 'Products & Pricing', desc_es: 'Catálogo mayorista maestro con precios escalonados por volumen, empaque por cajas/palets y pedidos mínimos (MOQ).', desc_en: 'Master wholesale catalog with volume tier pricing, case/pallet packaging, and minimum order quantities (MOQ).' },
-			orders: { icon: 'shopping-cart', title_es: 'Cotizaciones y Pedidos', title_en: 'Quotes & Orders', desc_es: 'Gestión integral del ciclo de ventas mayorista: Cotización, Validación crediticia, Picking WMS y Despacho.', desc_en: 'End-to-end wholesale sales cycle: Quotation, Credit approval, WMS picking, and Dispatch.' },
-			invoices: { icon: 'receipt', title_es: 'Facturación y Cobranzas', title_en: 'Invoicing & Collections', desc_es: 'Control integral de emisión de facturas desde pedidos confirmados, pagos, control de morosidad y notas de crédito comerciales.', desc_en: 'Comprehensive invoicing from confirmed orders, payment amortization, overdue tracking, and commercial credit notes.' },
-			'sales-reps': { icon: 'users', title_es: 'Vendedores y Territorios', title_en: 'Sales Reps & Territories', desc_es: 'Estructura comercial de ejecutivos de cuenta mayorista, asignación geográfica de clientes y control de metas.', desc_en: 'Commercial organization of wholesale account executives, geographical territories, and quota tracking.' },
-			profitability: { icon: 'trending-up', title_es: 'Rentabilidad Comercial', title_en: 'Commercial Profitability', desc_es: 'Análisis detallado de margen de contribución por cliente corporativo, línea de producto y canal de distribución.', desc_en: 'In-depth contribution margin analysis by corporate client, product category, and distribution channel.' },
-			reports: { icon: 'bar-chart-3', title_es: 'Reportes y Analítica', title_en: 'Reports & Analytics', desc_es: 'Centro de reportes consolidados para dirección comercial, auditoría de precios, OTIF y rotación mayorista.', desc_en: 'Consolidated executive reports hub for commercial leadership, pricing audits, OTIF, and inventory turns.' },
-			settings: { icon: 'settings', title_es: 'Configuración', title_en: 'Settings', desc_es: 'Parámetros generales de la plataforma de ventas B2B, integración con ERP/EDI y políticas de crédito.', desc_en: 'General B2B sales system configuration, ERP/EDI integrations, and credit policy parameters.' },
-			schedules: { icon: 'calendar-clock', title_es: 'Horarios y Cobertura', title_en: 'Schedules & Coverage', desc_es: 'Planificación laboral optimizada según ventas, demanda B2B, productividad por rol y presupuesto.', desc_en: 'Smart shift planning, demand coverage, and labor budget optimization.' },
-			operations: { icon: 'clipboard-list', title_es: 'Operaciones y Tareas', title_en: 'Operations & Tasks', desc_es: 'Supervisión de tareas operativas de almacén, reposición y control de incidencias.', desc_en: 'Supervision of warehouse operational tasks, restocking, and incident control.' },
-			employees: { icon: 'user-check', title_es: 'Directorio de Personal', title_en: 'Staff Directory', desc_es: 'Colaboradores operacionales, reponedores, fuerza de ventas y personal logístico.', desc_en: 'Commercial staffing, merchandisers, and operations personnel.' },
-			attendance: { icon: 'clock', title_es: 'Asistencia y Puntualidad', title_en: 'Attendance & Punctuality', desc_es: 'Comparativa de horas programadas vs trabajadas, horas productivas y control de tardanzas.', desc_en: 'Tracking worked vs scheduled hours.' },
-			'shift-requests': { icon: 'clipboard-check', title_es: 'Solicitudes de Personal', title_en: 'Shift Requests', desc_es: 'Aprobación de cambios de turno, solicitudes de vacaciones y permisos por horas.', desc_en: 'Shift swaps, permissions, and vacations.' },
-			'product-lifecycle': { icon: 'refresh-cw', title_es: 'Ciclo de Vida del Producto', title_en: 'Product Lifecycle', desc_es: 'Analiza el rendimiento, anticipa riesgos y optimiza la rentabilidad de tu portafolio.', desc_en: 'Analyze performance, anticipate risks, and optimize portfolio profitability.' }
+			products: { icon: 'package', title_es: 'Productos y Precios', title_en: 'Products & Pricing', desc_es: 'Catálogo con precios de lista, precios según cantidad comprada, empaques y pedido mínimo requerido.', desc_en: 'Catalog with list prices, quantity-based pricing, packaging and minimum order required.' },
+			orders: { icon: 'shopping-cart', title_es: 'Cotizaciones y Pedidos', title_en: 'Quotes & Orders', desc_es: 'Cada venta desde la cotización hasta la entrega: aprobación de crédito, preparación en almacén y despacho.', desc_en: 'Each sale from quote to delivery: credit approval, warehouse picking and dispatch.' },
+			invoices: { icon: 'receipt', title_es: 'Facturación y Cobranzas', title_en: 'Invoicing & Collections', desc_es: 'Facturas emitidas, pagos recibidos, deuda vencida y notas de crédito.', desc_en: 'Issued invoices, payments received, overdue debt and credit notes.' },
+			'sales-reps': { icon: 'users', title_es: 'Vendedores y Territorios', title_en: 'Sales Reps & Territories', desc_es: 'Ventas de cada vendedor y territorio frente a su meta, y clientes asignados.', desc_en: 'Sales by rep and territory against target, and assigned customers.' },
+			profitability: { icon: 'trending-up', title_es: 'Rentabilidad Comercial', title_en: 'Commercial Profitability', desc_es: 'Cuánto se gana por cliente, producto y canal después del costo y los descuentos.', desc_en: 'How much is earned per customer, product and channel after cost and discounts.' },
+			reports: { icon: 'bar-chart-3', title_es: 'Reportes y Analítica', title_en: 'Reports & Analytics', desc_es: 'Alertas de clientes en riesgo, caídas de venta y recomendaciones comerciales.', desc_en: 'Alerts on at-risk customers, sales drops and commercial recommendations.' },
+			settings: { icon: 'settings', title_es: 'Configuración', title_en: 'Settings', desc_es: 'Datos de la empresa, condiciones de crédito, impuestos y reglas comerciales.', desc_en: 'Company data, credit terms, taxes and commercial rules.' },
+			schedules: { icon: 'calendar-clock', title_es: 'Horarios y Cobertura', title_en: 'Schedules & Coverage', desc_es: 'Turnos de la semana según la demanda prevista, la productividad y el presupuesto.', desc_en: 'Weekly shifts based on expected demand, productivity and budget.' },
+			operations: { icon: 'clipboard-list', title_es: 'Operaciones y Tareas', title_en: 'Operations & Tasks', desc_es: 'Tareas de reposición en tienda, cumplimiento y problemas reportados.', desc_en: 'Store restocking tasks, completion and reported issues.' },
+			employees: { icon: 'user-check', title_es: 'Directorio de Personal', title_en: 'Staff Directory', desc_es: 'Personal de ventas, reposición y logística: dotación, ausentismo y costos.', desc_en: 'Sales, restocking and logistics staff: headcount, absenteeism and costs.' },
+			attendance: { icon: 'clock', title_es: 'Asistencia y Puntualidad', title_en: 'Attendance & Punctuality', desc_es: 'Horas programadas frente a horas trabajadas, llegadas tarde y horas extras.', desc_en: 'Scheduled versus worked hours, late arrivals and overtime.' },
+			'shift-requests': { icon: 'clipboard-check', title_es: 'Solicitudes de Personal', title_en: 'Shift Requests', desc_es: 'Solicitudes de vacaciones, permisos y cambios de turno pendientes de respuesta.', desc_en: 'Vacation, leave and shift-swap requests awaiting a response.' },
+			'product-lifecycle': { icon: 'refresh-cw', title_es: 'Ciclo de Vida del Producto', title_en: 'Product Lifecycle', desc_es: 'Qué productos crecen, cuáles se estancan y cuáles inmovilizan dinero en inventario.', desc_en: 'Which products grow, which stall and which tie up money in inventory.' }
 		};
 
 		let currentSection = getSectionFromPath() || document.body.dataset.initialSection || 'sales';
@@ -6369,7 +6358,7 @@
 				} else if (sectionId === 'profitability') {
 					headerActionText.textContent = currentLang === 'es' ? 'Ajuste de Costo' : 'Adjust Cost';
 				} else if (sectionId === 'reports') {
-					headerActionText.textContent = currentLang === 'es' ? 'Motor Analítico' : 'Run Engine';
+					headerActionText.textContent = currentLang === 'es' ? 'Actualizar análisis' : 'Refresh analysis';
 				} else if (sectionId === 'settings') {
 					headerActionText.textContent = currentLang === 'es' ? 'Guardar Cambios' : 'Save Settings';
 				} else if (sectionId === 'schedules') {
@@ -6630,7 +6619,7 @@
 			const subEl = document.getElementById('kpi-cust-' + key + '-sub');
 
 			if (card && kpi.tooltip) {
-				card.title = kpi.tooltip;
+				card.removeAttribute('title'); // la explicación está en el icono de información (diccionario de indicadores)
 			}
 			if (valEl) {
 				valEl.textContent = kpi.formatted ?? (kpi.value ?? '-');
@@ -6793,13 +6782,10 @@
 				const estCount = parseInt(c.active_establishments_count) || 0;
 				const estPill = `<button onclick="viewCustomerDetail(${c.id})" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-mono font-semibold text-[11px] bg-slate-100 dark:bg-slate-800 text-brand-800 dark:text-brand-300 hover:bg-brand-50 transition-colors"><i data-lucide="store" class="w-3 h-3"></i><span>${estCount} sucursal(es)</span></button>`;
 
-				const demoBadge = parseInt(c.is_demo) === 1 ? `<span class="px-1 py-0.2 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-[9px] font-mono font-bold ml-1">DEMO</span>` : '';
-
 				tr.innerHTML = `
 					<td class="py-3 px-4">
 						<div class="font-semibold text-slate-900 dark:text-white flex items-center">
 							<span>${escapeHtml(c.name)}</span>
-							${demoBadge}
 						</div>
 						<div class="text-[11px] text-slate-400 mt-0.5">${escapeHtml(c.commercial_name || c.name)}</div>
 					</td>
@@ -6869,13 +6855,6 @@
 				document.getElementById('detail-cust-phone').textContent = c.phone || '-';
 				document.getElementById('detail-cust-email').textContent = c.email || '-';
 				document.getElementById('detail-cust-address').textContent = `${c.address || '-'} ${c.city ? '— ' + c.city : ''}`;
-
-				const isDemo = parseInt(c.is_demo) === 1;
-				const demoBadge = document.getElementById('detail-cust-demo-badge');
-				if (demoBadge) {
-					if (isDemo) demoBadge.classList.remove('hidden');
-					else demoBadge.classList.add('hidden');
-				}
 
 				const isActive = parseInt(c.active) === 1;
 				const statusEl = document.getElementById('detail-cust-status');
@@ -9722,8 +9701,21 @@
 				const key = el.getAttribute('data-i18n');
 				if (t[key]) el.textContent = t[key];
 			});
+			updatePeriodShortLabels();
+			if (window.B2BKpiHelp) window.B2BKpiHelp.refresh();
 
 			navigateToSection(currentSection, false);
+		}
+
+		// Texto del período mostrado en las tarjetas (MTD/QTD/YTD son códigos internos, no se muestran)
+		const b2bPeriodLabels = {
+			es: { '7D': 'Últimos 7 días', MTD: 'Mes actual hasta hoy', QTD: 'Trimestre actual hasta hoy', YTD: 'Año actual hasta hoy', CUSTOM: 'Rango personalizado' },
+			en: { '7D': 'Last 7 days', MTD: 'Current month to date', QTD: 'Current quarter to date', YTD: 'Current year to date', CUSTOM: 'Custom range' }
+		};
+		function updatePeriodShortLabels() {
+			const labels = b2bPeriodLabels[currentLang] || b2bPeriodLabels.es;
+			const text = labels[(dashboardState && dashboardState.period) || 'MTD'] || labels.MTD;
+			document.querySelectorAll('.b2b-period-short').forEach(el => { el.textContent = text; });
 		}
 
 		/* ========================================================
@@ -9912,8 +9904,8 @@
 				elNetVar.className = 'text-[11px] font-semibold flex items-center ' + netSales.variation_class;
 				elNetVar.innerHTML = `<i data-lucide="${netSales.raw >= (netSales.previous_raw || 0) ? 'trending-up' : 'trending-down'}" class="w-3 h-3 mr-0.5"></i>${netSales.variation_text}`;
 			}
-			if (elNetSub) elNetSub.textContent = `Facturado: $${netSales.gross_subtotal} | NC: $${netSales.credit_notes}`;
-			if (elNetCard) elNetCard.title = netSales.tooltip;
+			if (elNetSub) elNetSub.textContent = (currentLang === 'en' ? `Invoiced $${netSales.gross_subtotal} − credit notes $${netSales.credit_notes}` : `Facturado $${netSales.gross_subtotal} − notas de crédito $${netSales.credit_notes}`);
+			if (elNetCard) elNetCard.removeAttribute('title');
 
 			// KPI 2: Pedidos Confirmados
 			const orders = kpis.confirmed_orders;
@@ -9927,7 +9919,7 @@
 				elOrdVar.textContent = orders.variation_text;
 			}
 			if (elOrdSub) elOrdSub.textContent = `${orders.raw} órdenes en firme registradas`;
-			if (elOrdCard) elOrdCard.title = orders.tooltip;
+			if (elOrdCard) elOrdCard.removeAttribute('title');
 
 			// KPI 3: Clientes Activos
 			const cust = kpis.active_customers;
@@ -9938,7 +9930,7 @@
 			if (elCustVal) elCustVal.textContent = cust.formatted;
 			if (elCustVar) elCustVar.textContent = `${cust.percentage_of_total}% de cartera`;
 			if (elCustSub) elCustSub.textContent = `${cust.raw} de ${cust.total_registered} clientes con compras`;
-			if (elCustCard) elCustCard.title = cust.tooltip;
+			if (elCustCard) elCustCard.removeAttribute('title');
 
 			// KPI 4: Ticket Promedio Facturado
 			const ticket = kpis.average_ticket;
@@ -9952,7 +9944,7 @@
 				elTickVar.textContent = ticket.variation_text;
 			}
 			if (elTickSub) elTickSub.textContent = `${ticket.invoices_count} facturas comerciales válidas`;
-			if (elTickCard) elTickCard.title = ticket.tooltip;
+			if (elTickCard) elTickCard.removeAttribute('title');
 
 			// KPI 5: Cuentas por Cobrar
 			const ar = kpis.accounts_receivable;
@@ -9963,7 +9955,7 @@
 			if (elArVal) elArVal.textContent = ar.formatted;
 			if (elArVar) elArVar.textContent = `Mora: ${ar.overdue_formatted} (${ar.overdue_percent}%)`;
 			if (elArSub) elArSub.textContent = `Saldo exigible pendiente de cobro`;
-			if (elArCard) elArCard.title = ar.tooltip;
+			if (elArCard) elArCard.removeAttribute('title');
 
 			// KPI 6: Variación vs. Período Anterior
 			const variation = kpis.sales_variation;
@@ -9975,7 +9967,7 @@
 				elVarVal.className = 'text-xl sm:text-2xl font-bold font-mono tracking-tight ' + variation.class;
 			}
 			if (elVarSub) elVarSub.textContent = `Período previo: ${variation.previous_net_sales}`;
-			if (elVarCard) elVarCard.title = variation.tooltip;
+			if (elVarCard) elVarCard.removeAttribute('title');
 		}
 
 		function renderDashboardCharts(charts) {
@@ -10429,6 +10421,7 @@
 				rangeBar.classList.add('hidden');
 			}
 
+			updatePeriodShortLabels();
 			fetchDashboardModule();
 		}
 
@@ -10794,7 +10787,7 @@
 							<div class="w-32 mx-auto">
 								<div class="flex items-center justify-between text-[11px] font-bold mb-1">
 									<span class="${achTextColor}">${achPct}%</span>
-									<span class="text-[10px] text-slate-400 font-normal">MTD</span>
+									<span class="text-[10px] text-slate-400 font-normal">Mes actual</span>
 								</div>
 								<div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
 									<div class="h-full ${barColor} rounded-full" style="width: ${barWidth}%"></div>
@@ -11532,7 +11525,11 @@
 			if (elTopCustProfit) {
 				elTopCustProfit.textContent = m.top_customer ? `${m.top_customer.profit_formatted} (${m.top_customer.margin_percent}%)` : '$0.00';
 			}
-			if (elPeriodBadge) elPeriodBadge.textContent = m.period || profitabilityState.period;
+			if (elPeriodBadge) {
+				// El código interno (MTD, QTD, YTD…) se muestra con su nombre comercial
+				const periodCode = m.period || profitabilityState.period;
+				elPeriodBadge.textContent = (b2bPeriodLabels[currentLang] || b2bPeriodLabels.es)[periodCode] || periodCode;
+			}
 			if (elPeriodLabel) elPeriodLabel.textContent = m.period_label || 'Período actual';
 		}
 
@@ -12709,7 +12706,7 @@
 					<div class="p-8 text-center text-xs text-slate-400 bg-white dark:bg-surface-dark rounded-xl border border-slate-200/90 dark:border-slate-800">
 						<i data-lucide="check-circle-2" class="w-8 h-8 text-emerald-500 mx-auto mb-2 opacity-80"></i>
 						<div class="font-bold text-slate-700 dark:text-slate-300">No hay alertas activas en esta categoría</div>
-						<div class="text-[11px] mt-0.5">Todas las cuentas y transacciones cumplen los umbrales configurados.</div>
+						<div class="text-[11px] mt-0.5">Ningún cliente ni operación supera los límites de alerta configurados.</div>
 					</div>
 				`;
 				if (window.lucide) lucide.createIcons();
@@ -12782,7 +12779,7 @@
 									<span>Evidencia Cuantitativa</span>
 								</div>
 								<div class="text-[11px] font-mono text-slate-700 dark:text-slate-300 break-words">
-									${a.threshold_used ? `<span class="text-slate-400">Umbral:</span> ${escapeHtml(a.threshold_used)} • ` : ''}
+									${a.threshold_used ? `<span class="text-slate-400">Límite de alerta:</span> ${escapeHtml(a.threshold_used)} • ` : ''}
 									<span class="text-slate-400">Entidad:</span> ${escapeHtml(a.entity_name || 'Comercial')} • 
 									<span class="text-slate-400">Vendedor:</span> ${escapeHtml(a.sales_rep_name || 'General')}
 								</div>
@@ -12998,7 +12995,7 @@
 			if (crossBadge) crossBadge.textContent = `${crossList.length} casos`;
 			if (crossTbody) {
 				if (crossList.length === 0) {
-					crossTbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-xs text-slate-400">Sin recomendaciones de cross-selling por el momento.</td></tr>`;
+					crossTbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-xs text-slate-400">Sin recomendaciones de venta de productos complementarios por el momento.</td></tr>`;
 				} else {
 					crossTbody.innerHTML = crossList.map(c => `
 						<tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
@@ -13145,10 +13142,10 @@
 				});
 				const d = await res.json();
 				if (d.success) {
-					alert('Umbrales comerciales actualizados exitosamente. El motor analítico ha recalculado todas las alertas.');
+					alert('Límites de alerta actualizados. Las alertas se recalcularon correctamente.');
 					fetchIntelligenceModule();
 				} else {
-					alert(`Error al actualizar umbrales: ${d.error_message || 'Operación fallida'}`);
+					alert(`No se pudieron actualizar los límites de alerta: ${d.error_message || 'Operación fallida'}`);
 				}
 			} catch (err) {
 				console.error('Error saving thresholds:', err);
@@ -13243,7 +13240,7 @@
 					csvContent += `"${c.customer_name}","${c.tax_id}","${c.customer_type}","${c.territory_name}","${c.sales_rep_name}","${c.last_purchase_date}",${c.days_inactive},${c.total_sales},"${c.risk_level}","${c.suggested_action}"\n`;
 				});
 			} else {
-				csvContent += 'ID,Tipo,Severidad,Titulo,Entidad,Vendedor,Estado,Fecha,Accion_Sugerida\n';
+				csvContent += 'ID,Tipo,Nivel de gravedad,Titulo,Entidad,Vendedor,Estado,Fecha,Accion_Sugerida\n';
 				intelligenceState.alertsData.forEach(a => {
 					csvContent += `${a.id},"${a.alert_type}","${a.severity}","${a.title}","${a.entity_name || ''}","${a.sales_rep_name || ''}","${a.status}","${a.created_at}","${a.suggested_action}"\n`;
 				});
@@ -13272,5 +13269,6 @@
 	@include('b2b.workforce_scripts')
 	@include('b2b.product_lifecycle_scripts')
 	@include('b2b.interactive_help_system')
+	@include('b2b.guided_dashboard_tour')
 </body>
 </html>

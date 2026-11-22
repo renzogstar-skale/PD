@@ -314,7 +314,7 @@
 										'Rotación: ' + meta.turnover + 'x',
 										'Margen Bruto: ' + meta.gross_margin + '%',
 										'Inventario: $' + meta.inventory_value.toLocaleString(),
-										'DIO: ' + meta.dio + ' días'
+										'Días de inventario: ' + meta.dio
 									];
 								}
 							}
@@ -370,7 +370,7 @@
 							pointRadius: 3
 						},
 						{
-							label: 'Línea de Seguridad (ROP)',
+							label: 'Punto de reposición',
 							data: trend.safety_stock_line,
 							borderColor: '#EF4444',
 							borderDash: [2, 2],

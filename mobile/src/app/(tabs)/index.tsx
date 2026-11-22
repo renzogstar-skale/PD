@@ -174,7 +174,7 @@ export default function HomeScreen() {
     sales_rep: { label: 'Vendedor Comercial', icon: '💼' },
     supervisor: { label: 'Supervisor de Ventas', icon: '👔' },
     admin: { label: 'Administrador Global', icon: '🏢' },
-    merchandiser: { label: 'Reponedor / Merchandiser', icon: '🛒' },
+    merchandiser: { label: 'Reponedor', icon: '🛒' },
   };
 
   const quickUpcs = [
@@ -342,7 +342,7 @@ export default function HomeScreen() {
                     📷 Escáner UPC & Reposición
                   </Text>
                   <Text style={{ color: '#E8F8F0', fontSize: 12, marginTop: 4 }}>
-                    Escanear códigos de barra con la cámara, auditar lotes FEFO y reponer góndolas.
+                    Escanear códigos de barra con la cámara, controlar fechas de vencimiento y reponer góndolas.
                   </Text>
                 </View>
                 <Button
@@ -450,6 +450,7 @@ export default function HomeScreen() {
 
             <View style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
               <StatCard
+                kpi="net_sales"
                 title={t('kpi_today_sales')}
                 value={`$${(kpis?.today_sales || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
                 icon="💵"
@@ -457,6 +458,7 @@ export default function HomeScreen() {
                 color={colors.primary}
               />
               <StatCard
+                kpi="confirmed_orders"
                 title={t('kpi_orders')}
                 value={String(kpis?.today_orders_count || 0)}
                 icon="📦"
@@ -467,6 +469,7 @@ export default function HomeScreen() {
 
             <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
               <StatCard
+                kpi="active_customers"
                 title={t('kpi_active_customers')}
                 value={String(kpis?.active_customers_count || 0)}
                 icon="👥"
@@ -474,6 +477,7 @@ export default function HomeScreen() {
                 color={colors.warning}
               />
               <StatCard
+                kpi="receivable"
                 title={t('kpi_cxc')}
                 value={`$${(kpis?.total_cxc || 0).toLocaleString('en-US', { minimumFractionDigits: 0 })}`}
                 icon="💳"
@@ -605,7 +609,7 @@ export default function HomeScreen() {
           <View style={{ paddingHorizontal: 20, paddingVertical: 14, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#1F2937' }}>
             <View>
               <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700' }}>
-                📷 Escáner UPC & Auditoría FEFO
+                📷 Escáner de código de barras y vencimientos
               </Text>
               <Text style={{ color: '#9CA3AF', fontSize: 11 }}>
                 Prince Distributors — Hallandale Beach, FL
@@ -689,7 +693,7 @@ export default function HomeScreen() {
             {/* Manual Code Input & Quick Pick */}
             <View style={{ marginTop: 14, backgroundColor: '#1E293B', padding: 14, borderRadius: 12 }}>
               <Text style={{ color: '#94A3B8', fontSize: 12, fontWeight: '600', marginBottom: 6 }}>
-                Ingresar Código UPC o SKU
+                Ingresar código de barras o código interno (SKU)
               </Text>
               <View style={{ flexDirection: 'row', gap: 8 }}>
                 <TextInput
@@ -761,7 +765,7 @@ export default function HomeScreen() {
                       {scannedProduct.name}
                     </Text>
                     <Text style={{ color: '#94A3B8', fontSize: 12, marginTop: 1 }}>
-                      {scannedProduct.category} • SKU: {scannedProduct.sku}
+                      {scannedProduct.category} • Código: {scannedProduct.sku}
                     </Text>
                   </View>
                   <Text style={{ color: '#34D399', fontSize: 16, fontWeight: '800' }}>
@@ -772,7 +776,7 @@ export default function HomeScreen() {
                 {/* FEFO Lot & Expiry Tag */}
                 <View style={{ flexDirection: 'row', gap: 8, marginTop: 10, paddingVertical: 8, borderTopWidth: 1, borderTopColor: '#1E293B' }}>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: '#94A3B8', fontSize: 10, textTransform: 'uppercase' }}>Lote FEFO</Text>
+                    <Text style={{ color: '#94A3B8', fontSize: 10, textTransform: 'uppercase' }}>Lote que vence primero</Text>
                     <Text style={{ color: '#F1F5F9', fontSize: 13, fontWeight: '700', fontFamily: 'monospace' }}>
                       {scannedProduct.lot}
                     </Text>

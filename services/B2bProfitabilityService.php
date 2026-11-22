@@ -284,7 +284,7 @@ class B2bProfitabilityService extends BaseService
 			case 'QTD':
 				return ['from' => '2026-10-01', 'to' => '2026-11-30', 'label' => 'Trimestre Comercial (Q4 2026)'];
 			case 'YTD':
-				return ['from' => '2026-01-01', 'to' => '2026-11-30', 'label' => 'Año a la Fecha (YTD 2026)'];
+				return ['from' => '2026-01-01', 'to' => '2026-11-30', 'label' => 'Año actual hasta hoy (2026)'];
 			case 'CUSTOM':
 				return [
 					'from' => $from ?: '2026-11-01',
@@ -293,7 +293,7 @@ class B2bProfitabilityService extends BaseService
 				];
 			case 'MTD':
 			default:
-				return ['from' => '2026-11-01', 'to' => '2026-11-30', 'label' => 'Mes a la Fecha (Noviembre 2026)'];
+				return ['from' => '2026-11-01', 'to' => '2026-11-30', 'label' => 'Mes actual hasta hoy (noviembre 2026)'];
 		}
 	}
 

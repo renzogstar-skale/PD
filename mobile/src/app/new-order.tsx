@@ -325,7 +325,7 @@ export default function NewOrderScreen() {
             <SearchBar
               value={productSearch}
               onChangeText={setProductSearch}
-              placeholder="Buscar SKU, producto o marca..."
+              placeholder="Buscar producto, marca o código..."
             />
           </View>
 
@@ -346,7 +346,7 @@ export default function NewOrderScreen() {
                       </Text>
                     </View>
                     <Text style={Typography.caption(colors.textMuted)}>
-                      Stock: {prod.current_stock}
+                      Disponible: {prod.current_stock}
                     </Text>
                   </View>
 

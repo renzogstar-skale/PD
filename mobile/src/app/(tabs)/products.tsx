@@ -217,7 +217,7 @@ export default function ProductsScreen() {
               <Text style={{ fontSize: 40, marginBottom: 12 }}>🔍</Text>
               <Text style={Typography.h3(colors.text)}>Producto no encontrado</Text>
               <Text style={[Typography.caption(colors.textMuted), { textAlign: 'center', marginTop: 4 }]}>
-                Intente con otro SKU o término de búsqueda.
+                Intente con otro código o término de búsqueda.
               </Text>
             </View>
           }

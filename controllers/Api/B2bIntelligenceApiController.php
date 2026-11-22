@@ -174,7 +174,7 @@ class B2bIntelligenceApiController extends BaseApiController
 			$success = $this->IntelligenceService()->UpdateThresholds($thresholds);
 			return $this->ApiResponse($response, [
 				'success' => $success,
-				'message' => 'Umbrales comerciales actualizados y motor recalculado exitosamente.'
+				'message' => 'Límites de alerta actualizados y alertas recalculadas.'
 			]);
 		}
 		catch (Exception $ex)

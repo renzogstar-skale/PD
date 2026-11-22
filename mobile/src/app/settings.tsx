@@ -41,7 +41,7 @@ export default function SettingsScreen() {
     },
     {
       role: 'merchandiser',
-      title: 'Reponedor / Merchandiser',
+      title: 'Reponedor',
       desc: 'Mi Jornada, control de turnos, escáner UPC, reposición y mermas',
     },
   ];
@@ -185,7 +185,7 @@ export default function SettingsScreen() {
         <Card>
           <Text style={Typography.h3(colors.text)}>{t('setting_server')}</Text>
           <Text style={[Typography.caption(colors.textMuted), { marginBottom: 10 }]}>
-            Punto de conexión con el backend de Prince Distributors
+            Servidor desde el que la app obtiene los datos de Prince Distributors
           </Text>
 
           {[

@@ -49,7 +49,7 @@ export default function ProfitabilityScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <Header
         title="Rentabilidad Comercial"
-        subtitle="Ingresos, costos de mercadería y utilidad bruta"
+        subtitle="Ventas, costo de los productos vendidos y ganancia bruta"
         onBack={() => router.back()}
       />
 
@@ -68,13 +68,13 @@ export default function ProfitabilityScreen() {
             {/* Top KPIs */}
             <View style={{ flexDirection: 'row', gap: 12 }}>
               <StatCard
-                title="Ventas Netas"
+                kpi="net_sales"
                 value={`$${(metrics?.total_sales || 0).toLocaleString()}`}
                 icon="💰"
                 color={colors.primary}
               />
               <StatCard
-                title="Costo de Ventas (COGS)"
+                kpi="cogs"
                 value={`$${(metrics?.total_cost || 0).toLocaleString()}`}
                 icon="📦"
                 color={colors.textMuted}
@@ -83,13 +83,13 @@ export default function ProfitabilityScreen() {
 
             <View style={{ flexDirection: 'row', gap: 12 }}>
               <StatCard
-                title="Utilidad Bruta"
+                kpi="gross_profit"
                 value={`$${(metrics?.gross_profit || 0).toLocaleString()}`}
                 icon="💵"
                 color={colors.success}
               />
               <StatCard
-                title="Margen Bruto"
+                kpi="gross_margin_pct"
                 value={`${(metrics?.gross_margin_pct || 0).toFixed(1)}%`}
                 icon="📊"
                 color={colors.primary}

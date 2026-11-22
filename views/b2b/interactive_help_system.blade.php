@@ -135,7 +135,7 @@
 				<div>
 					<span class="font-semibold text-slate-700 dark:text-slate-300">Fuente de datos & Actualización:</span>
 					<div id="kpi-help-source" class="mt-0.5">
-						Datos calculados desde las transacciones reales y conteos de almacén en Supabase PostgreSQL.
+						Datos calculados a partir de las ventas registradas y los conteos de inventario del almacén.
 					</div>
 				</div>
 			</div>
@@ -291,51 +291,6 @@
 </div>
 
 <!-- ========================================================================= -->
-<!-- 4. TOUR GUIADO INTERACTIVO: "APRENDER A USAR ESTE TABLERO" (STEP-BY-STEP) -->
-<!-- ========================================================================= -->
-<div id="tour-guide-overlay" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 transition-all">
-	<div id="tour-guide-card" class="relative w-full max-w-lg bg-white dark:bg-surface-dark border-2 border-brand-500 rounded-2xl shadow-2xl p-6 transform transition-all animate-in fade-in zoom-in-95">
-		
-		<div class="flex items-start justify-between gap-3 mb-4">
-			<div class="flex items-center gap-2.5">
-				<span class="w-7 h-7 rounded-lg bg-brand-100 dark:bg-brand-950/80 text-brand-800 dark:text-brand-300 font-bold text-xs flex items-center justify-center" id="tour-step-badge">
-					1
-				</span>
-				<div>
-					<div class="text-[10px] font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">Guía Interactiva Paso a Paso</div>
-					<h3 class="text-base font-bold text-slate-900 dark:text-white" id="tour-step-title">
-						Bienvenido a PRINCES
-					</h3>
-				</div>
-			</div>
-			<button onclick="endDashboardTour()" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg">
-				<i data-lucide="x" class="w-4 h-4"></i>
-			</button>
-		</div>
-
-		<div class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-6 space-y-2" id="tour-step-content">
-			<!-- Explicación del paso -->
-		</div>
-
-		<!-- Progreso y controles -->
-		<div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
-			<span class="text-xs text-slate-400 font-medium" id="tour-progress-text">
-				Paso 1 de 5
-			</span>
-			<div class="flex items-center gap-2">
-				<button id="tour-btn-prev" onclick="prevTourStep()" class="px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 transition-colors">
-					Anterior
-				</button>
-				<button id="tour-btn-next" onclick="nextTourStep()" class="px-4 py-1.5 text-xs font-semibold rounded-lg bg-brand-800 hover:bg-brand-700 text-white shadow-xs transition-colors flex items-center gap-1.5">
-					<span id="tour-next-label">Siguiente</span>
-					<i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-				</button>
-			</div>
-		</div>
-	</div>
-</div>
-
-<!-- ========================================================================= -->
 <!-- 5. BASE DE CONOCIMIENTO CENTRAL (GLOSARIO, GRÁFICOS Y CONTROLADORES JS)    -->
 <!-- ========================================================================= -->
 <script>
@@ -372,7 +327,7 @@
 				supervisor: 'Revisar pedidos retenidos o no confirmados para acelerar la facturación antes del cierre del mes.',
 				manager: 'Evaluar el cumplimiento de cuotas de facturación y rentabilidad por línea de producto frente al presupuesto.'
 			},
-			data_source_es: 'Módulo de Facturación y Cuentas por Cobrar de Supabase PostgreSQL (facturas en estado Emitida y Pagada).'
+			data_source_es: 'Facturas emitidas y pagadas, y notas de crédito.'
 		},
 
 		orders: {
@@ -446,12 +401,12 @@
 			interpretation_es: {
 				favorable: 'Ticket promedio creciente que supera el costo mínimo de envío por camión.',
 				warning: 'Ticket estable pero con muchos pedidos fragmentados que saturan el almacén.',
-				critical: 'Ticket por debajo del pedido mínimo rentable (MOQ).'
+				critical: 'Ticket por debajo del pedido mínimo rentable.'
 			},
 			roles_es: {
 				employee: 'Consolidar productos de un mismo cliente en un solo bulto o palet para optimizar espacio.',
 				supervisor: 'Incentivar promociones por volumen (escalonamiento de precios) para que el cliente pida pedidos completos.',
-				manager: 'Ajustar la política de pedidos mínimos (MOQ) y flete gratis para proteger el margen operativo.'
+				manager: 'Ajustar la política de pedidos mínimos requeridos y flete gratis para proteger el margen operativo.'
 			},
 			data_source_es: 'Ventas netas divididas entre facturas válidas emitidas en el período.'
 		},
@@ -507,7 +462,7 @@
 				supervisor: 'Revisar qué categorías o vendedores explican el crecimiento o la caída.',
 				manager: 'Ajustar la estrategia comercial, precios o campañas promocionales para revertir tendencias negativas.'
 			},
-			data_source_es: 'Comparación determinista entre el rango de fechas seleccionado y su período anterior idéntico.'
+			data_source_es: 'Comparación entre el período seleccionado y el período anterior de igual duración.'
 		},
 
 		// --- CICLO DE VIDA DEL PRODUCTO (PLM) ---
@@ -586,7 +541,7 @@
 			},
 			roles_es: {
 				employee: 'Avisar de inmediato cuando queden pocas cajas en el rack de almacenamiento para activar reposición.',
-				supervisor: 'Revisar los tiempos de entrega del proveedor (Lead Time) y emitir pedidos cuando la cobertura baje del punto de reorden.',
+				supervisor: 'Revisar los tiempos de entrega del proveedor (tiempo de reposición) y emitir pedidos cuando la cobertura baje del punto de reposición.',
 				manager: 'Autorizar pedidos de emergencia o transferencias entre sucursales para evitar quiebres.'
 			},
 			data_source_es: 'Existencias físicas disponibles divididas entre la demanda proyectada por el modelo Holt-Winters.'
@@ -765,7 +720,7 @@
 			why_it_matters_es: 'Un quiebre de stock significa ventas perdidas inmediatamente: si el cliente nos pide leche y no tenemos, se la comprará a la competencia.',
 			why_it_matters_en: 'A stockout means direct lost sales and damaged wholesale customer trust.',
 			formula_text_es: '(Productos con Cobertura < Tiempo de Entrega del Proveedor / Total Productos) × 100',
-			formula_text_en: '(Products with Coverage < Lead Time / Total Products) × 100',
+			formula_text_en: '(Products with Coverage < Supplier Replenishment Time / Total Products) × 100',
 			formula_example_es: 'Si de 16 productos, 2 tienen menos días de stock de los que tarda el camión en llegar: (2 / 16) × 100 = 12.5% de riesgo.',
 			formula_example_en: 'If 2 out of 16 products will run out before supplier delivery: (2 / 16) × 100 = 12.5% risk.',
 			interpretation_es: {
@@ -778,7 +733,7 @@
 				supervisor: 'Llamar al proveedor para agilizar el despacho o pedir transferencia urgente desde Broward o Miami.',
 				manager: 'Autorizar compras prioritarias y evaluar proveedores alternativos con menor tiempo de entrega.'
 			},
-			data_source_es: 'Cálculo algorítmico comparando Cobertura en Días (DIO) versus Tiempo de Reposición (Lead Time).'
+			data_source_es: 'Cálculo algorítmico comparando días de inventario disponible versus el tiempo de reposición del proveedor.'
 		},
 
 		net_margin_post_discounts: {
@@ -805,7 +760,7 @@
 				supervisor: 'Revisar la política de descuentos de los vendedores que otorgan rebajas excesivas.',
 				manager: 'Fijar techos máximos de descuento por cliente y renegociar costos de adquisición con proveedores.'
 			},
-			data_source_es: 'Ventas netas deducidas de costo de mercancía vendida en el módulo financiero de Supabase.'
+			data_source_es: 'Ventas netas menos el costo de los productos vendidos.'
 		},
 
 		forecast_accuracy: {
@@ -844,11 +799,11 @@
 			category: 'Logistica',
 			what_is_it_es: 'Porcentaje de pedidos entregados al cliente en la fecha pactada y con exactamente todos los productos solicitados sin faltantes.',
 			what_is_it_en: 'Percentage of customer wholesale orders delivered strictly on schedule and with 100% complete items.',
-			why_it_matters_es: 'Es el indicador de oro del servicio mayorista. Las grandes cadenas como Walmart o Sedano\'s multan a los proveedores que no cumplen su OTIF.',
+			why_it_matters_es: 'Es el indicador de oro del servicio mayorista. Las grandes cadenas como Walmart o Sedano\'s multan a los proveedores que no entregan completo y a tiempo.',
 			why_it_matters_en: 'Primary benchmark for B2B supplier reliability, preventing retailer penalties and SLA chargebacks.',
 			formula_text_es: '(Pedidos Entregados a Tiempo y Completos / Total de Pedidos Despachados) × 100',
 			formula_text_en: '(Orders Delivered On-Time and In-Full / Total Dispatched Orders) × 100',
-			formula_example_es: 'De 100 pedidos despachados, 96 llegaron a la hora prometida y con todas sus cajas completas: OTIF = 96.0%.',
+			formula_example_es: 'De 100 pedidos despachados, 96 llegaron a la hora prometida y con todas sus cajas completas: entregas completas y a tiempo = 96,0%.',
 			formula_example_en: 'Out of 100 orders dispatched, 96 arrived on schedule with zero missing items: OTIF = 96.0%.',
 			interpretation_es: {
 				favorable: 'Mayor al 95%: estándar de excelencia mayorista.',
@@ -875,17 +830,17 @@
 			why_it_matters_en: 'Protects logistics operating margin by ensuring order drops meet break-even delivery thresholds.',
 			formula_text_es: 'Establecido por regla de catálogo según la presentación (ej: mínimo 5 cajas o 1 palet completo)',
 			formula_text_en: 'Configured business rule per SKU based on case pack or pallet size',
-			formula_example_es: 'El Aceite de Oliva 5L tiene un MOQ de 10 cajas por pedido mayorista.',
+			formula_example_es: 'El Aceite de Oliva 5L tiene un pedido mínimo requerido de 10 cajas por pedido mayorista.',
 			formula_example_en: 'Olive Oil 5L carries an MOQ of 10 cases per wholesale purchase order.',
 			interpretation_es: {
-				favorable: 'MOQ alineado con el empaque del fabricante (cajas cerradas sin fraccionar).',
+				favorable: 'Pedido mínimo alineado con el empaque del fabricante (cajas cerradas sin fraccionar).',
 				warning: 'Clientes que solicitan excepciones frecuentes para comprar menos del mínimo.',
 				critical: 'Venta de unidades sueltas que generan pérdidas por manipulación y transporte.'
 			},
 			roles_es: {
 				employee: 'Despachar únicamente cajas selladas de fábrica para evitar daños y errores de conteo.',
-				supervisor: 'Configurar en el sistema las alertas para que los vendedores no puedan ingresar pedidos bajo el MOQ sin autorización.',
-				manager: 'Revisar si los MOQ actuales son atractivos para tiendas pequeñas o si deben crearse escalonamientos.'
+				supervisor: 'Configurar en el sistema las alertas para que los vendedores no puedan ingresar pedidos bajo el pedido mínimo requerido sin autorización.',
+				manager: 'Revisar si los pedidos mínimos actuales son atractivos para tiendas pequeñas o si deben crearse escalonamientos.'
 			},
 			data_source_es: 'Parámetro definido en el maestro de productos b2b_products.'
 		},
@@ -977,6 +932,23 @@
 			decisions: 'Revisar la pestaña de Recomendaciones para autorizar las acciones de mayor impacto económico primero.'
 		}
 	};
+
+	// Sincroniza el glosario con el diccionario centralizado de indicadores (misma definición en toda la plataforma)
+	const b2bGlossaryToKpi = { orders: 'confirmed_orders', ticket: 'avg_invoice_value', sales_variation: 'sales_growth', moq: 'min_order' };
+	window.addEventListener('b2b:kpi-dictionary-ready', function (e) {
+		const d = e.detail;
+		Object.keys(b2bGlossaryData).forEach(function (key) {
+			const k = d.kpis[b2bGlossaryToKpi[key] || key];
+			const g = b2bGlossaryData[key];
+			if (!k || !g.name_es) return;
+			g.name_es = k.es.name; g.name_en = k.en.name;
+			g.what_is_it_es = k.es.what; g.what_is_it_en = k.en.what;
+			g.formula_text_es = k.es.formula; g.formula_text_en = k.en.formula;
+			if (k.es.example) { g.formula_example_es = k.es.example; g.formula_example_en = k.en.example; }
+			g.data_source_es = (k.source || []).map(function (s) { return (d.meta.sources[s] || {}).es || ''; }).join(' ');
+		});
+		if (typeof renderGlossaryItems === 'function') renderGlossaryItems();
+	});
 
 	// CONTROLADORES DE APERTURA Y CIERRE DE MODALES
 	function openKpiHelp(metricKey) {
@@ -1157,92 +1129,12 @@
 		if (typeof lucide !== 'undefined') lucide.createIcons();
 	}
 
-	// --- TOUR GUIADO PASO A PASO ("APRENDER A USAR ESTE TABLERO") ---
-	const dashboardTourSteps = [
-		{
-			title: 'Bienvenido al Tablero Ejecutivo de PRINCES',
-			content: 'Esta plataforma fue diseñada para que <strong>cualquier persona del equipo</strong>, desde el almacén hasta la gerencia general, comprenda las ventas, el inventario y las decisiones del negocio sin necesidad de ser un experto en finanzas.<br><br>A continuación haremos un breve recorrido de 5 pasos por las herramientas esenciales.',
-			elementId: 'b2b-content-area'
-		},
-		{
-			title: '1. Filtros de Período y Sucursales',
-			content: 'En la parte superior puede seleccionar el período de análisis con un solo clic: <strong>7D</strong> (últimos 7 días), <strong>MTD</strong> (mes en curso), <strong>QTD</strong> (trimestre) o <strong>YTD</strong> (año).<br><br>También puede filtrar por cliente, cadena o establecimiento específico para evaluar sucursales individuales.',
-			elementId: 'dash-btn-mtd'
-		},
-		{
-			title: '2. Tarjetas de Indicadores con Ayuda Interactiva',
-			content: 'Cada tarjeta muestra un indicador clave del negocio (como ventas netas, pedidos confirmados, rotación o sell-through).<br><br><strong>¿No conoce un término?</strong> Simplemente pulse el ícono <strong>(i)</strong> en cualquier tarjeta para abrir la ventana de ayuda donde se explica qué significa, cómo se calcula y qué acciones puede tomar según su rol.',
-			elementId: 'kpi-net-sales-card'
-		},
-		{
-			title: '3. Gráficos de Tendencias y Desempeño',
-			content: 'Los gráficos le permiten detectar anomalías y oportunidades rápidamente. En cada gráfico encontrará el botón <strong>"Explicar este gráfico"</strong> que le detallará qué significan las líneas y barras, y qué patrones debe vigilar.',
-			elementId: 'dash-granularity-badge'
-		},
-		{
-			title: '4. Inteligencia Comercial y Simulación',
-			content: 'En la sección de <strong>Ciclo de Vida del Producto</strong>, el sistema clasifica automáticamente cada producto en 5 etapas (Introducción, Crecimiento, Madurez, Declive y Salida) y le advierte si un producto corre riesgo de agotarse o si tiene capital congelado en el almacén.<br><br>Además, el <strong>Simulador de Descuentos</strong> le permite calcular antes de lanzar una rebaja si el margen es rentable.',
-			elementId: 'section-product-lifecycle'
-		}
-	];
-
-	function startDashboardTour() {
-		currentTourStep = 0;
-		const overlay = document.getElementById('tour-guide-overlay');
-		overlay.classList.remove('hidden');
-		renderTourStep();
-	}
-
-	function renderTourStep() {
-		const step = dashboardTourSteps[currentTourStep];
-		if (!step) return;
-
-		document.getElementById('tour-step-badge').textContent = currentTourStep + 1;
-		document.getElementById('tour-step-title').textContent = step.title;
-		document.getElementById('tour-step-content').innerHTML = step.content;
-		document.getElementById('tour-progress-text').textContent = `Paso ${currentTourStep + 1} de ${dashboardTourSteps.length}`;
-
-		const prevBtn = document.getElementById('tour-btn-prev');
-		prevBtn.disabled = (currentTourStep === 0);
-
-		const nextLabel = document.getElementById('tour-next-label');
-		if (currentTourStep === dashboardTourSteps.length - 1) {
-			nextLabel.textContent = 'Finalizar Guía';
-		} else {
-			nextLabel.textContent = 'Siguiente';
-		}
-
-		if (typeof lucide !== 'undefined') lucide.createIcons();
-	}
-
-	function nextTourStep() {
-		if (currentTourStep < dashboardTourSteps.length - 1) {
-			currentTourStep++;
-			renderTourStep();
-		} else {
-			endDashboardTour();
-		}
-	}
-
-	function prevTourStep() {
-		if (currentTourStep > 0) {
-			currentTourStep--;
-			renderTourStep();
-		}
-	}
-
-	function endDashboardTour() {
-		const overlay = document.getElementById('tour-guide-overlay');
-		if (overlay) overlay.classList.add('hidden');
-	}
-
 	// Cerrar modales con tecla Escape
 	document.addEventListener('keydown', function(e) {
 		if (e.key === 'Escape') {
 			closeKpiHelpModal();
 			closeChartHelpModal();
 			closeGlossaryModal();
-			endDashboardTour();
 		}
 	});
 </script>

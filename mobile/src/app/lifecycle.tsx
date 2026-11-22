@@ -15,10 +15,11 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../lib/theme';
-import { Card, Badge, Button, Header, Typography } from '../components/ui';
+import { Card, Badge, Button, Header, Typography, KpiInfo } from '../components/ui';
+import { kpiShort } from '../lib/kpi';
 
 interface KpiItem {
-  label: string;
+  kpi: string;
   value: string;
   diff: string;
   status: 'favorable' | 'advertencia' | 'critico';
@@ -37,7 +38,7 @@ interface RecItem {
 }
 
 export default function ProductLifecycleScreen() {
-  const { colors } = useTheme();
+  const { colors, settings } = useTheme();
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -46,18 +47,18 @@ export default function ProductLifecycleScreen() {
 
   // 12 KPIs principales
   const kpis: KpiItem[] = [
-    { label: '1. Sell-through', value: '58.4%', diff: '+4.2% vs ant.', status: 'favorable', meta: 'Meta: ≥ 50%' },
-    { label: '2. Rotación Inventario', value: '1.38x', diff: '+0.13x', status: 'favorable', meta: 'Meta: 1.25x' },
-    { label: '3. Cobertura (DIO)', value: '24.2 d', diff: '-4.3 d', status: 'favorable', meta: 'Rango: 20-30 d' },
-    { label: '4. GMROI', value: '$3.15', diff: '+$0.30', status: 'favorable', meta: 'Retorno x $ inv.' },
-    { label: '5. GMROS', value: '$415/m²', diff: '+$35/m²', status: 'favorable', meta: 'Capacidad 85m²' },
-    { label: '6. En Crecimiento', value: '21.4%', diff: '3 SKUs clave', status: 'favorable', meta: 'Demanda +15%' },
-    { label: '7. En Madurez', value: '28.6%', diff: '4 Cash-Cows', status: 'favorable', meta: 'Estabilidad 98%' },
-    { label: '8. En Declive', value: '14.3%', diff: '2 SKUs en riesgo', status: 'advertencia', meta: 'Caída > -10%' },
-    { label: '9. Capital Inmovilizado', value: '$17,215', diff: '-$2,260 ant.', status: 'advertencia', meta: '$9,375 liquidable' },
-    { label: '10. Riesgo Quiebre Stock', value: '14.3%', diff: '-3.7%', status: 'advertencia', meta: '2 SKUs en ROP' },
-    { label: '11. Margen Post-Desc.', value: '24.2%', diff: '+1.4%', status: 'favorable', meta: 'Desc. 3.8%' },
-    { label: '12. Precisión Pronóstico', value: '92.4%', diff: '+3.3%', status: 'favorable', meta: 'Holt-Winters' },
+    { kpi: 'sell_through', value: '58.4%', diff: '+4.2% vs ant.', status: 'favorable', meta: 'Meta: ≥ 50%' },
+    { kpi: 'turnover', value: '1.38x', diff: '+0.13x', status: 'favorable', meta: 'Meta: 1.25x' },
+    { kpi: 'coverage_dio', value: '24.2 d', diff: '-4.3 d', status: 'favorable', meta: 'Rango: 20-30 d' },
+    { kpi: 'gmroi', value: '$3.15', diff: '+$0.30', status: 'favorable', meta: 'Por cada $1 en inventario' },
+    { kpi: 'gmros', value: '$415/m²', diff: '+$35/m²', status: 'favorable', meta: 'Capacidad 85m²' },
+    { kpi: 'growth_skus', value: '21.4%', diff: '3 productos clave', status: 'favorable', meta: 'Demanda +15%' },
+    { kpi: 'maturity_skus', value: '28.6%', diff: '4 productos estables', status: 'favorable', meta: 'Estabilidad 98%' },
+    { kpi: 'decline_skus', value: '14.3%', diff: '2 productos en riesgo', status: 'advertencia', meta: 'Caída > -10%' },
+    { kpi: 'immobilized_capital', value: '$17,215', diff: '-$2,260 ant.', status: 'advertencia', meta: '$9,375 liquidable' },
+    { kpi: 'stockout_risk', value: '14.3%', diff: '-3.7%', status: 'advertencia', meta: '2 en punto de reposición' },
+    { kpi: 'net_margin_post_discounts', value: '24.2%', diff: '+1.4%', status: 'favorable', meta: 'Desc. 3.8%' },
+    { kpi: 'forecast_accuracy', value: '92.4%', diff: '+3.3%', status: 'favorable', meta: 'Método estadístico de tendencia' },
   ];
 
   // Recomendaciones comerciales prioritarias
@@ -66,8 +67,8 @@ export default function ProductLifecycleScreen() {
       id: 1,
       sku: 'SKU-CER-008',
       title: 'Reposición Preventiva: Avena Orgánica',
-      problem: 'Ventas crecieron +24.8%. Cobertura (12.6 d) es menor al Lead Time (14 d).',
-      action: 'Emitir OC de 1,800 uds (150 cajas) a Quaker para evitar quiebre en 11 días.',
+      problem: 'Ventas crecieron +24.8%. El inventario alcanza para 12.6 días y el proveedor tarda 14 días en reponer.',
+      action: 'Emitir orden de compra de 1,800 unidades (150 cajas) a Quaker para no quedarse sin inventario en 11 días.',
       impact: '+$4,500 USD',
       priority: 'high',
       status: 'pending',
@@ -75,8 +76,8 @@ export default function ProductLifecycleScreen() {
     {
       id: 2,
       sku: 'SKU-QUE-021',
-      title: 'Riesgo Quiebre Stock: Queso Mozzarella Barra',
-      problem: '350 uds en existencia frente a tasa de 35 uds/día en canal Horeca.',
+      title: 'Riesgo de quedarse sin inventario: Queso Mozzarella Barra',
+      problem: '350 unidades en existencia y se venden 35 por día en hoteles y restaurantes.',
       action: 'Generar solicitud prioritaria de 600 uds y verificar lote refrigerado.',
       impact: '+$3,200 USD',
       priority: 'urgent',
@@ -85,9 +86,9 @@ export default function ProductLifecycleScreen() {
     {
       id: 3,
       sku: 'SKU-GAL-030',
-      title: 'Liquidación Markdown 25%: Galleta Familiar',
-      problem: 'SKU descontinuado con 2,100 uds inmovilizadas ($5,250 a costo).',
-      action: 'Aprobar Markdown del 25% ($2.25/ud) para recuperar $4,200 de capital.',
+      title: 'Liquidación con rebaja de precio del 25%: Galleta Familiar',
+      problem: 'Producto descontinuado con 2,100 unidades sin venta ($5,250 al costo).',
+      action: 'Aprobar una rebaja de precio del 25% ($2.25 por unidad) para recuperar $4,200.',
       impact: '+$4,200 USD',
       priority: 'high',
       status: 'pending',
@@ -130,43 +131,6 @@ export default function ProductLifecycleScreen() {
         contentContainerStyle={{ padding: 16, gap: 16 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        {/* Banner Modo Demostración */}
-        <Card
-          style={{
-            backgroundColor: colors.card,
-            borderColor: '#6366F1',
-            borderWidth: 1,
-            padding: 12,
-          }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <View
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: 4,
-                backgroundColor: '#10B981',
-              }}
-            />
-            <Text
-              style={[
-                Typography.caption(colors.text),
-                { fontWeight: 'bold', letterSpacing: 0.5 },
-              ]}
-            >
-              MODO DEMOSTRACIÓN — PRINCE DISTRIBUTORS
-            </Text>
-          </View>
-          <Text
-            style={[
-              Typography.caption(colors.textMuted),
-              { marginTop: 4, fontSize: 11 },
-            ]}
-          >
-            Portafolio B2B de 14 SKUs calibrado en ventas, inventario y previsión estadística.
-          </Text>
-        </Card>
-
         {/* Distribución del Portafolio */}
         <Card style={{ padding: 14 }}>
           <Text style={[Typography.h3(colors.text), { marginBottom: 8 }]}>
@@ -199,7 +163,7 @@ export default function ProductLifecycleScreen() {
         {/* Grid de los 12 KPIs */}
         <View>
           <Text style={[Typography.h3(colors.text), { marginBottom: 10 }]}>
-            12 Indicadores Clave de Desempeño
+            12 indicadores del ciclo de vida del producto
           </Text>
           <View
             style={{
@@ -219,15 +183,18 @@ export default function ProductLifecycleScreen() {
                   borderLeftColor: statusBorderColors[k.status],
                 }}
               >
-                <Text
-                  style={[
-                    Typography.caption(colors.textMuted),
-                    { fontSize: 11, fontWeight: '600' },
-                  ]}
-                  numberOfLines={1}
-                >
-                  {k.label}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                  <Text
+                    style={[
+                      Typography.caption(colors.textMuted),
+                      { fontSize: 11, fontWeight: '600', flexShrink: 1 },
+                    ]}
+                    numberOfLines={2}
+                  >
+                    {kpiShort(k.kpi, settings.language === 'en' ? 'en' : 'es')}
+                  </Text>
+                  <KpiInfo kpi={k.kpi} />
+                </View>
                 <Text
                   style={[
                     Typography.h2(colors.text),

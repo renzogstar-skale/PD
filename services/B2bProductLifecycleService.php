@@ -269,7 +269,7 @@ class B2bProductLifecycleService
 				'stockout_days' => 1,
 				'is_immobilized' => 0,
 				'stockout_risk' => 68.0,
-				'reason' => 'Crecimiento de ventas intermensual +24.8%. Cobertura disponible (12.6 días) por debajo de lead time de reposición (14 días). Riesgo alto de stockout.'
+				'reason' => 'Crecimiento de ventas intermensual +24.8%. Cobertura disponible (12.6 días) por debajo del tiempo de reposición del proveedor (14 días). Riesgo alto de quedarse sin inventario.'
 			],
 			[
 				'sku' => 'SKU-LAC-012',
@@ -317,7 +317,7 @@ class B2bProductLifecycleService
 				'stockout_days' => 2,
 				'is_immobilized' => 0,
 				'stockout_risk' => 74.0,
-				'reason' => 'Canal Horeca en fuerte expansión (+28%). Cobertura en nivel crítico con pedidos pendientes de clientes institucionales.'
+				'reason' => 'Canal de hoteles, restaurantes y cafeterías en fuerte expansión (+28%). Cobertura en nivel crítico con pedidos pendientes de clientes institucionales.'
 			],
 
 			// --- 3. MADUREZ (Estabilidad, alto volumen, cash-cow consolidado) ---
@@ -491,7 +491,7 @@ class B2bProductLifecycleService
 				'stockout_days' => 0,
 				'is_immobilized' => 1,
 				'stockout_risk' => 0.0,
-				'reason' => 'SKU descontinuado por el fabricante. Rotación prácticamente paralizada. Se recomienda markdown del 25% para recuperar $4,200 en capital.'
+				'reason' => 'Producto descontinuado por el fabricante. Casi no tiene ventas. Se recomienda una rebaja de precio del 25% para recuperar $4,200 inmovilizados.'
 			],
 			[
 				'sku' => 'SKU-CON-042',
@@ -708,7 +708,7 @@ class B2bProductLifecycleService
 				'title' => 'Reposición Preventiva por Aceleración de Ventas',
 				'problem' => 'Ventas crecieron +24.8% en 30 días. Cobertura disponible (12.6 días) es menor al tiempo de reposición del proveedor (14 días).',
 				'evidence' => json_encode(['growth_pct' => 24.8, 'dio' => 12.6, 'lead_time' => 14, 'units_sold_mtd' => 2850]),
-				'action' => 'Emitir Orden de Compra por 1,800 unidades (150 cajas) al proveedor Quaker para evitar quiebre de stock proyectado en 11 días.',
+				'action' => 'Emitir Orden de Compra por 1,800 unidades (150 cajas) al proveedor Quaker para evitar quedarse sin inventario en 11 días.',
 				'impact' => 4500.0,
 				'confidence' => 95.0
 			],
@@ -720,7 +720,7 @@ class B2bProductLifecycleService
 				'rule_key' => 'STOCKOUT_RISK_REPLENISHMENT',
 				'rule_cat' => 'stockout_risk',
 				'priority' => 'high',
-				'title' => 'Riesgo Crítico de Quiebre de Stock en Canal Horeca',
+				'title' => 'Riesgo crítico de quedarse sin inventario (hoteles y restaurantes)',
 				'problem' => 'Existencia de 350 uds frente a una tasa diaria de consumo de 35 uds/día y 2 días con rotura en el último mes.',
 				'evidence' => json_encode(['current_stock' => 350, 'daily_run_rate' => 35, 'stockout_incidents' => 2]),
 				'action' => 'Generar solicitud prioritaria de 600 unidades y verificar asignación de lote refrigerado en almacén central.',
@@ -736,7 +736,7 @@ class B2bProductLifecycleService
 				'rule_cat' => 'excess_stock',
 				'priority' => 'medium',
 				'title' => 'Exceso de Inventario con Riesgo de Caducidad',
-				'problem' => 'Stock acumulado de 3,200 unidades con cobertura de 165 días y vida útil restante de 180 días. Capital inmovilizado: $1,920.',
+				'problem' => 'Inventario acumulado de 3,200 unidades con cobertura de 165 días y vida útil restante de 180 días. Capital inmovilizado: $1,920.',
 				'evidence' => json_encode(['stock' => 3200, 'dio' => 165.5, 'shelf_life_days' => 180, 'capital_locked' => 1920.0]),
 				'action' => 'Activar promoción en combo 3x2 con leche entera o descuento por volumen del 15% para canal bodegas.',
 				'impact' => 1450.0,
@@ -751,9 +751,9 @@ class B2bProductLifecycleService
 				'rule_cat' => 'decline',
 				'priority' => 'high',
 				'title' => 'Liquidación Acelerada por Salida de Portafolio',
-				'problem' => 'SKU en salida con ventas residuales (85 uds/mes) y 2,100 unidades inmovilizadas ($5,250 a costo). Rotación anualizada menor a 0.05.',
+				'problem' => 'Producto en retiro con ventas mínimas (85 unidades/mes) y 2,100 unidades inmovilizadas ($5,250 a costo). Rotación anualizada menor a 0.05.',
 				'evidence' => json_encode(['stock' => 2100, 'monthly_sales' => 85, 'capital_locked' => 5250.0, 'shelf_dio' => 741]),
-				'action' => 'Aprobar Markdown del 25% ($2.25/ud) para canal mayorista para liquidar el 80% del stock en 45 días y liberar $4,200 en capital de trabajo.',
+				'action' => 'Aprobar una rebaja de precio del 25% ($2.25 por unidad) en el canal mayorista para vender el 80% del inventario en 45 días y liberar $4,200.',
 				'impact' => 4200.0,
 				'confidence' => 94.0
 			]
@@ -887,7 +887,7 @@ class B2bProductLifecycleService
 		return [
 			'sell_through' => [
 				'id' => 'kpi_sell_through',
-				'label' => 'Sell-through',
+				'label' => 'Porcentaje vendido del inventario',
 				'value' => $sellThroughPct,
 				'formatted' => $sellThroughPct . '%',
 				'unit' => '%',
@@ -915,7 +915,7 @@ class B2bProductLifecycleService
 			],
 			'coverage_dio' => [
 				'id' => 'kpi_dio',
-				'label' => 'Cobertura en Días (DIO)',
+				'label' => 'Días de inventario',
 				'value' => $dioDays,
 				'formatted' => $dioDays . ' d',
 				'unit' => 'días',
@@ -929,7 +929,7 @@ class B2bProductLifecycleService
 			],
 			'gmroi' => [
 				'id' => 'kpi_gmroi',
-				'label' => 'GMROI',
+				'label' => 'Ganancia por dólar en inventario',
 				'value' => $gmroi,
 				'formatted' => '$' . $gmroi,
 				'unit' => 'ratio',
@@ -943,7 +943,7 @@ class B2bProductLifecycleService
 			],
 			'gmros' => [
 				'id' => 'kpi_gmros',
-				'label' => 'GMROS',
+				'label' => 'Ganancia por metro cuadrado',
 				'value' => $gmros,
 				'formatted' => '$' . number_format($gmros, 0) . '/m²',
 				'unit' => '$/m²',
@@ -957,7 +957,7 @@ class B2bProductLifecycleService
 			],
 			'growth_skus' => [
 				'id' => 'kpi_growth',
-				'label' => 'SKUs en Crecimiento',
+				'label' => 'Productos en crecimiento',
 				'value' => $growthPct,
 				'formatted' => $growthPct . '%',
 				'unit' => '%',
@@ -971,7 +971,7 @@ class B2bProductLifecycleService
 			],
 			'maturity_skus' => [
 				'id' => 'kpi_maturity',
-				'label' => 'SKUs en Madurez',
+				'label' => 'Productos estables',
 				'value' => $maturityPct,
 				'formatted' => $maturityPct . '%',
 				'unit' => '%',
@@ -985,7 +985,7 @@ class B2bProductLifecycleService
 			],
 			'decline_skus' => [
 				'id' => 'kpi_decline',
-				'label' => 'SKUs en Declive',
+				'label' => 'Productos en declive',
 				'value' => $declinePct,
 				'formatted' => $declinePct . '%',
 				'unit' => '%',
@@ -1013,7 +1013,7 @@ class B2bProductLifecycleService
 			],
 			'stockout_risk' => [
 				'id' => 'kpi_stockout_risk',
-				'label' => 'Riesgo Quiebre Stock',
+				'label' => 'Riesgo de quedarse sin inventario',
 				'value' => $stockoutRiskPct,
 				'formatted' => $stockoutRiskPct . '%',
 				'unit' => '%',

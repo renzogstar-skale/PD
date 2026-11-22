@@ -475,7 +475,7 @@ class B2bIntelligenceService
 
 		return [
 			'success' => true,
-			'message' => 'Motor de Inteligencia Comercial ejecutado exitosamente con datos reales.'
+			'message' => 'Análisis comercial actualizado con las ventas registradas.'
 		];
 	}
 
